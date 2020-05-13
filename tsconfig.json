@@ -1,0 +1,23 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+    "baseUrl": "src",
+    "lib": ["dom", "dom.iterable", "webworker", "esnext"],
+
+    "strict": true,
+    "target": "es2017",
+    "noEmit": true,
+    "jsx": "react",
+    "allowJs": false,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": false
+  }
+}

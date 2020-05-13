@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders a list of properties 1`] = `
+<Fragment>
+  <span>
+    Property List
+  </span>
+  <WithStyles(ForwardRef(List))
+    className="makeStyles-root-1"
+  >
+    <WithStyles(ForwardRef(ListItem))
+      button={true}
+      dense={true}
+      key="id"
+    >
+      <WithStyles(ForwardRef(ListItemText))
+        id="list-label-id"
+        primary="id"
+      />
+    </WithStyles(ForwardRef(ListItem))>
+    <WithStyles(ForwardRef(ListItem))
+      button={true}
+      dense={true}
+      key="edgeMap"
+    >
+      <WithStyles(ForwardRef(ListItemText))
+        id="list-label-edgeMap"
+        primary="edgeMap"
+      />
+    </WithStyles(ForwardRef(ListItem))>
+    <WithStyles(ForwardRef(ListItem))
+      button={true}
+      dense={true}
+      key="label"
+    >
+      <WithStyles(ForwardRef(ListItemText))
+        id="list-label-label"
+        primary="label"
+      />
+    </WithStyles(ForwardRef(ListItem))>
+  </WithStyles(ForwardRef(List))>
+</Fragment>
+`;

@@ -1,0 +1,12 @@
+.*
+!.git*
+!.circleci
+!.eslintrc
+!.prettierrc
+
+node_modules
+coverage
+build
+docs
+
+*.log*
