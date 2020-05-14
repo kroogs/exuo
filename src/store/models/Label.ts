@@ -3,11 +3,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * Copyright © 2020 Justin Krueger */
 
-import { types } from 'mobx-state-tree'
+import { types as t } from 'mobx-state-tree'
 
-export const Label = types
+export const Label = t
   .model('Label', {
-    label: types.string,
+    label: t.maybe(t.string),
   })
   .actions(self => ({
     setLabel(label: string) {

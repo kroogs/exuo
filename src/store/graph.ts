@@ -21,12 +21,12 @@ import {
 // many node types
 // getEdgeMapTypes()
 
-export const edgeMapFactory = (
-  referenceFunc: () => IAnyModelType,
-): IAnyModelType =>
+type EdgeTypeFn = () => IAnyType
+
+export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
   t
     .model('EdgeMap', {
-      edgeMap: t.map(t.array(t.reference(t.late(referenceFunc)))),
+      edgeMap: t.map(t.array(t.reference(t.late(getEdgeType)))),
     })
     .actions(self => ({
       addEdge(tag: string, target: Instance<IAnyModelType>) {
@@ -38,18 +38,27 @@ export const edgeMapFactory = (
       },
 
       removeEdge(tag: string, target: Instance<IAnyModelType>) {
+        // TODO THROW ERRORS when trying to delete something not there
         self.edgeMap.get(tag)?.remove(target)
       },
     }))
 
-const Node = t
-  .compose(
-    edgeMapFactory((): IAnyModelType => Node),
-    t.model({
-      id: t.identifier,
-    }),
+export const nodeFactory = (
+  getEdgeType: EdgeTypeFn,
+  composeModels: Array<IAnyModelType | EdgeTypeFn> = [],
+): IAnyModelType =>
+  t.compose(
+    // @ts-ignore
+    ...[
+      edgeMapFactory,
+      ...composeModels,
+      t.model({
+        id: t.identifier,
+      }),
+    ].map(item => (typeof item === 'function' ? item(getEdgeType) : item)),
   )
-  .named('Node')
+
+const Node = nodeFactory(() => Node)
 
 // const NodeType = t.model('NodeType', {
 //   name: t.identifier,
@@ -58,56 +67,52 @@ const Node = t
 // })
 
 export function graphFactory(
-  initialNodeModels: Record<
-    string,
-    IAnyModelType | ((x: IAnyModelType) => IAnyModelType)
-  >,
+  initialNodeModels: Record<string, IAnyModelType> = { Node },
 ): IAnyModelType {
-  const modelCache = { Node, ...initialNodeModels }
-  const GraphBase = modelCache.Node.props({
-    nodesById: t.map(modelCache.Node),
+  const modelCache = {
+    ...initialNodeModels,
+  }
+
+  const modelValues = Object.values(modelCache)
+
+  return modelCache.Node.props({
+    nodesById: t.map(
+      modelValues.length > 1 ? t.union(...modelValues) : modelCache.Node,
+    ),
     // typesById: t.map(NodeType),
   })
+    .named('Graph')
+    .actions(self => {
+      // const createNodeTypeModel = (typeName: string): void => {
+      //   const typeModel = self.typesById.get(typeName)
+      //   if (!typeModel) {
+      //     throw Error(`No type named '${typeName}'`)
+      //   }
 
-  const Graph = GraphBase.named('Graph').actions(self => {
-    // const createNodeTypeModel = (typeName: string): void => {
-    //   const typeModel = self.typesById.get(typeName)
-    //   if (!typeModel) {
-    //     throw Error(`No type named '${typeName}'`)
-    //   }
+      //   const typeModelProps = Object.fromEntries(typeModel.props)
+      //   typeModelCache[typeModel.name] = t
+      //     .compose(Node, t.model(typeModelProps))
+      //     .named(typeModel.name)
+      // }
 
-    //   const typeModelProps = Object.fromEntries(typeModel.props)
-    //   typeModelCache[typeModel.name] = t
-    //     .compose(Node, t.model(typeModelProps))
-    //     .named(typeModel.name)
-    // }
+      return {
+        createNode(
+          modelName: string,
+          props: Omit<SnapshotIn<IAnyModelType>, 'id'>,
+        ): Instance<IAnyModelType> {
+          if (!modelCache[modelName]) {
+            throw Error(`No model named '${modelName}'`)
+          }
 
-    return {
-      createNode<T extends IAnyModelType>(
-        typeModelName: string,
-        props: Omit<SnapshotIn<T>, 'id'>,
-      ): Instance<T> {
-        if (!typeModelCache[typeModelName]) {
-          console.log('typeModelCache', typeModelCache)
-          throw Error(`No type model named '${typeModelName}'`)
-        }
+          const instance = modelCache[modelName].create({
+            ...props,
+            id: uuid(),
+          })
 
-        const instance = typeModelCache[typeModelName].create({
-          ...props,
-          id: uuid(),
-        })
+          self.nodesById.put(instance)
 
-        self.nodesById.put(instance)
-
-        return instance
-      },
-    }
-  })
-
-  return Graph
+          return instance
+        },
+      }
+    })
 }
-
-// export const Graph = graphFactory({
-//   Node,
-//   Graph,
-// })
