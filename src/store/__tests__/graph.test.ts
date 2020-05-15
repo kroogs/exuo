@@ -42,7 +42,7 @@ describe('edgeMapFactory', () => {
     })
   })
 
-  test('#hasEdge returns a boolean indicating a stored tagged reference', () => {
+  test('#hasEdge returns a boolean indicating a stored tagged reference exists', () => {
     const box = Container.create({
       items: {
         one: { id: 'one', edgeMap: { next: ['two'] } },
@@ -57,7 +57,7 @@ describe('edgeMapFactory', () => {
     expect(two.hasEdge('prev', one)).toBe(false)
   })
 
-  test('#getEdgeTag returns an array of references by tag', () => {
+  test('#getEdgeTag returns an array of instances by tag', () => {
     const box = Container.create({
       items: {
         one: { id: 'one', edgeMap: { next: ['one', 'two'] } },
@@ -71,7 +71,7 @@ describe('edgeMapFactory', () => {
     expect(one.getEdgeTag('next')).toStrictEqual([one, two])
   })
 
-  test('#removeEdge removes a stored tagged reference to a target', () => {
+  test('#removeEdge removes the first stored tagged reference to a target', () => {
     const box = Container.create({
       items: {
         one: { id: 'one', edgeMap: { next: ['two'] } },
@@ -81,11 +81,6 @@ describe('edgeMapFactory', () => {
 
     const one = box.items.get('one')
     const two = box.items.get('two')
-
-    expect(getSnapshot(box).items).toStrictEqual({
-      one: { id: 'one', edgeMap: { next: ['two'] } },
-      two: { id: 'two', edgeMap: { prev: ['one'] } },
-    })
 
     one.removeEdge('next', two)
 
