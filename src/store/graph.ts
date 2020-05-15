@@ -14,11 +14,10 @@ import {
   IAnyStateTreeNode,
 } from 'mobx-state-tree'
 
-// goals
-// custom edgemap types
-// custom default node type
+// TODO
+// improve TS types
+// types from configuration
 // custom default graph type
-// many node types
 // getEdgeMapTypes()
 
 type EdgeTypeFn = () => IAnyType
@@ -29,6 +28,11 @@ export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
       edgeMap: t.map(t.array(t.reference(t.late(getEdgeType)))),
     })
     .actions(self => ({
+      hasEdge(tag: string, target: Instance<IAnyModelType>): boolean {
+        return Boolean(self.edgeMap.get(tag)?.includes(target))
+      },
+    }))
+    .actions(self => ({
       addEdge(tag: string, target: Instance<IAnyModelType>) {
         if (!self.edgeMap.has(tag)) {
           self.edgeMap.set(tag, [])
@@ -37,8 +41,17 @@ export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
         self.edgeMap.get(tag)?.push(target)
       },
 
+      getEdgeTag(tag: string): Array<Instance<IAnyModelType>> {
+        return self.edgeMap.get(tag) ?? []
+      },
+
       removeEdge(tag: string, target: Instance<IAnyModelType>) {
-        // TODO THROW ERRORS when trying to delete something not there
+        if (!self.hasEdge(tag, target)) {
+          throw Error(
+            `No edge target '${target}' for tag '${tag}' on '${self}'`,
+          )
+        }
+
         self.edgeMap.get(tag)?.remove(target)
       },
     }))

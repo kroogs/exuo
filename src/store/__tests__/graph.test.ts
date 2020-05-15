@@ -42,6 +42,35 @@ describe('edgeMapFactory', () => {
     })
   })
 
+  test('#hasEdge returns a boolean indicating a stored tagged reference', () => {
+    const box = Container.create({
+      items: {
+        one: { id: 'one', edgeMap: { next: ['two'] } },
+        two: { id: 'two' },
+      },
+    })
+
+    const one = box.items.get('one')
+    const two = box.items.get('two')
+
+    expect(one.hasEdge('next', two)).toBe(true)
+    expect(two.hasEdge('prev', one)).toBe(false)
+  })
+
+  test('#getEdgeTag returns an array of references by tag', () => {
+    const box = Container.create({
+      items: {
+        one: { id: 'one', edgeMap: { next: ['one', 'two'] } },
+        two: { id: 'two' },
+      },
+    })
+
+    const one = box.items.get('one')
+    const two = box.items.get('two')
+
+    expect(one.getEdgeTag('next')).toStrictEqual([one, two])
+  })
+
   test('#removeEdge removes a stored tagged reference to a target', () => {
     const box = Container.create({
       items: {
