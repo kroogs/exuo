@@ -7,24 +7,20 @@ import { types as t, getSnapshot, IAnyModelType } from 'mobx-state-tree'
 import { edgeMapFactory, nodeFactory, graphFactory } from '../graph'
 import Label from '../models/Label'
 
-describe('edgeMapFactory', () => {
-  const Item = t.compose(
-    edgeMapFactory((): IAnyModelType => Item),
-    t.model({ id: t.identifier }),
-  )
-  const Container = t.model({
-    items: t.map(Item),
-  })
+const Item = t.compose(
+  edgeMapFactory((): IAnyModelType => Item),
+  t.model({ id: t.identifier }),
+)
+const Container = t.model({
+  items: t.map(Item),
+})
 
+describe('edgeMapFactory', () => {
   test('#addEdge stores a tagged reference to a target', () => {
     const box = Container.create({
       items: {
-        one: {
-          id: 'one',
-        },
-        two: {
-          id: 'two',
-        },
+        one: { id: 'one' },
+        two: { id: 'two' },
       },
     })
 
@@ -71,29 +67,43 @@ describe('edgeMapFactory', () => {
     expect(one.getEdgeTag('next')).toStrictEqual([one, two])
   })
 
-  test('#removeEdge removes the first stored tagged reference to a target', () => {
-    const box = Container.create({
-      items: {
-        one: { id: 'one', edgeMap: { next: ['two'] } },
+  describe('#removeTest', () => {
+    test('removes the first stored tagged reference to a target', () => {
+      const box = Container.create({
+        items: {
+          one: { id: 'one', edgeMap: { next: ['two'] } },
+          two: { id: 'two', edgeMap: { prev: ['one'] } },
+        },
+      })
+
+      const one = box.items.get('one')
+      const two = box.items.get('two')
+
+      one.removeEdge('next', two)
+
+      expect(getSnapshot(box).items).toStrictEqual({
+        one: { id: 'one', edgeMap: { next: [] } },
         two: { id: 'two', edgeMap: { prev: ['one'] } },
-      },
+      })
+
+      two.removeEdge('prev', one)
+
+      expect(getSnapshot(box).items).toStrictEqual({
+        one: { id: 'one', edgeMap: { next: [] } },
+        two: { id: 'two', edgeMap: { prev: [] } },
+      })
     })
 
-    const one = box.items.get('one')
-    const two = box.items.get('two')
+    test("throws an exception when an edge ref isn't found", () => {
+      const box = Container.create({
+        items: {
+          one: { id: 'one' },
+        },
+      })
 
-    one.removeEdge('next', two)
+      const one = box.items.get('one')
 
-    expect(getSnapshot(box).items).toStrictEqual({
-      one: { id: 'one', edgeMap: { next: [] } },
-      two: { id: 'two', edgeMap: { prev: ['one'] } },
-    })
-
-    two.removeEdge('prev', one)
-
-    expect(getSnapshot(box).items).toStrictEqual({
-      one: { id: 'one', edgeMap: { next: [] } },
-      two: { id: 'two', edgeMap: { prev: [] } },
+      expect(() => one.removeEdge('next', one)).toThrowErrorMatchingSnapshot()
     })
   })
 })

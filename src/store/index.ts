@@ -3,8 +3,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * Copyright © 2020 Justin Krueger */
 
-export * from './models/Graph'
 export * from './models/Log'
 export * from './models/Label'
 export * from './setup'
+export * from './graph'
 export * from './utils'

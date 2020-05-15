@@ -129,3 +129,5 @@ export function graphFactory(
       }
     })
 }
+
+export const Graph = graphFactory()
