@@ -42,7 +42,7 @@ describe('edgeMapFactory', () => {
     })
   })
 
-  test("#removeEdge removes a target's stored tagged reference", () => {
+  test('#removeEdge removes a stored tagged reference to a target', () => {
     const box = Container.create({
       items: {
         one: { id: 'one', edgeMap: { next: ['two'] } },
