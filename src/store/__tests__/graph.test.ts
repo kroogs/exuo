@@ -3,7 +3,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * Copyright © 2020 Justin Krueger */
 
-import { types as t, getSnapshot, IAnyModelType } from 'mobx-state-tree'
+import {
+  types as t,
+  getSnapshot,
+  IAnyModelType,
+  getType,
+  isType,
+} from 'mobx-state-tree'
 import { edgeMapFactory, nodeFactory, graphFactory } from '../graph'
 import Label from '../models/Label'
 
@@ -11,11 +17,12 @@ const Item = t.compose(
   edgeMapFactory((): IAnyModelType => Item),
   t.model({ id: t.identifier }),
 )
+
 const Container = t.model({
   items: t.map(Item),
 })
 
-describe('edgeMapFactory', () => {
+describe('#edgeMapFactory', () => {
   test('#addEdge stores a tagged reference to a target', () => {
     const box = Container.create({
       items: {
@@ -65,6 +72,7 @@ describe('edgeMapFactory', () => {
     const two = box.items.get('two')
 
     expect(one.getEdgeTag('next')).toStrictEqual([one, two])
+    expect(one.getEdgeTag('none')).toBe(undefined)
   })
 
   describe('#removeTest', () => {
@@ -106,15 +114,46 @@ describe('edgeMapFactory', () => {
       expect(() => one.removeEdge('next', one)).toThrowErrorMatchingSnapshot()
     })
   })
+
+  test.skip('getEdgeMapTypes', () => {
+    return
+  })
 })
 
-describe('graphFactory', () => {
+describe('#nodeFactory', () => {
+  test('composes models into a custom Node type', () => {
+    const Custom = nodeFactory(() => Custom, [t.model({ label: t.string })])
+    expect(isType(Custom)).toBe(true)
+
+    const keys = Object.keys(Custom.properties)
+    expect(keys).toContain('edgeMap')
+    expect(keys).toContain('label')
+    expect(keys).toContain('id')
+  })
+})
+
+describe('#graphFactory', () => {
+  test('supports custom Node models', () => {
+    const Node = nodeFactory(() => Node, [t.model({ label: t.string })])
+    const GraphModel = graphFactory({ Node })
+    expect(
+      getSnapshot(
+        GraphModel.create({
+          nodesById: { one: { id: 'one', label: 'one' } },
+        }),
+      ),
+    ).toStrictEqual({
+      nodesById: { one: { id: 'one', label: 'one', edgeMap: {} } },
+      typesById: {},
+    })
+  })
+
   test('works', () => {
     const Node = nodeFactory(() => t.union(Node, LabelNode))
     const LabelNode = nodeFactory(() => t.union(Node, LabelNode), [Label])
-    const GraphModel = graphFactory({ Node, LabelNode })
+    const GraphModel = graphFactory({ Node, Label: LabelNode }).named('Boop')
 
-    const graph = GraphModel.create({ id: 'root' })
+    const graph = GraphModel.create()
 
     // graph.createNode([
     //   {
@@ -123,16 +162,14 @@ describe('graphFactory', () => {
     //   },
     // ])
 
-    const one = graph.createNode('Node', {})
-    const two = graph.createNode('Node', {})
+    const one = graph.createNode()
+    const two = graph.createNode()
 
     two.addEdge('side', one)
-
     expect(graph.nodesById.get(two.id).edgeMap.get('side')?.[0]).toBe(one)
 
-    const potato = graph.createNode('LabelNode', { label: 'potato' })
+    const potato = graph.createNode('Label', { label: 'potato' })
     one.addEdge('item', potato)
-
     expect(graph.nodesById.get(one.id).edgeMap.get('item')?.[0]).toBe(potato)
 
     potato.addEdge('inside', potato)

@@ -7,18 +7,10 @@ import { v4 as uuid } from 'uuid'
 import {
   types as t,
   SnapshotIn,
-  SnapshotOrInstance,
   Instance,
   IAnyType,
   IAnyModelType,
-  IAnyStateTreeNode,
 } from 'mobx-state-tree'
-
-// TODO
-// improve TS types
-// types from configuration
-// custom default graph type
-// getEdgeMapTypes()
 
 type EdgeTypeFn = () => IAnyType
 
@@ -41,20 +33,22 @@ export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
         self.edgeMap.get(tag)?.push(target)
       },
 
-      getEdgeTag(tag: string): Array<Instance<IAnyModelType>> {
-        return self.edgeMap.get(tag) ?? []
+      getEdgeTag(tag: string): void | Array<Instance<IAnyModelType>> {
+        return self.edgeMap.get(tag)
       },
 
       removeEdge(tag: string, target: Instance<IAnyModelType>) {
         if (!self.hasEdge(tag, target)) {
-          throw Error(
-            `No edge target '${target}' for tag '${tag}' on '${self}'`,
-          )
+          throw Error(`Node '${self}' has no '${tag}' edge for '${target}'`)
         }
 
         self.edgeMap.get(tag)?.remove(target)
       },
     }))
+
+export const getEdgeMapTypes = (): void => {
+  return
+}
 
 export const nodeFactory = (
   getEdgeType: EdgeTypeFn,
@@ -73,11 +67,11 @@ export const nodeFactory = (
 
 const Node = nodeFactory(() => Node)
 
-// const NodeType = t.model('NodeType', {
-//   name: t.identifier,
-//   compose: t.maybe(t.array(t.late((): IAnyType => t.reference(NodeType)))),
-//   props: t.array(t.array(t.string)),
-// })
+const TypeConfig = t.model({
+  name: t.identifier,
+  compose: t.maybe(t.array(t.late((): IAnyType => t.reference(TypeConfig)))),
+  props: t.array(t.array(t.string)),
+})
 
 export function graphFactory(
   initialNodeModels: Record<string, IAnyModelType> = { Node },
@@ -88,30 +82,30 @@ export function graphFactory(
 
   const modelValues = Object.values(modelCache)
 
-  return modelCache.Node.props({
-    nodesById: t.map(
-      modelValues.length > 1 ? t.union(...modelValues) : modelCache.Node,
-    ),
-    // typesById: t.map(NodeType),
-  })
-    .named('Graph')
+  return t
+    .model({
+      nodesById: t.map(
+        modelValues.length > 1 ? t.union(...modelValues) : modelCache.Node,
+      ),
+      typesById: t.map(TypeConfig),
+    })
     .actions(self => {
-      // const createNodeTypeModel = (typeName: string): void => {
-      //   const typeModel = self.typesById.get(typeName)
-      //   if (!typeModel) {
-      //     throw Error(`No type named '${typeName}'`)
-      //   }
-
-      //   const typeModelProps = Object.fromEntries(typeModel.props)
-      //   typeModelCache[typeModel.name] = t
-      //     .compose(Node, t.model(typeModelProps))
-      //     .named(typeModel.name)
-      // }
-
       return {
+        createNodeTypeModel(typeName: string): void {
+          const typeModel = self.typesById.get(typeName)
+          if (!typeModel) {
+            throw Error(`No type named '${typeName}'`)
+          }
+
+          const typeModelProps = Object.fromEntries(typeModel.props)
+          modelCache[typeModel.name] = t
+            .compose(Node, t.model(typeModelProps))
+            .named(typeModel.name)
+        },
+
         createNode(
-          modelName: string,
-          props: Omit<SnapshotIn<IAnyModelType>, 'id'>,
+          modelName = 'Node',
+          props: Omit<SnapshotIn<IAnyModelType>, 'id'> = {},
         ): Instance<IAnyModelType> {
           if (!modelCache[modelName]) {
             throw Error(`No model named '${modelName}'`)
