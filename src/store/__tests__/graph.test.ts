@@ -5,24 +5,24 @@
 
 import {
   types as t,
+  getType,
   getSnapshot,
   IAnyModelType,
-  getType,
   isType,
 } from 'mobx-state-tree'
-import { edgeMapFactory, nodeFactory, graphFactory } from '../graph'
+import { Graph, edgeMapFactory, nodeFactory, graphFactory } from '../graph'
 import Label from '../models/Label'
 
-const Item = t.compose(
-  edgeMapFactory((): IAnyModelType => Item),
-  t.model({ id: t.identifier }),
-)
-
-const Container = t.model({
-  items: t.map(Item),
-})
-
 describe('#edgeMapFactory', () => {
+  const Item = t.compose(
+    edgeMapFactory((): IAnyModelType => Item),
+    t.model({ id: t.identifier }),
+  )
+
+  const Container = t.model({
+    items: t.map(Item),
+  })
+
   test('#addEdge stores a tagged reference to a target', () => {
     const box = Container.create({
       items: {
@@ -45,7 +45,7 @@ describe('#edgeMapFactory', () => {
     })
   })
 
-  test('#hasEdge returns a boolean indicating a stored tagged reference exists', () => {
+  test('#hasEdge returns a boolean indicating whether a stored tagged reference exists', () => {
     const box = Container.create({
       items: {
         one: { id: 'one', edgeMap: { next: ['two'] } },
@@ -114,53 +114,46 @@ describe('#edgeMapFactory', () => {
       expect(() => one.removeEdge('next', one)).toThrowErrorMatchingSnapshot()
     })
   })
+})
 
-  test.skip('getEdgeMapTypes', () => {
-    return
-  })
+test.skip('getEdgeMapModels', () => {
+  return
 })
 
 describe('#nodeFactory', () => {
   test('composes models into a custom Node type', () => {
-    const Custom = nodeFactory(() => Custom, [t.model({ label: t.string })])
+    const Custom = nodeFactory(() => Custom, [t.model({ custom: t.string })])
     expect(isType(Custom)).toBe(true)
 
     const keys = Object.keys(Custom.properties)
     expect(keys).toContain('edgeMap')
-    expect(keys).toContain('label')
+    expect(keys).toContain('custom')
     expect(keys).toContain('id')
   })
 })
 
 describe('#graphFactory', () => {
-  test('supports custom Node models', () => {
-    const Node = nodeFactory(() => Node, [t.model({ label: t.string })])
+  test('supports a custom base Node model', () => {
+    const Node = nodeFactory(() => Node, [t.model({ custom: t.string })])
     const GraphModel = graphFactory({ Node })
     expect(
       getSnapshot(
         GraphModel.create({
-          nodesById: { one: { id: 'one', label: 'one' } },
+          nodesById: { one: { id: 'one', custom: 'one' } },
         }),
       ),
     ).toStrictEqual({
-      nodesById: { one: { id: 'one', label: 'one', edgeMap: {} } },
+      nodesById: { one: { id: 'one', custom: 'one', edgeMap: {} } },
       typesById: {},
     })
   })
 
-  test('works', () => {
+  test('supports relationships with custom models', () => {
     const Node = nodeFactory(() => t.union(Node, LabelNode))
     const LabelNode = nodeFactory(() => t.union(Node, LabelNode), [Label])
-    const GraphModel = graphFactory({ Node, Label: LabelNode }).named('Boop')
+    const GraphModel = graphFactory({ Node, Label: LabelNode })
 
     const graph = GraphModel.create()
-
-    // graph.createNode([
-    //   {
-    //     name: 'Test',
-    //     props: [['label', 'string']],
-    //   },
-    // ])
 
     const one = graph.createNode()
     const two = graph.createNode()
@@ -174,5 +167,36 @@ describe('#graphFactory', () => {
 
     potato.addEdge('inside', potato)
     expect(potato.edgeMap.get('inside')?.[0]).toBe(potato)
+  })
+
+  test.skip('#createTypeConfig creates and stores TypeConfig instances', () => {
+    // graph.createTypeConfig([
+    //   {
+    //     name: 'Test',
+    //     props: [['label', 'string']],
+    //   },
+    // ])
+    return
+  })
+
+  test.skip('#recompose produces a new graph with configured types', () => {
+    const graph = Graph.create({
+      nodesById: {
+        one: {
+          id: 'one',
+        },
+      },
+      typesById: {
+        Custom: {
+          name: 'Custom',
+          compose: ['Node'],
+          props: [['custom', 'string']],
+        },
+      },
+    })
+
+    const newGraph = graph.recompose()
+    const custom = newGraph.createNode('Custom', { custom: 'sure' })
+    newGraph.nodesById.get('one').addEdge('out', custom)
   })
 })
