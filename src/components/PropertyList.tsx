@@ -34,7 +34,7 @@ export const PropertyList: React.FunctionComponent<PropertyListProps> = props =>
 
   return useObserver(() => {
     if (!props.model) {
-      throw 'Invalid model'
+      throw Error('Invalid model')
     }
 
     const members = getMembers(props.model)

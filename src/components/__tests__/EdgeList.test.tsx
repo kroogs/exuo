@@ -4,26 +4,35 @@
  * Copyright © 2020 Justin Krueger */
 
 import React from 'react'
-import { shallow } from 'enzyme'
-import { types as t } from 'mobx-state-tree'
+import { render } from 'enzyme'
 
 import EdgeList from '../EdgeList'
-import Graph from 'store/models/Graph'
-import Node from 'store/models/Node'
-import Label from 'store/models/Label'
+import { Graph } from 'store/graph'
 
-const LabelNode = t.compose(Label, Node)
+test('Renders a list of associated nodes', () => {
+  let nextId = 0
+  const makeId = (): number => ++nextId
 
-test.skip('Renders a list of associated nodes', () => {
-  throw Error('This fails.')
-  const graph = Graph.create({
-    id: 'graph',
-  })
+  const graph = Graph.create({ id: makeId() }, makeId)
+  const first = graph.createNode()
+  const last = graph.createNode()
 
-  const one = graph.createNode(LabelNode, { label: 'one' })
-  const two = graph.createNode(LabelNode, { label: 'two' })
+  let prev = null
 
-  one.addEdge('side', two)
+  for (let i = 0; i < 30; i++) {
+    const node = graph.createNode()
 
-  expect(shallow(<EdgeList model={graph} />)).toMatchSnapshot()
+    node.addEdge('last', last)
+    node.addEdge('first', first)
+    first.addEdge('child', node)
+
+    if (prev) {
+      prev.addEdge('next', node)
+      node.addEdge('prev', prev)
+    }
+
+    prev = node
+  }
+
+  expect(render(<EdgeList model={first} />)).toMatchSnapshot()
 })

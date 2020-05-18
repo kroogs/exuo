@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders a list of associated nodes 1`] = `
+Array [
+  <span>
+    Edge List
+  </span>,
+  <ul
+    class="MuiList-root makeStyles-root-1 MuiList-padding"
+  />,
+]
+`;

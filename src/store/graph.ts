@@ -79,6 +79,7 @@ const TypeConfig = t.model({
 
 export function graphFactory(
   initialNodeModels: Record<string, IAnyModelType> = { Node },
+  makeId = () => uuid(),
 ): IAnyModelType {
   const modelCache = {
     ...initialNodeModels,
@@ -98,7 +99,7 @@ export function graphFactory(
     createTypeConfig(typeName: string): void {
       const typeModel = self.typesById.get(typeName)
       if (!typeModel) {
-        throw Error(`No type named '${typeName}'`)
+        throw Error(`No type config named '${typeName}'`)
       }
 
       const typeModelProps = Object.fromEntries(typeModel.props)
@@ -144,7 +145,7 @@ export function graphFactory(
 
       const instance = modelCache[modelName].create({
         ...props,
-        id: uuid(),
+        id: makeId(),
       })
 
       self.nodesById.put(instance)

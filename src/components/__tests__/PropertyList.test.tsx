@@ -5,17 +5,22 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import { types } from 'mobx-state-tree'
+import { types as t } from 'mobx-state-tree'
 
-import Node from 'store/models/Node'
-import Label from 'store/models/Label'
 import PropertyList from '../PropertyList'
 
 test('Renders a list of properties', () => {
-  const model = types.compose(Node, Label).create({
-    id: 'fruit',
-    label: 'Fruit!',
+  const Model = t.model({
+    one: t.number,
+    two: t.string,
+    three: t.boolean,
   })
 
-  expect(shallow(<PropertyList model={model} />)).toMatchSnapshot()
+  const instance = Model.create({
+    one: 100,
+    two: 'graphs',
+    three: true,
+  })
+
+  expect(shallow(<PropertyList model={instance} />)).toMatchSnapshot()
 })

@@ -75,7 +75,7 @@ describe('#edgeMapFactory', () => {
     expect(one.getEdgeTag('none')).toBe(undefined)
   })
 
-  describe('#removeTest', () => {
+  describe('#removeEdge', () => {
     test('removes the first stored tagged reference to a target', () => {
       const box = Container.create({
         items: {

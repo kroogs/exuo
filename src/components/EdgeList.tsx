@@ -41,16 +41,18 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = props => {
     const modelMembers = getMembers(props.model)
     const edges: Array<string> = []
 
-    console.log('modelMembers', modelMembers)
-
+    console.log('props', props)
     Object.keys(modelMembers.properties).forEach(name => {
       // TODO uhhh? some kind of error going on here idk
-      if (!isType(props.model[name])) {
-        return
-      }
+      /* if (!isType(props.model[name])) { */
+      /*   /1* console.log('thefk', props.model[name]) *1/ */
+      /*   return */
+      /* } */
 
       const propType = getType(props.model[name])
       const childType = getChildType(props.model[name])
+
+      console.log('property', name, propType)
 
       if (isModelType(propType) || isModelType(childType)) {
         if (isArrayType(propType)) {

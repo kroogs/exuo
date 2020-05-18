@@ -11,31 +11,31 @@ exports[`Renders a list of properties 1`] = `
     <WithStyles(ForwardRef(ListItem))
       button={true}
       dense={true}
-      key="id"
+      key="one"
     >
       <WithStyles(ForwardRef(ListItemText))
-        id="list-label-id"
-        primary="id"
+        id="list-label-one"
+        primary="one"
       />
     </WithStyles(ForwardRef(ListItem))>
     <WithStyles(ForwardRef(ListItem))
       button={true}
       dense={true}
-      key="edgeMap"
+      key="two"
     >
       <WithStyles(ForwardRef(ListItemText))
-        id="list-label-edgeMap"
-        primary="edgeMap"
+        id="list-label-two"
+        primary="two"
       />
     </WithStyles(ForwardRef(ListItem))>
     <WithStyles(ForwardRef(ListItem))
       button={true}
       dense={true}
-      key="label"
+      key="three"
     >
       <WithStyles(ForwardRef(ListItemText))
-        id="list-label-label"
-        primary="label"
+        id="list-label-three"
+        primary="three"
       />
     </WithStyles(ForwardRef(ListItem))>
   </WithStyles(ForwardRef(List))>
