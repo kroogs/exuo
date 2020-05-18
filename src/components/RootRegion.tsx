@@ -223,7 +223,7 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
     /*   ) */
     /* } */
     if (!graph) {
-      throw new Error('no graph')
+      throw Error('no graph')
     }
 
     return (

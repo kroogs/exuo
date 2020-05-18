@@ -32,7 +32,7 @@ export function useStore<S>(selector: (s: Instance<typeof Root>) => S): S {
   const store = React.useContext(storeContext)
 
   if (!store) {
-    throw new Error('Cannot use store before setup.')
+    throw Error('Cannot use store before setup.')
   }
 
   return selector(store)
