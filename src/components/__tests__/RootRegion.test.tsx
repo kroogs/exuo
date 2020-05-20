@@ -5,9 +5,24 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+
+import { StoreProvider } from 'store'
 
 import RootRegion from '../RootRegion'
 
-test.skip('Renders', () => {
-  expect(shallow(<RootRegion />)).toMatchSnapshot()
+const theme = createMuiTheme()
+
+const Wrapper: React.FunctionComponent = () => (
+  <React.StrictMode>
+    <StoreProvider>
+      <ThemeProvider theme={theme}>
+        <RootRegion />
+      </ThemeProvider>
+    </StoreProvider>
+  </React.StrictMode>
+)
+
+test('Renders', () => {
+  expect(shallow(<Wrapper />)).toMatchSnapshot()
 })
