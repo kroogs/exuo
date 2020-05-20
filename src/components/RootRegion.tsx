@@ -210,7 +210,8 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
   )
 
   return useObserver(() => {
-    const graph = store.byId.get('default')
+    const graph = store.nodesById.values()
+    /* const graph = store.nodesById.get('default') */
     /* const rows: Array<React.ReactElement> = [] */
 
     /* if (graph) { */
@@ -226,6 +227,7 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
       throw Error('no graph')
     }
 
+    return <>boop</>
     return (
       <div className={classes.root}>
         <EdgeList model={graph} />

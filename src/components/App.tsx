@@ -21,7 +21,7 @@ const Route: React.FunctionComponent<Props> = ({
 const App: React.FunctionComponent = () => {
   const store = useStore(store => store.graph)
   return useObserver(() => {
-    const graph = store.byId.get('default')
+    const graph = store.nodesById.values()
     return (
       <Router>
         <Route path="/" component={RootRegion} />

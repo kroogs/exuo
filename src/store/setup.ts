@@ -14,7 +14,7 @@ export const Root = t.model('Root', {
 })
 
 export const initStore = (): Instance<typeof Root> => {
-  const store = Root.create()
+  const store = Root.create({ graph: {} })
 
   // store.graph.init([persist])
 

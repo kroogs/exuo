@@ -4,10 +4,25 @@
  * Copyright © 2020 Justin Krueger */
 
 import React from 'react'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+
+import { StoreProvider } from 'store'
 
 import App from '../App'
 
-test.skip('Renders', () => {
-  expect(shallow(<App />)).toMatchSnapshot()
+const theme = createMuiTheme()
+
+const Wrapper: React.FunctionComponent = () => (
+  <React.StrictMode>
+    <StoreProvider>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </StoreProvider>
+  </React.StrictMode>
+)
+
+test('Renders', () => {
+  expect(mount(<Wrapper />)).toMatchSnapshot()
 })
