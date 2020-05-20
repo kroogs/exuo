@@ -4,22 +4,24 @@
  * Copyright © 2020 Justin Krueger */
 
 import React from 'react'
-import { render } from 'enzyme'
+import { mount } from 'enzyme'
 
 import EdgeList from '../EdgeList'
-import { Graph } from 'store/graph'
+import { graphFactory, Node } from 'store/graph'
+
+let nextId = 0
+const makeId = (): string => String(++nextId)
+
+const Graph = graphFactory({ Node }, makeId)
 
 test('Renders a list of associated nodes', () => {
-  let nextId = 0
-  const makeId = (): number => ++nextId
-
-  const graph = Graph.create({ id: makeId() }, makeId)
+  const graph = Graph.create({ id: makeId() })
   const first = graph.createNode()
   const last = graph.createNode()
 
   let prev = null
 
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 5; i++) {
     const node = graph.createNode()
 
     node.addEdge('last', last)
@@ -34,5 +36,5 @@ test('Renders a list of associated nodes', () => {
     prev = node
   }
 
-  expect(render(<EdgeList model={first} />)).toMatchSnapshot()
+  expect(mount(<EdgeList node={first} />)).toMatchSnapshot()
 })

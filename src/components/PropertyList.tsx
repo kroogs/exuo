@@ -4,7 +4,6 @@
  * Copyright © 2020 Justin Krueger */
 
 import React from 'react'
-
 import { IAnyStateTreeNode, getMembers } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 

@@ -14,7 +14,7 @@ import {
   getSnapshot,
 } from 'mobx-state-tree'
 
-type EdgeTypeFn = () => IAnyType
+type EdgeTypeFn = <T extends IAnyModelType = IAnyModelType>() => T
 
 export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
   t
@@ -69,9 +69,9 @@ export const nodeFactory = (
     )
     .named('Node')
 
-const Node = nodeFactory(() => Node)
+export const Node = nodeFactory(() => Node)
 
-const TypeConfig = t.model({
+export const TypeConfig = t.model({
   name: t.identifier,
   compose: t.maybe(t.array(t.string)),
   props: t.array(t.array(t.string)),

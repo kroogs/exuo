@@ -4,78 +4,48 @@
  * Copyright © 2020 Justin Krueger */
 
 import React from 'react'
-
-import {
-  IAnyStateTreeNode,
-  getMembers,
-  getType,
-  getChildType,
-  isType,
-  isMapType,
-  isLateType,
-  isArrayType,
-  isModelType,
-} from 'mobx-state-tree'
+import { IAnyModelType, Instance } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import ListSubheader from '@material-ui/core/ListSubheader'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
     },
+    listSection: {},
+    ul: {},
   }),
 )
 
 interface EdgeListProps {
-  model: IAnyStateTreeNode
+  node: Instance<IAnyModelType>
 }
 
-export const EdgeList: React.FunctionComponent<EdgeListProps> = props => {
+export const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
   const classes = useStyles()
   return useObserver(() => {
-    const modelMembers = getMembers(props.model)
-    const edges: Array<string> = []
-
-    console.log('props', props)
-    Object.keys(modelMembers.properties).forEach(name => {
-      // TODO uhhh? some kind of error going on here idk
-      /* if (!isType(props.model[name])) { */
-      /*   /1* console.log('thefk', props.model[name]) *1/ */
-      /*   return */
-      /* } */
-
-      const propType = getType(props.model[name])
-      const childType = getChildType(props.model[name])
-
-      console.log('property', name, propType)
-
-      if (isModelType(propType) || isModelType(childType)) {
-        if (isArrayType(propType)) {
-          edges.push(name)
-        } else if (isMapType(propType)) {
-          edges.push(name)
-        } else if (isLateType(propType)) {
-          edges.push(name)
-        }
-      }
-    })
-
+    const edgeKeys = Array.from(node.edgeMap.keys())
     return (
-      <>
-        <span>Edge List</span>
-        <List className={classes.root}>
-          {edges.map(value => (
-            <ListItem key={value} role={undefined} dense button>
-              <ListItemText id={`list-label-${value}`} primary={value} />
-            </ListItem>
-          ))}
-        </List>
-      </>
+      <List className={classes.root} subheader={<li />}>
+        {edgeKeys.map((key) => (
+          <li key={`edge-${key}`} className={classes.listSection}>
+            <ul className={classes.ul}>
+              <ListSubheader>{`${key}`}</ListSubheader>
+              {node.edgeMap.get(key)?.map((item: { id: string }) => (
+                <ListItem key={`edge-${key}-${item.id}`}>
+                  <ListItemText primary={`Item ${item.id}`} />
+                </ListItem>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </List>
     )
   })
 }

@@ -1,12 +1,588 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Renders a list of associated nodes 1`] = `
-Array [
-  <span>
-    Edge List
-  </span>,
-  <ul
-    class="MuiList-root makeStyles-root-1 MuiList-padding"
-  />,
-]
+<EdgeList
+  node={
+    Object {
+      "edgeMap": Object {
+        "child": Array [
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+        ],
+      },
+      "id": "2",
+    }
+  }
+>
+  <WithStyles(ForwardRef(List))
+    className="makeStyles-root-1"
+    subheader={<li />}
+  >
+    <ForwardRef(List)
+      className="makeStyles-root-1"
+      classes={
+        Object {
+          "dense": "MuiList-dense",
+          "padding": "MuiList-padding",
+          "root": "MuiList-root",
+          "subheader": "MuiList-subheader",
+        }
+      }
+      subheader={<li />}
+    >
+      <ul
+        className="MuiList-root makeStyles-root-1 MuiList-padding MuiList-subheader"
+      >
+        <li />
+        <li
+          className="makeStyles-listSection-2"
+          key="edge-child"
+        >
+          <ul
+            className="makeStyles-ul-3"
+          >
+            <WithStyles(ForwardRef(ListSubheader))>
+              <ForwardRef(ListSubheader)
+                classes={
+                  Object {
+                    "colorInherit": "MuiListSubheader-colorInherit",
+                    "colorPrimary": "MuiListSubheader-colorPrimary",
+                    "gutters": "MuiListSubheader-gutters",
+                    "inset": "MuiListSubheader-inset",
+                    "root": "MuiListSubheader-root",
+                    "sticky": "MuiListSubheader-sticky",
+                  }
+                }
+              >
+                <li
+                  className="MuiListSubheader-root MuiListSubheader-sticky MuiListSubheader-gutters"
+                >
+                  child
+                </li>
+              </ForwardRef(ListSubheader)>
+            </WithStyles(ForwardRef(ListSubheader))>
+            <WithStyles(ForwardRef(ListItem))
+              key="edge-child-4"
+            >
+              <ForwardRef(ListItem)
+                classes={
+                  Object {
+                    "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                    "button": "MuiListItem-button",
+                    "container": "MuiListItem-container",
+                    "dense": "MuiListItem-dense",
+                    "disabled": "Mui-disabled",
+                    "divider": "MuiListItem-divider",
+                    "focusVisible": "Mui-focusVisible",
+                    "gutters": "MuiListItem-gutters",
+                    "root": "MuiListItem-root",
+                    "secondaryAction": "MuiListItem-secondaryAction",
+                    "selected": "Mui-selected",
+                  }
+                }
+              >
+                <li
+                  className="MuiListItem-root MuiListItem-gutters"
+                  disabled={false}
+                >
+                  <WithStyles(ForwardRef(ListItemText))
+                    key=".0"
+                    primary="Item 4"
+                  >
+                    <ForwardRef(ListItemText)
+                      classes={
+                        Object {
+                          "dense": "MuiListItemText-dense",
+                          "inset": "MuiListItemText-inset",
+                          "multiline": "MuiListItemText-multiline",
+                          "primary": "MuiListItemText-primary",
+                          "root": "MuiListItemText-root",
+                          "secondary": "MuiListItemText-secondary",
+                        }
+                      }
+                      primary="Item 4"
+                    >
+                      <div
+                        className="MuiListItemText-root"
+                      >
+                        <WithStyles(ForwardRef(Typography))
+                          className="MuiListItemText-primary"
+                          component="span"
+                          display="block"
+                          variant="body1"
+                        >
+                          <ForwardRef(Typography)
+                            className="MuiListItemText-primary"
+                            classes={
+                              Object {
+                                "alignCenter": "MuiTypography-alignCenter",
+                                "alignJustify": "MuiTypography-alignJustify",
+                                "alignLeft": "MuiTypography-alignLeft",
+                                "alignRight": "MuiTypography-alignRight",
+                                "body1": "MuiTypography-body1",
+                                "body2": "MuiTypography-body2",
+                                "button": "MuiTypography-button",
+                                "caption": "MuiTypography-caption",
+                                "colorError": "MuiTypography-colorError",
+                                "colorInherit": "MuiTypography-colorInherit",
+                                "colorPrimary": "MuiTypography-colorPrimary",
+                                "colorSecondary": "MuiTypography-colorSecondary",
+                                "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                "displayBlock": "MuiTypography-displayBlock",
+                                "displayInline": "MuiTypography-displayInline",
+                                "gutterBottom": "MuiTypography-gutterBottom",
+                                "h1": "MuiTypography-h1",
+                                "h2": "MuiTypography-h2",
+                                "h3": "MuiTypography-h3",
+                                "h4": "MuiTypography-h4",
+                                "h5": "MuiTypography-h5",
+                                "h6": "MuiTypography-h6",
+                                "noWrap": "MuiTypography-noWrap",
+                                "overline": "MuiTypography-overline",
+                                "paragraph": "MuiTypography-paragraph",
+                                "root": "MuiTypography-root",
+                                "srOnly": "MuiTypography-srOnly",
+                                "subtitle1": "MuiTypography-subtitle1",
+                                "subtitle2": "MuiTypography-subtitle2",
+                              }
+                            }
+                            component="span"
+                            display="block"
+                            variant="body1"
+                          >
+                            <span
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                            >
+                              Item 4
+                            </span>
+                          </ForwardRef(Typography)>
+                        </WithStyles(ForwardRef(Typography))>
+                      </div>
+                    </ForwardRef(ListItemText)>
+                  </WithStyles(ForwardRef(ListItemText))>
+                </li>
+              </ForwardRef(ListItem)>
+            </WithStyles(ForwardRef(ListItem))>
+            <WithStyles(ForwardRef(ListItem))
+              key="edge-child-5"
+            >
+              <ForwardRef(ListItem)
+                classes={
+                  Object {
+                    "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                    "button": "MuiListItem-button",
+                    "container": "MuiListItem-container",
+                    "dense": "MuiListItem-dense",
+                    "disabled": "Mui-disabled",
+                    "divider": "MuiListItem-divider",
+                    "focusVisible": "Mui-focusVisible",
+                    "gutters": "MuiListItem-gutters",
+                    "root": "MuiListItem-root",
+                    "secondaryAction": "MuiListItem-secondaryAction",
+                    "selected": "Mui-selected",
+                  }
+                }
+              >
+                <li
+                  className="MuiListItem-root MuiListItem-gutters"
+                  disabled={false}
+                >
+                  <WithStyles(ForwardRef(ListItemText))
+                    key=".0"
+                    primary="Item 5"
+                  >
+                    <ForwardRef(ListItemText)
+                      classes={
+                        Object {
+                          "dense": "MuiListItemText-dense",
+                          "inset": "MuiListItemText-inset",
+                          "multiline": "MuiListItemText-multiline",
+                          "primary": "MuiListItemText-primary",
+                          "root": "MuiListItemText-root",
+                          "secondary": "MuiListItemText-secondary",
+                        }
+                      }
+                      primary="Item 5"
+                    >
+                      <div
+                        className="MuiListItemText-root"
+                      >
+                        <WithStyles(ForwardRef(Typography))
+                          className="MuiListItemText-primary"
+                          component="span"
+                          display="block"
+                          variant="body1"
+                        >
+                          <ForwardRef(Typography)
+                            className="MuiListItemText-primary"
+                            classes={
+                              Object {
+                                "alignCenter": "MuiTypography-alignCenter",
+                                "alignJustify": "MuiTypography-alignJustify",
+                                "alignLeft": "MuiTypography-alignLeft",
+                                "alignRight": "MuiTypography-alignRight",
+                                "body1": "MuiTypography-body1",
+                                "body2": "MuiTypography-body2",
+                                "button": "MuiTypography-button",
+                                "caption": "MuiTypography-caption",
+                                "colorError": "MuiTypography-colorError",
+                                "colorInherit": "MuiTypography-colorInherit",
+                                "colorPrimary": "MuiTypography-colorPrimary",
+                                "colorSecondary": "MuiTypography-colorSecondary",
+                                "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                "displayBlock": "MuiTypography-displayBlock",
+                                "displayInline": "MuiTypography-displayInline",
+                                "gutterBottom": "MuiTypography-gutterBottom",
+                                "h1": "MuiTypography-h1",
+                                "h2": "MuiTypography-h2",
+                                "h3": "MuiTypography-h3",
+                                "h4": "MuiTypography-h4",
+                                "h5": "MuiTypography-h5",
+                                "h6": "MuiTypography-h6",
+                                "noWrap": "MuiTypography-noWrap",
+                                "overline": "MuiTypography-overline",
+                                "paragraph": "MuiTypography-paragraph",
+                                "root": "MuiTypography-root",
+                                "srOnly": "MuiTypography-srOnly",
+                                "subtitle1": "MuiTypography-subtitle1",
+                                "subtitle2": "MuiTypography-subtitle2",
+                              }
+                            }
+                            component="span"
+                            display="block"
+                            variant="body1"
+                          >
+                            <span
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                            >
+                              Item 5
+                            </span>
+                          </ForwardRef(Typography)>
+                        </WithStyles(ForwardRef(Typography))>
+                      </div>
+                    </ForwardRef(ListItemText)>
+                  </WithStyles(ForwardRef(ListItemText))>
+                </li>
+              </ForwardRef(ListItem)>
+            </WithStyles(ForwardRef(ListItem))>
+            <WithStyles(ForwardRef(ListItem))
+              key="edge-child-6"
+            >
+              <ForwardRef(ListItem)
+                classes={
+                  Object {
+                    "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                    "button": "MuiListItem-button",
+                    "container": "MuiListItem-container",
+                    "dense": "MuiListItem-dense",
+                    "disabled": "Mui-disabled",
+                    "divider": "MuiListItem-divider",
+                    "focusVisible": "Mui-focusVisible",
+                    "gutters": "MuiListItem-gutters",
+                    "root": "MuiListItem-root",
+                    "secondaryAction": "MuiListItem-secondaryAction",
+                    "selected": "Mui-selected",
+                  }
+                }
+              >
+                <li
+                  className="MuiListItem-root MuiListItem-gutters"
+                  disabled={false}
+                >
+                  <WithStyles(ForwardRef(ListItemText))
+                    key=".0"
+                    primary="Item 6"
+                  >
+                    <ForwardRef(ListItemText)
+                      classes={
+                        Object {
+                          "dense": "MuiListItemText-dense",
+                          "inset": "MuiListItemText-inset",
+                          "multiline": "MuiListItemText-multiline",
+                          "primary": "MuiListItemText-primary",
+                          "root": "MuiListItemText-root",
+                          "secondary": "MuiListItemText-secondary",
+                        }
+                      }
+                      primary="Item 6"
+                    >
+                      <div
+                        className="MuiListItemText-root"
+                      >
+                        <WithStyles(ForwardRef(Typography))
+                          className="MuiListItemText-primary"
+                          component="span"
+                          display="block"
+                          variant="body1"
+                        >
+                          <ForwardRef(Typography)
+                            className="MuiListItemText-primary"
+                            classes={
+                              Object {
+                                "alignCenter": "MuiTypography-alignCenter",
+                                "alignJustify": "MuiTypography-alignJustify",
+                                "alignLeft": "MuiTypography-alignLeft",
+                                "alignRight": "MuiTypography-alignRight",
+                                "body1": "MuiTypography-body1",
+                                "body2": "MuiTypography-body2",
+                                "button": "MuiTypography-button",
+                                "caption": "MuiTypography-caption",
+                                "colorError": "MuiTypography-colorError",
+                                "colorInherit": "MuiTypography-colorInherit",
+                                "colorPrimary": "MuiTypography-colorPrimary",
+                                "colorSecondary": "MuiTypography-colorSecondary",
+                                "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                "displayBlock": "MuiTypography-displayBlock",
+                                "displayInline": "MuiTypography-displayInline",
+                                "gutterBottom": "MuiTypography-gutterBottom",
+                                "h1": "MuiTypography-h1",
+                                "h2": "MuiTypography-h2",
+                                "h3": "MuiTypography-h3",
+                                "h4": "MuiTypography-h4",
+                                "h5": "MuiTypography-h5",
+                                "h6": "MuiTypography-h6",
+                                "noWrap": "MuiTypography-noWrap",
+                                "overline": "MuiTypography-overline",
+                                "paragraph": "MuiTypography-paragraph",
+                                "root": "MuiTypography-root",
+                                "srOnly": "MuiTypography-srOnly",
+                                "subtitle1": "MuiTypography-subtitle1",
+                                "subtitle2": "MuiTypography-subtitle2",
+                              }
+                            }
+                            component="span"
+                            display="block"
+                            variant="body1"
+                          >
+                            <span
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                            >
+                              Item 6
+                            </span>
+                          </ForwardRef(Typography)>
+                        </WithStyles(ForwardRef(Typography))>
+                      </div>
+                    </ForwardRef(ListItemText)>
+                  </WithStyles(ForwardRef(ListItemText))>
+                </li>
+              </ForwardRef(ListItem)>
+            </WithStyles(ForwardRef(ListItem))>
+            <WithStyles(ForwardRef(ListItem))
+              key="edge-child-7"
+            >
+              <ForwardRef(ListItem)
+                classes={
+                  Object {
+                    "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                    "button": "MuiListItem-button",
+                    "container": "MuiListItem-container",
+                    "dense": "MuiListItem-dense",
+                    "disabled": "Mui-disabled",
+                    "divider": "MuiListItem-divider",
+                    "focusVisible": "Mui-focusVisible",
+                    "gutters": "MuiListItem-gutters",
+                    "root": "MuiListItem-root",
+                    "secondaryAction": "MuiListItem-secondaryAction",
+                    "selected": "Mui-selected",
+                  }
+                }
+              >
+                <li
+                  className="MuiListItem-root MuiListItem-gutters"
+                  disabled={false}
+                >
+                  <WithStyles(ForwardRef(ListItemText))
+                    key=".0"
+                    primary="Item 7"
+                  >
+                    <ForwardRef(ListItemText)
+                      classes={
+                        Object {
+                          "dense": "MuiListItemText-dense",
+                          "inset": "MuiListItemText-inset",
+                          "multiline": "MuiListItemText-multiline",
+                          "primary": "MuiListItemText-primary",
+                          "root": "MuiListItemText-root",
+                          "secondary": "MuiListItemText-secondary",
+                        }
+                      }
+                      primary="Item 7"
+                    >
+                      <div
+                        className="MuiListItemText-root"
+                      >
+                        <WithStyles(ForwardRef(Typography))
+                          className="MuiListItemText-primary"
+                          component="span"
+                          display="block"
+                          variant="body1"
+                        >
+                          <ForwardRef(Typography)
+                            className="MuiListItemText-primary"
+                            classes={
+                              Object {
+                                "alignCenter": "MuiTypography-alignCenter",
+                                "alignJustify": "MuiTypography-alignJustify",
+                                "alignLeft": "MuiTypography-alignLeft",
+                                "alignRight": "MuiTypography-alignRight",
+                                "body1": "MuiTypography-body1",
+                                "body2": "MuiTypography-body2",
+                                "button": "MuiTypography-button",
+                                "caption": "MuiTypography-caption",
+                                "colorError": "MuiTypography-colorError",
+                                "colorInherit": "MuiTypography-colorInherit",
+                                "colorPrimary": "MuiTypography-colorPrimary",
+                                "colorSecondary": "MuiTypography-colorSecondary",
+                                "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                "displayBlock": "MuiTypography-displayBlock",
+                                "displayInline": "MuiTypography-displayInline",
+                                "gutterBottom": "MuiTypography-gutterBottom",
+                                "h1": "MuiTypography-h1",
+                                "h2": "MuiTypography-h2",
+                                "h3": "MuiTypography-h3",
+                                "h4": "MuiTypography-h4",
+                                "h5": "MuiTypography-h5",
+                                "h6": "MuiTypography-h6",
+                                "noWrap": "MuiTypography-noWrap",
+                                "overline": "MuiTypography-overline",
+                                "paragraph": "MuiTypography-paragraph",
+                                "root": "MuiTypography-root",
+                                "srOnly": "MuiTypography-srOnly",
+                                "subtitle1": "MuiTypography-subtitle1",
+                                "subtitle2": "MuiTypography-subtitle2",
+                              }
+                            }
+                            component="span"
+                            display="block"
+                            variant="body1"
+                          >
+                            <span
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                            >
+                              Item 7
+                            </span>
+                          </ForwardRef(Typography)>
+                        </WithStyles(ForwardRef(Typography))>
+                      </div>
+                    </ForwardRef(ListItemText)>
+                  </WithStyles(ForwardRef(ListItemText))>
+                </li>
+              </ForwardRef(ListItem)>
+            </WithStyles(ForwardRef(ListItem))>
+            <WithStyles(ForwardRef(ListItem))
+              key="edge-child-8"
+            >
+              <ForwardRef(ListItem)
+                classes={
+                  Object {
+                    "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                    "button": "MuiListItem-button",
+                    "container": "MuiListItem-container",
+                    "dense": "MuiListItem-dense",
+                    "disabled": "Mui-disabled",
+                    "divider": "MuiListItem-divider",
+                    "focusVisible": "Mui-focusVisible",
+                    "gutters": "MuiListItem-gutters",
+                    "root": "MuiListItem-root",
+                    "secondaryAction": "MuiListItem-secondaryAction",
+                    "selected": "Mui-selected",
+                  }
+                }
+              >
+                <li
+                  className="MuiListItem-root MuiListItem-gutters"
+                  disabled={false}
+                >
+                  <WithStyles(ForwardRef(ListItemText))
+                    key=".0"
+                    primary="Item 8"
+                  >
+                    <ForwardRef(ListItemText)
+                      classes={
+                        Object {
+                          "dense": "MuiListItemText-dense",
+                          "inset": "MuiListItemText-inset",
+                          "multiline": "MuiListItemText-multiline",
+                          "primary": "MuiListItemText-primary",
+                          "root": "MuiListItemText-root",
+                          "secondary": "MuiListItemText-secondary",
+                        }
+                      }
+                      primary="Item 8"
+                    >
+                      <div
+                        className="MuiListItemText-root"
+                      >
+                        <WithStyles(ForwardRef(Typography))
+                          className="MuiListItemText-primary"
+                          component="span"
+                          display="block"
+                          variant="body1"
+                        >
+                          <ForwardRef(Typography)
+                            className="MuiListItemText-primary"
+                            classes={
+                              Object {
+                                "alignCenter": "MuiTypography-alignCenter",
+                                "alignJustify": "MuiTypography-alignJustify",
+                                "alignLeft": "MuiTypography-alignLeft",
+                                "alignRight": "MuiTypography-alignRight",
+                                "body1": "MuiTypography-body1",
+                                "body2": "MuiTypography-body2",
+                                "button": "MuiTypography-button",
+                                "caption": "MuiTypography-caption",
+                                "colorError": "MuiTypography-colorError",
+                                "colorInherit": "MuiTypography-colorInherit",
+                                "colorPrimary": "MuiTypography-colorPrimary",
+                                "colorSecondary": "MuiTypography-colorSecondary",
+                                "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                "displayBlock": "MuiTypography-displayBlock",
+                                "displayInline": "MuiTypography-displayInline",
+                                "gutterBottom": "MuiTypography-gutterBottom",
+                                "h1": "MuiTypography-h1",
+                                "h2": "MuiTypography-h2",
+                                "h3": "MuiTypography-h3",
+                                "h4": "MuiTypography-h4",
+                                "h5": "MuiTypography-h5",
+                                "h6": "MuiTypography-h6",
+                                "noWrap": "MuiTypography-noWrap",
+                                "overline": "MuiTypography-overline",
+                                "paragraph": "MuiTypography-paragraph",
+                                "root": "MuiTypography-root",
+                                "srOnly": "MuiTypography-srOnly",
+                                "subtitle1": "MuiTypography-subtitle1",
+                                "subtitle2": "MuiTypography-subtitle2",
+                              }
+                            }
+                            component="span"
+                            display="block"
+                            variant="body1"
+                          >
+                            <span
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                            >
+                              Item 8
+                            </span>
+                          </ForwardRef(Typography)>
+                        </WithStyles(ForwardRef(Typography))>
+                      </div>
+                    </ForwardRef(ListItemText)>
+                  </WithStyles(ForwardRef(ListItemText))>
+                </li>
+              </ForwardRef(ListItem)>
+            </WithStyles(ForwardRef(ListItem))>
+          </ul>
+        </li>
+      </ul>
+    </ForwardRef(List)>
+  </WithStyles(ForwardRef(List))>
+</EdgeList>
 `;
