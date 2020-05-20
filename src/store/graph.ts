@@ -21,12 +21,12 @@ export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
     .model('EdgeMap', {
       edgeMap: t.map(t.array(t.reference(t.late(getEdgeType)))),
     })
-    .actions((self) => ({
+    .actions(self => ({
       hasEdge(tag: string, target: Instance<IAnyModelType>): boolean {
         return Boolean(self.edgeMap.get(tag)?.includes(target))
       },
     }))
-    .actions((self) => ({
+    .actions(self => ({
       addEdge(tag: string, target: Instance<IAnyModelType>) {
         if (!self.edgeMap.has(tag)) {
           self.edgeMap.set(tag, [])
@@ -65,7 +65,7 @@ export const nodeFactory = (
         t.model({
           id: t.identifier,
         }),
-      ].map((item) => (typeof item === 'function' ? item(getEdgeType) : item)),
+      ].map(item => (typeof item === 'function' ? item(getEdgeType) : item)),
     )
     .named('Node')
 
@@ -95,7 +95,7 @@ export function graphFactory(
       ),
       typesById: t.map(TypeConfig),
     })
-  ).actions((self) => ({
+  ).actions(self => ({
     createTypeConfig(typeName: string): void {
       const typeModel = self.typesById.get(typeName)
       if (!typeModel) {
@@ -122,7 +122,7 @@ export function graphFactory(
         if (config.compose) {
           Model = t.compose(
             // @ts-ignore
-            ...[Model, ...config.compose.map((c) => newModels[c])],
+            ...[Model, ...config.compose.map(c => newModels[c])],
           )
         }
 
