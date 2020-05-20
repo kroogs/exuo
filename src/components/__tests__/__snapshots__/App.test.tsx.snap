@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Renders 1`] = `
-<Wrapper>
+<StrictMode>
   <StoreProvider>
     <ThemeProvider
       theme={
@@ -292,157 +292,11 @@ exports[`Renders 1`] = `
             "speedDial": 1050,
             "tooltip": 1500,
           },
-          Symbol(mui.nested): false,
         }
       }
     >
-      <App>
-        <Router>
-          <Location>
-            <LocationProvider
-              history={
-                Object {
-                  "_onTransitionComplete": [Function],
-                  "listen": [Function],
-                  "location": Object {
-                    "hash": "",
-                    "host": "localhost",
-                    "hostname": "localhost",
-                    "href": "http://localhost/",
-                    "key": "initial",
-                    "origin": "http://localhost",
-                    "pathname": "/",
-                    "port": "",
-                    "protocol": "http:",
-                    "search": "",
-                    "state": null,
-                  },
-                  "navigate": [Function],
-                  "transitioning": false,
-                }
-              }
-            >
-              <RouterImpl
-                basepath="/"
-                baseuri="/"
-                location={
-                  Object {
-                    "hash": "",
-                    "host": "localhost",
-                    "hostname": "localhost",
-                    "href": "http://localhost/",
-                    "key": "initial",
-                    "origin": "http://localhost",
-                    "pathname": "/",
-                    "port": "",
-                    "protocol": "http:",
-                    "search": "",
-                    "state": null,
-                  }
-                }
-                navigate={[Function]}
-                primary={true}
-              >
-                <FocusHandler
-                  component="div"
-                  location={
-                    Object {
-                      "hash": "",
-                      "host": "localhost",
-                      "hostname": "localhost",
-                      "href": "http://localhost/",
-                      "key": "initial",
-                      "origin": "http://localhost",
-                      "pathname": "/",
-                      "port": "",
-                      "protocol": "http:",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
-                  uri="/"
-                >
-                  <FocusHandlerImpl
-                    component="div"
-                    location={
-                      Object {
-                        "hash": "",
-                        "host": "localhost",
-                        "hostname": "localhost",
-                        "href": "http://localhost/",
-                        "key": "initial",
-                        "origin": "http://localhost",
-                        "pathname": "/",
-                        "port": "",
-                        "protocol": "http:",
-                        "search": "",
-                        "state": null,
-                      }
-                    }
-                    uri="/"
-                  >
-                    <div
-                      style={
-                        Object {
-                          "outline": "none",
-                        }
-                      }
-                      tabIndex="-1"
-                    >
-                      <Route
-                        component={[Function]}
-                        key=".0"
-                        location={
-                          Object {
-                            "hash": "",
-                            "host": "localhost",
-                            "hostname": "localhost",
-                            "href": "http://localhost/",
-                            "key": "initial",
-                            "origin": "http://localhost",
-                            "pathname": "/",
-                            "port": "",
-                            "protocol": "http:",
-                            "search": "",
-                            "state": null,
-                          }
-                        }
-                        navigate={[Function]}
-                        path="/"
-                        uri="/"
-                      >
-                        <RootRegion
-                          location={
-                            Object {
-                              "hash": "",
-                              "host": "localhost",
-                              "hostname": "localhost",
-                              "href": "http://localhost/",
-                              "key": "initial",
-                              "origin": "http://localhost",
-                              "pathname": "/",
-                              "port": "",
-                              "protocol": "http:",
-                              "search": "",
-                              "state": null,
-                            }
-                          }
-                          navigate={[Function]}
-                          path="/"
-                          uri="/"
-                        >
-                          boop
-                        </RootRegion>
-                      </Route>
-                    </div>
-                  </FocusHandlerImpl>
-                </FocusHandler>
-              </RouterImpl>
-            </LocationProvider>
-          </Location>
-        </Router>
-      </App>
+      <App />
     </ThemeProvider>
   </StoreProvider>
-</Wrapper>
+</StrictMode>
 `;

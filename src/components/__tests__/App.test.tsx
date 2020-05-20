@@ -4,7 +4,7 @@
  * Copyright © 2020 Justin Krueger */
 
 import React from 'react'
-import { mount } from 'enzyme'
+import { shallow } from 'enzyme'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 
 import { StoreProvider } from 'store'
@@ -24,5 +24,5 @@ const Wrapper: React.FunctionComponent = () => (
 )
 
 test('Renders', () => {
-  expect(mount(<Wrapper />)).toMatchSnapshot()
+  expect(shallow(<Wrapper />)).toMatchSnapshot()
 })
