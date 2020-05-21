@@ -29,11 +29,13 @@ interface EdgeListProps {
 
 export const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
   const classes = useStyles()
+
   return useObserver(() => {
     const edgeKeys = Array.from(node.edgeMap.keys())
+    console.log(edgeKeys)
     return (
       <List className={classes.root} subheader={<li />}>
-        {edgeKeys.map((key) => (
+        {edgeKeys.map(key => (
           <li key={`edge-${key}`} className={classes.listSection}>
             <ul className={classes.ul}>
               <ListSubheader>{`${key}`}</ListSubheader>

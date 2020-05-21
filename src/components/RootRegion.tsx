@@ -4,7 +4,7 @@
  * Copyright © 2020 Justin Krueger */
 
 import React from 'react'
-import { useObserver } from 'mobx-react-lite'
+
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import AppBar from '@material-ui/core/AppBar'
 import Avatar from '@material-ui/core/Avatar'
@@ -34,7 +34,10 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import { fade, makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 
-import { useStore } from 'store'
+import { useObserver } from 'mobx-react-lite'
+import { Instance, IAnyModelType } from 'mobx-state-tree'
+
+import { Graph, useStore } from 'store'
 import { EdgeList } from './EdgeList'
 import { PropertyList } from './PropertyList'
 
@@ -113,15 +116,13 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface RootRegionProps {
-  vertexId?: string
+  graph: Instance<typeof Graph>
 }
 
 export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
-  vertexId,
+  graph,
 }) => {
-  const store = useStore(store => store.graph)
-
-  console.log('RootRegion vertexId', vertexId)
+  /* const store = useStore(store => store.graph) */
 
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -209,8 +210,28 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
     </Menu>
   )
 
+  const first = graph.createNode()
+  const last = graph.createNode()
+
+  let prev = first
+
+  for (let i = 0; i < 5; i++) {
+    const node = graph.createNode()
+
+    node.addEdge('last', last)
+    node.addEdge('first', first)
+    first.addEdge('child', node)
+
+    if (prev) {
+      prev.addEdge('next', node)
+      node.addEdge('prev', prev)
+    }
+
+    prev = node
+  }
+
   return useObserver(() => {
-    const graph = store.nodesById.values()
+    /* const graph = store.nodesById.values() */
     /* const graph = store.nodesById.get('default') */
     /* const rows: Array<React.ReactElement> = [] */
 
@@ -227,11 +248,11 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
       throw Error('no graph')
     }
 
-    return <>boop</>
+    const firstNode = graph.nodesById.values().next().value
     return (
       <div className={classes.root}>
-        <EdgeList model={graph} />
-        <PropertyList model={graph} />
+        <PropertyList model={firstNode} />
+        <EdgeList node={firstNode} />
       </div>
     )
   })

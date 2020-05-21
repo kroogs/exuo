@@ -5,24 +5,36 @@
 
 import React from 'react'
 import { shallow } from 'enzyme'
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
-
-import { StoreProvider } from 'store'
 
 import RootRegion from '../RootRegion'
+import { graphFactory, Node } from 'store/graph'
 
-const theme = createMuiTheme()
+let nextId = 0
+const makeId = (): string => String(++nextId)
 
-const Wrapper: React.FunctionComponent = () => (
-  <React.StrictMode>
-    <StoreProvider>
-      <ThemeProvider theme={theme}>
-        <RootRegion />
-      </ThemeProvider>
-    </StoreProvider>
-  </React.StrictMode>
-)
+const Graph = graphFactory({ Node }, makeId)
 
-test('Renders', () => {
-  expect(shallow(<Wrapper />)).toMatchSnapshot()
+test('Renders a basic graph', () => {
+  const graph = Graph.create({ id: makeId() })
+  const first = graph.createNode()
+  const last = graph.createNode()
+
+  let prev = null
+
+  for (let i = 0; i < 5; i++) {
+    const node = graph.createNode()
+
+    node.addEdge('last', last)
+    node.addEdge('first', first)
+    first.addEdge('child', node)
+
+    if (prev) {
+      prev.addEdge('next', node)
+      node.addEdge('prev', prev)
+    }
+
+    prev = node
+  }
+
+  expect(shallow(<RootRegion graph={graph} />)).toMatchSnapshot()
 })

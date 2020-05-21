@@ -6,8 +6,11 @@
 import React from 'react'
 import { types as t, Instance } from 'mobx-state-tree'
 
-import { Graph } from './graph'
-import { persist } from './utils'
+import { graphFactory, nodeFactory } from './graph'
+import { Label } from 'store/models'
+
+const Node = nodeFactory(() => Node, [Label])
+const Graph = graphFactory({ Node })
 
 export const Root = t.model('Root', {
   graph: Graph,
@@ -16,7 +19,7 @@ export const Root = t.model('Root', {
 export const initStore = (): Instance<typeof Root> => {
   const store = Root.create({ graph: {} })
 
-  // store.graph.init([persist])
+  store.graph.persist()
 
   return store
 }

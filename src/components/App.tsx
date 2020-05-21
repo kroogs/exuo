@@ -19,16 +19,13 @@ const Route: React.FunctionComponent<Props> = ({
 }) => <Component {...rest} />
 
 const App: React.FunctionComponent = () => {
-  const store = useStore(store => store.graph)
-  return useObserver(() => {
-    const graph = store.nodesById.values()
-    return (
-      <Router>
-        <Route path="/" component={RootRegion} />
-        <Route path="/settings" component={Settings} />
-      </Router>
-    )
-  })
+  const graph = useStore(store => store.graph)
+  return (
+    <Router>
+      <Route path="/" component={() => <RootRegion graph={graph} />} />
+      <Route path="/settings" component={Settings} />
+    </Router>
+  )
 }
 
 export default App

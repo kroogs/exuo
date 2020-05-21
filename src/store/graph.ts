@@ -12,9 +12,17 @@ import {
   IAnyModelType,
   getType,
   getSnapshot,
+  applySnapshot,
+  onPatch,
 } from 'mobx-state-tree'
+import Dexie from 'dexie'
 
-type EdgeTypeFn = <T extends IAnyModelType = IAnyModelType>() => T
+type EdgeTypeFn = () => IAnyType
+
+type PersistOptions = {
+  pathFilter?: RegExp
+  name?: string
+}
 
 export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
   t
@@ -151,6 +159,44 @@ export function graphFactory(
       self.nodesById.put(instance)
 
       return instance
+    },
+
+    persist(options: PersistOptions = {}): void {
+      // random old wants?:
+      // ref resolver that loads adjacent edges
+      // begin loading from 'last loaded' vertex in each region
+      // patch buffer to flush to bulkPut on debounce
+      // staleness stack used to free unused memory (free call)
+      // handle remove call (rather than free call)
+      // single Collection api for mobx and dexie? <3<3<3
+      // graph structure wide enough to make use of indexedDB tables for different schemas
+      // ERROR HANDLING.
+      // more sensible api?
+      const pathFilter = options.pathFilter ?? /\w+byId\/(.+)$/i
+      const db = new Dexie(options.name ?? 'default')
+
+      db.version(1).stores({
+        graph: 'id',
+      })
+
+      const table = db.table('graph')
+
+      table.toArray().then(rows => {
+        applySnapshot(self, {
+          vertexById: Object.fromEntries(rows.map(r => [r.id, r])),
+        })
+
+        onPatch(self, patch => {
+          const match = patch.path.match(pathFilter)
+          if (!match) {
+            return
+          }
+
+          if (patch.op === 'add' || patch.op === 'replace') {
+            table.put(patch.value)
+          }
+        })
+      })
     },
   }))
 }
