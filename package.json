@@ -2,7 +2,7 @@
   "name": "exuo",
   "version": "0.1.0",
   "license": "MPL-2.0",
-  "author": "Justin Krueger <justin@kroo.gs>",
+  "author": "Ty Dira <ty@dira.dev>",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
