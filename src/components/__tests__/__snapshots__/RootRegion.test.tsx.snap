@@ -4,108 +4,35 @@ exports[`Renders a basic graph 1`] = `
 <div
   className="makeStyles-root-1"
 >
-  <EdgeList />
   <PropertyList
     model={
       Object {
-        "nodesById": Object {
-          "2": Object {
-            "edgeMap": Object {
-              "child": Array [
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-              ],
-            },
-            "id": "2",
-          },
-          "3": Object {
-            "edgeMap": Object {},
-            "id": "3",
-          },
-          "4": Object {
-            "edgeMap": Object {
-              "first": Array [
-                "2",
-              ],
-              "last": Array [
-                "3",
-              ],
-              "next": Array [
-                "5",
-              ],
-            },
-            "id": "4",
-          },
-          "5": Object {
-            "edgeMap": Object {
-              "first": Array [
-                "2",
-              ],
-              "last": Array [
-                "3",
-              ],
-              "next": Array [
-                "6",
-              ],
-              "prev": Array [
-                "4",
-              ],
-            },
-            "id": "5",
-          },
-          "6": Object {
-            "edgeMap": Object {
-              "first": Array [
-                "2",
-              ],
-              "last": Array [
-                "3",
-              ],
-              "next": Array [
-                "7",
-              ],
-              "prev": Array [
-                "5",
-              ],
-            },
-            "id": "6",
-          },
-          "7": Object {
-            "edgeMap": Object {
-              "first": Array [
-                "2",
-              ],
-              "last": Array [
-                "3",
-              ],
-              "next": Array [
-                "8",
-              ],
-              "prev": Array [
-                "6",
-              ],
-            },
-            "id": "7",
-          },
-          "8": Object {
-            "edgeMap": Object {
-              "first": Array [
-                "2",
-              ],
-              "last": Array [
-                "3",
-              ],
-              "prev": Array [
-                "7",
-              ],
-            },
-            "id": "8",
-          },
+        "edgeMap": Object {
+          "child": Array [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+          ],
         },
-        "typesById": Object {},
+        "id": "2",
+      }
+    }
+  />
+  <EdgeList
+    node={
+      Object {
+        "edgeMap": Object {
+          "child": Array [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+          ],
+        },
+        "id": "2",
       }
     }
   />
