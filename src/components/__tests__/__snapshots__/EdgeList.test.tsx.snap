@@ -38,14 +38,17 @@ exports[`Renders a list of associated nodes 1`] = `
       >
         <li />
         <li
-          className="makeStyles-listSection-2"
+          className="makeStyles-listSection-3"
           key="edge-child"
         >
           <ul
-            className="makeStyles-ul-3"
+            className="makeStyles-ul-5"
           >
-            <WithStyles(ForwardRef(ListSubheader))>
+            <WithStyles(ForwardRef(ListSubheader))
+              className="makeStyles-section-2"
+            >
               <ForwardRef(ListSubheader)
+                className="makeStyles-section-2"
                 classes={
                   Object {
                     "colorInherit": "MuiListSubheader-colorInherit",
@@ -58,16 +61,18 @@ exports[`Renders a list of associated nodes 1`] = `
                 }
               >
                 <li
-                  className="MuiListSubheader-root MuiListSubheader-sticky MuiListSubheader-gutters"
+                  className="MuiListSubheader-root makeStyles-section-2 MuiListSubheader-sticky MuiListSubheader-gutters"
                 >
                   child
                 </li>
               </ForwardRef(ListSubheader)>
             </WithStyles(ForwardRef(ListSubheader))>
             <WithStyles(ForwardRef(ListItem))
+              className="makeStyles-listItem-4"
               key="edge-child-4"
             >
               <ForwardRef(ListItem)
+                className="makeStyles-listItem-4"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -85,12 +90,12 @@ exports[`Renders a list of associated nodes 1`] = `
                 }
               >
                 <li
-                  className="MuiListItem-root MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
                     key=".0"
-                    primary="Item 4"
+                    primary="4"
                   >
                     <ForwardRef(ListItemText)
                       classes={
@@ -103,7 +108,7 @@ exports[`Renders a list of associated nodes 1`] = `
                           "secondary": "MuiListItemText-secondary",
                         }
                       }
-                      primary="Item 4"
+                      primary="4"
                     >
                       <div
                         className="MuiListItemText-root"
@@ -157,7 +162,7 @@ exports[`Renders a list of associated nodes 1`] = `
                             <span
                               className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
                             >
-                              Item 4
+                              4
                             </span>
                           </ForwardRef(Typography)>
                         </WithStyles(ForwardRef(Typography))>
@@ -168,9 +173,11 @@ exports[`Renders a list of associated nodes 1`] = `
               </ForwardRef(ListItem)>
             </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
+              className="makeStyles-listItem-4"
               key="edge-child-5"
             >
               <ForwardRef(ListItem)
+                className="makeStyles-listItem-4"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -188,12 +195,12 @@ exports[`Renders a list of associated nodes 1`] = `
                 }
               >
                 <li
-                  className="MuiListItem-root MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
                     key=".0"
-                    primary="Item 5"
+                    primary="5"
                   >
                     <ForwardRef(ListItemText)
                       classes={
@@ -206,7 +213,7 @@ exports[`Renders a list of associated nodes 1`] = `
                           "secondary": "MuiListItemText-secondary",
                         }
                       }
-                      primary="Item 5"
+                      primary="5"
                     >
                       <div
                         className="MuiListItemText-root"
@@ -260,7 +267,7 @@ exports[`Renders a list of associated nodes 1`] = `
                             <span
                               className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
                             >
-                              Item 5
+                              5
                             </span>
                           </ForwardRef(Typography)>
                         </WithStyles(ForwardRef(Typography))>
@@ -271,9 +278,11 @@ exports[`Renders a list of associated nodes 1`] = `
               </ForwardRef(ListItem)>
             </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
+              className="makeStyles-listItem-4"
               key="edge-child-6"
             >
               <ForwardRef(ListItem)
+                className="makeStyles-listItem-4"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -291,12 +300,12 @@ exports[`Renders a list of associated nodes 1`] = `
                 }
               >
                 <li
-                  className="MuiListItem-root MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
                     key=".0"
-                    primary="Item 6"
+                    primary="6"
                   >
                     <ForwardRef(ListItemText)
                       classes={
@@ -309,7 +318,7 @@ exports[`Renders a list of associated nodes 1`] = `
                           "secondary": "MuiListItemText-secondary",
                         }
                       }
-                      primary="Item 6"
+                      primary="6"
                     >
                       <div
                         className="MuiListItemText-root"
@@ -363,7 +372,7 @@ exports[`Renders a list of associated nodes 1`] = `
                             <span
                               className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
                             >
-                              Item 6
+                              6
                             </span>
                           </ForwardRef(Typography)>
                         </WithStyles(ForwardRef(Typography))>
@@ -374,9 +383,11 @@ exports[`Renders a list of associated nodes 1`] = `
               </ForwardRef(ListItem)>
             </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
+              className="makeStyles-listItem-4"
               key="edge-child-7"
             >
               <ForwardRef(ListItem)
+                className="makeStyles-listItem-4"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -394,12 +405,12 @@ exports[`Renders a list of associated nodes 1`] = `
                 }
               >
                 <li
-                  className="MuiListItem-root MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
                     key=".0"
-                    primary="Item 7"
+                    primary="7"
                   >
                     <ForwardRef(ListItemText)
                       classes={
@@ -412,7 +423,7 @@ exports[`Renders a list of associated nodes 1`] = `
                           "secondary": "MuiListItemText-secondary",
                         }
                       }
-                      primary="Item 7"
+                      primary="7"
                     >
                       <div
                         className="MuiListItemText-root"
@@ -466,7 +477,7 @@ exports[`Renders a list of associated nodes 1`] = `
                             <span
                               className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
                             >
-                              Item 7
+                              7
                             </span>
                           </ForwardRef(Typography)>
                         </WithStyles(ForwardRef(Typography))>
@@ -477,9 +488,11 @@ exports[`Renders a list of associated nodes 1`] = `
               </ForwardRef(ListItem)>
             </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
+              className="makeStyles-listItem-4"
               key="edge-child-8"
             >
               <ForwardRef(ListItem)
+                className="makeStyles-listItem-4"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -497,12 +510,12 @@ exports[`Renders a list of associated nodes 1`] = `
                 }
               >
                 <li
-                  className="MuiListItem-root MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
                     key=".0"
-                    primary="Item 8"
+                    primary="8"
                   >
                     <ForwardRef(ListItemText)
                       classes={
@@ -515,7 +528,7 @@ exports[`Renders a list of associated nodes 1`] = `
                           "secondary": "MuiListItemText-secondary",
                         }
                       }
-                      primary="Item 8"
+                      primary="8"
                     >
                       <div
                         className="MuiListItemText-root"
@@ -569,7 +582,7 @@ exports[`Renders a list of associated nodes 1`] = `
                             <span
                               className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
                             >
-                              Item 8
+                              8
                             </span>
                           </ForwardRef(Typography)>
                         </WithStyles(ForwardRef(Typography))>

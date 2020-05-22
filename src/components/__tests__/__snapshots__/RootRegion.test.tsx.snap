@@ -4,37 +4,60 @@ exports[`Renders a basic graph 1`] = `
 <div
   className="makeStyles-root-1"
 >
-  <PropertyList
-    model={
-      Object {
-        "edgeMap": Object {
-          "child": Array [
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-          ],
-        },
-        "id": "2",
+  <Styled(MuiBox)
+    className="makeStyles-pane-2"
+  >
+    <Styled(MuiBox)
+      className="makeStyles-addRecord-3"
+    >
+      <WithStyles(ForwardRef(Typography))
+        className="makeStyles-title-4"
+        variant="h5"
+      >
+        2
+      </WithStyles(ForwardRef(Typography))>
+      <form
+        autoComplete="off"
+        noValidate={true}
+        onSubmit={[Function]}
+      >
+        <WithStyles(ForwardRef(Input))
+          placeholder="Add Record"
+        />
+      </form>
+    </Styled(MuiBox)>
+    <PropertyList
+      model={
+        Object {
+          "edgeMap": Object {
+            "child": Array [
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+            ],
+          },
+          "id": "2",
+        }
       }
-    }
-  />
-  <EdgeList
-    node={
-      Object {
-        "edgeMap": Object {
-          "child": Array [
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-          ],
-        },
-        "id": "2",
+    />
+    <EdgeList
+      node={
+        Object {
+          "edgeMap": Object {
+            "child": Array [
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+            ],
+          },
+          "id": "2",
+        }
       }
-    }
-  />
+    />
+  </Styled(MuiBox)>
 </div>
 `;

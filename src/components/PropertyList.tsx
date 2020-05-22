@@ -16,8 +16,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
-      backgroundColor: theme.palette.background.default,
     },
+    item: {},
+    itemText: {},
   }),
 )
 
@@ -42,8 +43,18 @@ export const PropertyList: React.FunctionComponent<PropertyListProps> = props =>
     return (
       <List className={classes.root}>
         {properties.map(value => (
-          <ListItem key={value} role={undefined} dense button>
-            <ListItemText id={`list-label-${value}`} primary={value} />
+          <ListItem
+            className={classes.item}
+            key={value}
+            role={undefined}
+            dense
+            button
+          >
+            <ListItemText
+              className={classes.itemText}
+              id={`list-label-${value}`}
+              primary={value}
+            />
           </ListItem>
         ))}
       </List>

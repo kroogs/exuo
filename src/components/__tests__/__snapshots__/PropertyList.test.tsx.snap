@@ -6,30 +6,36 @@ exports[`Renders a list of properties 1`] = `
 >
   <WithStyles(ForwardRef(ListItem))
     button={true}
+    className="makeStyles-item-2"
     dense={true}
     key="one"
   >
     <WithStyles(ForwardRef(ListItemText))
+      className="makeStyles-itemText-3"
       id="list-label-one"
       primary="one"
     />
   </WithStyles(ForwardRef(ListItem))>
   <WithStyles(ForwardRef(ListItem))
     button={true}
+    className="makeStyles-item-2"
     dense={true}
     key="two"
   >
     <WithStyles(ForwardRef(ListItemText))
+      className="makeStyles-itemText-3"
       id="list-label-two"
       primary="two"
     />
   </WithStyles(ForwardRef(ListItem))>
   <WithStyles(ForwardRef(ListItem))
     button={true}
+    className="makeStyles-item-2"
     dense={true}
     key="three"
   >
     <WithStyles(ForwardRef(ListItemText))
+      className="makeStyles-itemText-3"
       id="list-label-three"
       primary="three"
     />

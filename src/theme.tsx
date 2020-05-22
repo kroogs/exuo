@@ -10,10 +10,11 @@ export const palette = {
     main: '#34c3ff',
   },
   background: {
-    default: '#000000',
+    default: 'inherit',
   },
   text: {
-    primary: '#ffffff',
+    primary: 'inherit',
+    secondary: 'inherit',
   },
 }
 

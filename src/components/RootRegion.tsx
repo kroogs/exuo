@@ -6,6 +6,7 @@
 import React from 'react'
 
 import AccountCircle from '@material-ui/icons/AccountCircle'
+import Box from '@material-ui/core/Box'
 import AppBar from '@material-ui/core/AppBar'
 import Avatar from '@material-ui/core/Avatar'
 import Paper from '@material-ui/core/Paper'
@@ -29,7 +30,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import MoreIcon from '@material-ui/icons/MoreVert'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import SearchIcon from '@material-ui/icons/Search'
-import TextField from '@material-ui/core/TextField'
+import Input from '@material-ui/core/Input'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import { fade, makeStyles, Theme, createStyles } from '@material-ui/core/styles'
@@ -47,6 +48,18 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.default,
       color: theme.palette.text.primary,
     },
+    pane: {
+      overflowY: 'auto',
+      maxHeight: '100vh',
+      flexDirection: 'column',
+      position: 'relative',
+    },
+    addRecord: {
+      top: 0,
+      position: 'sticky',
+      backgroundColor: theme.palette.background.default,
+    },
+    title: {},
     bar: {
       backgroundColor: theme.palette.common.white,
     },
@@ -58,12 +71,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     menuButton: {
       marginRight: theme.spacing(2),
-    },
-    title: {
-      display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
     },
     search: {
       position: 'relative',
@@ -122,93 +129,92 @@ interface RootRegionProps {
 export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
   graph,
 }) => {
-  /* const store = useStore(store => store.graph) */
+  /* const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null) */
+  /* const [ */
+  /*   mobileMoreAnchorEl, */
+  /*   setMobileMoreAnchorEl, */
+  /* ] = React.useState<null | HTMLElement>(null) */
+
+  /* const isMenuOpen = Boolean(anchorEl) */
+  /* const isMobileMenuOpen = Boolean(mobileMoreAnchorEl) */
+
+  /* const handleProfileMenuOpen = ( */
+  /*   event: React.MouseEvent<HTMLElement>, */
+  /* ): void => { */
+  /*   setAnchorEl(event.currentTarget) */
+  /* } */
+
+  /* const handleMobileMenuClose = (): void => { */
+  /*   setMobileMoreAnchorEl(null) */
+  /* } */
+
+  /* const handleMenuClose = (): void => { */
+  /*   setAnchorEl(null) */
+  /*   handleMobileMenuClose() */
+  /* } */
+
+  /* const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>): void => { */
+  /*   setMobileMoreAnchorEl(event.currentTarget) */
+  /* } */
+
+  /* const menuId = 'primary-search-account-menu' */
+  /* const renderMenu = ( */
+  /*   <Menu */
+  /*     anchorEl={anchorEl} */
+  /*     anchorOrigin={{ vertical: 'top', horizontal: 'right' }} */
+  /*     id={menuId} */
+  /*     keepMounted */
+  /*     transformOrigin={{ vertical: 'top', horizontal: 'right' }} */
+  /*     open={isMenuOpen} */
+  /*     onClose={handleMenuClose} */
+  /*   > */
+  /*     <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */
+  /*     <MenuItem onClick={handleMenuClose}>My account</MenuItem> */
+  /*   </Menu> */
+  /* ) */
+
+  /* const mobileMenuId = 'primary-search-account-menu-mobile' */
+  /* const renderMobileMenu = ( */
+  /*   <Menu */
+  /*     anchorEl={mobileMoreAnchorEl} */
+  /*     anchorOrigin={{ vertical: 'top', horizontal: 'right' }} */
+  /*     id={mobileMenuId} */
+  /*     keepMounted */
+  /*     transformOrigin={{ vertical: 'top', horizontal: 'right' }} */
+  /*     open={isMobileMenuOpen} */
+  /*     onClose={handleMobileMenuClose} */
+  /*   > */
+  /*     <MenuItem> */
+  /*       <IconButton aria-label="show 4 new mails" color="inherit"> */
+  /*         <Badge badgeContent={4} color="secondary"> */
+  /*           <MailIcon /> */
+  /*         </Badge> */
+  /*       </IconButton> */
+  /*       <p>Messages</p> */
+  /*     </MenuItem> */
+  /*     <MenuItem> */
+  /*       <IconButton aria-label="show 11 new notifications" color="inherit"> */
+  /*         <Badge badgeContent={11} color="secondary"> */
+  /*           <NotificationsIcon /> */
+  /*         </Badge> */
+  /*       </IconButton> */
+  /*       <p>Notifications</p> */
+  /*     </MenuItem> */
+  /*     <MenuItem onClick={handleProfileMenuOpen}> */
+  /*       <IconButton */
+  /*         aria-label="account of current user" */
+  /*         aria-controls="primary-search-account-menu" */
+  /*         aria-haspopup="true" */
+  /*         color="inherit" */
+  /*       > */
+  /*         <AccountCircle /> */
+  /*       </IconButton> */
+  /*       <p>Profile</p> */
+  /*     </MenuItem> */
+  /*   </Menu> */
+  /* ) */
 
   const classes = useStyles()
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const [
-    mobileMoreAnchorEl,
-    setMobileMoreAnchorEl,
-  ] = React.useState<null | HTMLElement>(null)
-
-  const isMenuOpen = Boolean(anchorEl)
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
-
-  const handleProfileMenuOpen = (
-    event: React.MouseEvent<HTMLElement>,
-  ): void => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleMobileMenuClose = (): void => {
-    setMobileMoreAnchorEl(null)
-  }
-
-  const handleMenuClose = (): void => {
-    setAnchorEl(null)
-    handleMobileMenuClose()
-  }
-
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>): void => {
-    setMobileMoreAnchorEl(event.currentTarget)
-  }
-
-  const menuId = 'primary-search-account-menu'
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  )
-
-  const mobileMenuId = 'primary-search-account-menu-mobile'
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={11} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  )
 
   const first = graph.createNode()
   const last = graph.createNode()
@@ -248,65 +254,30 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
       throw Error('no graph')
     }
 
+    const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
+      console.log('banana')
+      event.preventDefault()
+    }
+
     const firstNode = graph.nodesById.values().next().value
     return (
       <div className={classes.root}>
-        <PropertyList model={firstNode} />
-        <EdgeList node={firstNode} />
+        <Box className={classes.pane}>
+          <Box className={classes.addRecord}>
+            <Typography className={classes.title} variant="h5">
+              {firstNode.label ?? firstNode.id}
+            </Typography>
+            <form onSubmit={handleSubmit} noValidate autoComplete="off">
+              <Input placeholder="Add Record" />
+            </form>
+          </Box>
+
+          <PropertyList model={firstNode} />
+          <EdgeList node={firstNode} />
+        </Box>
       </div>
     )
   })
 }
-
-/* export const RootRegion: React.FunctionComponent = props => { */
-/*   const store = useStore(store => store.graph) */
-
-/*   return useObserver(() => { */
-/*     const graph = store.byId.get('default') */
-
-/*     if (graph) { */
-/*       const rows: Array<React.ReactElement> = [] */
-/*       const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => { */
-/*         event.preventDefault() */
-/*       } */
-
-/*       graph.vertexById.forEach(item => */
-/*         rows.push( */
-/*           <ListItem key={item.id}> */
-/*             <ListItemText>{item.label}</ListItemText> */
-/*           </ListItem>, */
-/*         ), */
-/*       ) */
-
-/*       return ( */
-/*         <Flex */
-/*           sx={{ */
-/*             flexDirection: 'column', */
-/*             maxHeight: '100vh', */
-/*             position: 'relative', */
-/*             overflowY: 'auto', */
-/*           }} */
-/*         > */
-/*           <Box */
-/*             sx={{ */
-/*               position: 'sticky', */
-/*               top: '0', */
-/*               bg: 'background', */
-/*             }} */
-/*           > */
-/*             <Typography variant="h3">Delicious Fruit</Typography> */
-/*             <form onSubmit={handleSubmit} noValidate autoComplete="off"> */
-/*               <TextField label="Add Record" /> */
-/*             </form> */
-/*           </Box> */
-
-/*           {rows.length > 0 && <List>{rows.reverse()}</List>} */
-/*         </Flex> */
-/*       ) */
-/*     } else { */
-/*       return <div>shit</div> */
-/*     } */
-/*   }) */
-/* } */
 
 export default RootRegion

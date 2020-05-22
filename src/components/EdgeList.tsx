@@ -4,7 +4,7 @@
  * Copyright © 2020 Ty Dira */
 
 import React from 'react'
-import { IAnyModelType, Instance } from 'mobx-state-tree'
+import { IAnyModelType, Instance, IAnyStateTreeNode } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
@@ -18,7 +18,12 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       width: '100%',
     },
+    section: {
+      color: 'inherit',
+      fontWeight: 'bold',
+    },
     listSection: {},
+    listItem: {},
     ul: {},
   }),
 )
@@ -32,16 +37,20 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
 
   return useObserver(() => {
     const edgeKeys = Array.from(node.edgeMap.keys())
-    console.log(edgeKeys)
     return (
       <List className={classes.root} subheader={<li />}>
         {edgeKeys.map(key => (
           <li key={`edge-${key}`} className={classes.listSection}>
             <ul className={classes.ul}>
-              <ListSubheader>{`${key}`}</ListSubheader>
-              {node.edgeMap.get(key)?.map((item: { id: string }) => (
-                <ListItem key={`edge-${key}-${item.id}`}>
-                  <ListItemText primary={`Item ${item.id}`} />
+              <ListSubheader
+                className={classes.section}
+              >{`${key}`}</ListSubheader>
+              {node.edgeMap.get(key)?.map((item: IAnyStateTreeNode) => (
+                <ListItem
+                  className={classes.listItem}
+                  key={`edge-${key}-${item.id}`}
+                >
+                  <ListItemText primary={item.label ?? item.id} />
                 </ListItem>
               ))}
             </ul>
