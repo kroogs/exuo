@@ -5,16 +5,11 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
-
-import { default as themeConfig } from './theme'
-import * as serviceWorker from './serviceWorker'
-
-import { StoreProvider } from './store'
-
+import { ThemeProvider } from '@material-ui/core/styles'
 import App from './components/App'
-
-const theme = createMuiTheme(themeConfig)
+import * as serviceWorker from './serviceWorker'
+import { StoreProvider } from './store'
+import theme from './theme'
 
 ReactDOM.render(
   <React.StrictMode>

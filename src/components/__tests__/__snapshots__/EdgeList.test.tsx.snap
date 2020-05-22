@@ -19,6 +19,8 @@ exports[`Renders a list of associated nodes 1`] = `
 >
   <WithStyles(ForwardRef(List))
     className="makeStyles-root-1"
+    dense={true}
+    disablePadding={true}
     subheader={<li />}
   >
     <ForwardRef(List)
@@ -31,48 +33,29 @@ exports[`Renders a list of associated nodes 1`] = `
           "subheader": "MuiList-subheader",
         }
       }
+      dense={true}
+      disablePadding={true}
       subheader={<li />}
     >
       <ul
-        className="MuiList-root makeStyles-root-1 MuiList-padding MuiList-subheader"
+        className="MuiList-root makeStyles-root-1 MuiList-dense MuiList-subheader"
       >
         <li />
         <li
-          className="makeStyles-listSection-3"
+          className="makeStyles-listSection-2"
           key="edge-child"
         >
           <ul
-            className="makeStyles-ul-5"
+            className="makeStyles-group-5"
           >
-            <WithStyles(ForwardRef(ListSubheader))
-              className="makeStyles-section-2"
-            >
-              <ForwardRef(ListSubheader)
-                className="makeStyles-section-2"
-                classes={
-                  Object {
-                    "colorInherit": "MuiListSubheader-colorInherit",
-                    "colorPrimary": "MuiListSubheader-colorPrimary",
-                    "gutters": "MuiListSubheader-gutters",
-                    "inset": "MuiListSubheader-inset",
-                    "root": "MuiListSubheader-root",
-                    "sticky": "MuiListSubheader-sticky",
-                  }
-                }
-              >
-                <li
-                  className="MuiListSubheader-root makeStyles-section-2 MuiListSubheader-sticky MuiListSubheader-gutters"
-                >
-                  child
-                </li>
-              </ForwardRef(ListSubheader)>
-            </WithStyles(ForwardRef(ListSubheader))>
             <WithStyles(ForwardRef(ListItem))
-              className="makeStyles-listItem-4"
+              className="makeStyles-listItem-3"
+              dense={true}
+              disableGutters={true}
               key="edge-child-4"
             >
               <ForwardRef(ListItem)
-                className="makeStyles-listItem-4"
+                className="makeStyles-listItem-3"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -88,16 +71,20 @@ exports[`Renders a list of associated nodes 1`] = `
                     "selected": "Mui-selected",
                   }
                 }
+                dense={true}
+                disableGutters={true}
               >
                 <li
-                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-3 MuiListItem-dense"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
+                    className="makeStyles-itemText-4"
                     key=".0"
                     primary="4"
                   >
                     <ForwardRef(ListItemText)
+                      className="makeStyles-itemText-4"
                       classes={
                         Object {
                           "dense": "MuiListItemText-dense",
@@ -111,13 +98,13 @@ exports[`Renders a list of associated nodes 1`] = `
                       primary="4"
                     >
                       <div
-                        className="MuiListItemText-root"
+                        className="MuiListItemText-root makeStyles-itemText-4 MuiListItemText-dense"
                       >
                         <WithStyles(ForwardRef(Typography))
                           className="MuiListItemText-primary"
                           component="span"
                           display="block"
-                          variant="body1"
+                          variant="body2"
                         >
                           <ForwardRef(Typography)
                             className="MuiListItemText-primary"
@@ -157,10 +144,10 @@ exports[`Renders a list of associated nodes 1`] = `
                             }
                             component="span"
                             display="block"
-                            variant="body1"
+                            variant="body2"
                           >
                             <span
-                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
                             >
                               4
                             </span>
@@ -173,11 +160,13 @@ exports[`Renders a list of associated nodes 1`] = `
               </ForwardRef(ListItem)>
             </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
-              className="makeStyles-listItem-4"
+              className="makeStyles-listItem-3"
+              dense={true}
+              disableGutters={true}
               key="edge-child-5"
             >
               <ForwardRef(ListItem)
-                className="makeStyles-listItem-4"
+                className="makeStyles-listItem-3"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -193,16 +182,20 @@ exports[`Renders a list of associated nodes 1`] = `
                     "selected": "Mui-selected",
                   }
                 }
+                dense={true}
+                disableGutters={true}
               >
                 <li
-                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-3 MuiListItem-dense"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
+                    className="makeStyles-itemText-4"
                     key=".0"
                     primary="5"
                   >
                     <ForwardRef(ListItemText)
+                      className="makeStyles-itemText-4"
                       classes={
                         Object {
                           "dense": "MuiListItemText-dense",
@@ -216,13 +209,13 @@ exports[`Renders a list of associated nodes 1`] = `
                       primary="5"
                     >
                       <div
-                        className="MuiListItemText-root"
+                        className="MuiListItemText-root makeStyles-itemText-4 MuiListItemText-dense"
                       >
                         <WithStyles(ForwardRef(Typography))
                           className="MuiListItemText-primary"
                           component="span"
                           display="block"
-                          variant="body1"
+                          variant="body2"
                         >
                           <ForwardRef(Typography)
                             className="MuiListItemText-primary"
@@ -262,10 +255,10 @@ exports[`Renders a list of associated nodes 1`] = `
                             }
                             component="span"
                             display="block"
-                            variant="body1"
+                            variant="body2"
                           >
                             <span
-                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
                             >
                               5
                             </span>
@@ -278,11 +271,13 @@ exports[`Renders a list of associated nodes 1`] = `
               </ForwardRef(ListItem)>
             </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
-              className="makeStyles-listItem-4"
+              className="makeStyles-listItem-3"
+              dense={true}
+              disableGutters={true}
               key="edge-child-6"
             >
               <ForwardRef(ListItem)
-                className="makeStyles-listItem-4"
+                className="makeStyles-listItem-3"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -298,16 +293,20 @@ exports[`Renders a list of associated nodes 1`] = `
                     "selected": "Mui-selected",
                   }
                 }
+                dense={true}
+                disableGutters={true}
               >
                 <li
-                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-3 MuiListItem-dense"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
+                    className="makeStyles-itemText-4"
                     key=".0"
                     primary="6"
                   >
                     <ForwardRef(ListItemText)
+                      className="makeStyles-itemText-4"
                       classes={
                         Object {
                           "dense": "MuiListItemText-dense",
@@ -321,13 +320,13 @@ exports[`Renders a list of associated nodes 1`] = `
                       primary="6"
                     >
                       <div
-                        className="MuiListItemText-root"
+                        className="MuiListItemText-root makeStyles-itemText-4 MuiListItemText-dense"
                       >
                         <WithStyles(ForwardRef(Typography))
                           className="MuiListItemText-primary"
                           component="span"
                           display="block"
-                          variant="body1"
+                          variant="body2"
                         >
                           <ForwardRef(Typography)
                             className="MuiListItemText-primary"
@@ -367,10 +366,10 @@ exports[`Renders a list of associated nodes 1`] = `
                             }
                             component="span"
                             display="block"
-                            variant="body1"
+                            variant="body2"
                           >
                             <span
-                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
                             >
                               6
                             </span>
@@ -383,11 +382,13 @@ exports[`Renders a list of associated nodes 1`] = `
               </ForwardRef(ListItem)>
             </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
-              className="makeStyles-listItem-4"
+              className="makeStyles-listItem-3"
+              dense={true}
+              disableGutters={true}
               key="edge-child-7"
             >
               <ForwardRef(ListItem)
-                className="makeStyles-listItem-4"
+                className="makeStyles-listItem-3"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -403,16 +404,20 @@ exports[`Renders a list of associated nodes 1`] = `
                     "selected": "Mui-selected",
                   }
                 }
+                dense={true}
+                disableGutters={true}
               >
                 <li
-                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-3 MuiListItem-dense"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
+                    className="makeStyles-itemText-4"
                     key=".0"
                     primary="7"
                   >
                     <ForwardRef(ListItemText)
+                      className="makeStyles-itemText-4"
                       classes={
                         Object {
                           "dense": "MuiListItemText-dense",
@@ -426,13 +431,13 @@ exports[`Renders a list of associated nodes 1`] = `
                       primary="7"
                     >
                       <div
-                        className="MuiListItemText-root"
+                        className="MuiListItemText-root makeStyles-itemText-4 MuiListItemText-dense"
                       >
                         <WithStyles(ForwardRef(Typography))
                           className="MuiListItemText-primary"
                           component="span"
                           display="block"
-                          variant="body1"
+                          variant="body2"
                         >
                           <ForwardRef(Typography)
                             className="MuiListItemText-primary"
@@ -472,10 +477,10 @@ exports[`Renders a list of associated nodes 1`] = `
                             }
                             component="span"
                             display="block"
-                            variant="body1"
+                            variant="body2"
                           >
                             <span
-                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
                             >
                               7
                             </span>
@@ -488,11 +493,13 @@ exports[`Renders a list of associated nodes 1`] = `
               </ForwardRef(ListItem)>
             </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
-              className="makeStyles-listItem-4"
+              className="makeStyles-listItem-3"
+              dense={true}
+              disableGutters={true}
               key="edge-child-8"
             >
               <ForwardRef(ListItem)
-                className="makeStyles-listItem-4"
+                className="makeStyles-listItem-3"
                 classes={
                   Object {
                     "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
@@ -508,16 +515,20 @@ exports[`Renders a list of associated nodes 1`] = `
                     "selected": "Mui-selected",
                   }
                 }
+                dense={true}
+                disableGutters={true}
               >
                 <li
-                  className="MuiListItem-root makeStyles-listItem-4 MuiListItem-gutters"
+                  className="MuiListItem-root makeStyles-listItem-3 MuiListItem-dense"
                   disabled={false}
                 >
                   <WithStyles(ForwardRef(ListItemText))
+                    className="makeStyles-itemText-4"
                     key=".0"
                     primary="8"
                   >
                     <ForwardRef(ListItemText)
+                      className="makeStyles-itemText-4"
                       classes={
                         Object {
                           "dense": "MuiListItemText-dense",
@@ -531,13 +542,13 @@ exports[`Renders a list of associated nodes 1`] = `
                       primary="8"
                     >
                       <div
-                        className="MuiListItemText-root"
+                        className="MuiListItemText-root makeStyles-itemText-4 MuiListItemText-dense"
                       >
                         <WithStyles(ForwardRef(Typography))
                           className="MuiListItemText-primary"
                           component="span"
                           display="block"
-                          variant="body1"
+                          variant="body2"
                         >
                           <ForwardRef(Typography)
                             className="MuiListItemText-primary"
@@ -577,10 +588,10 @@ exports[`Renders a list of associated nodes 1`] = `
                             }
                             component="span"
                             display="block"
-                            variant="body1"
+                            variant="body2"
                           >
                             <span
-                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
                             >
                               8
                             </span>

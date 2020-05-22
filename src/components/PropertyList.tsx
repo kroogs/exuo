@@ -4,19 +4,14 @@
  * Copyright © 2020 Ty Dira */
 
 import React from 'react'
-import { IAnyStateTreeNode, getMembers, isStateTreeNode } from 'mobx-state-tree'
-import { useObserver } from 'mobx-react-lite'
-
+import { List, ListItem, ListItemText } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
+import { useObserver } from 'mobx-react-lite'
+import { getMembers, IAnyStateTreeNode, isStateTreeNode } from 'mobx-state-tree'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      width: '100%',
-    },
+    root: {},
     item: {},
     itemText: {},
   }),

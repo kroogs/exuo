@@ -3,19 +3,18 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * Copyright © 2020 Ty Dira */
 
-import { v4 as uuid } from 'uuid'
 import {
-  types as t,
-  SnapshotIn,
-  Instance,
-  IAnyType,
-  IAnyModelType,
-  getType,
-  getSnapshot,
   applySnapshot,
+  getSnapshot,
+  IAnyModelType,
+  IAnyType,
+  Instance,
   onPatch,
+  SnapshotIn,
+  types as t,
 } from 'mobx-state-tree'
 import Dexie from 'dexie'
+import { v4 as uuid } from 'uuid'
 
 type EdgeTypeFn = () => IAnyType
 
@@ -181,20 +180,20 @@ export function graphFactory(
 
       const table = db.table('graph')
 
+      onPatch(self, patch => {
+        const match = patch.path.match(pathFilter)
+        if (!match) {
+          return
+        }
+
+        if (patch.op === 'add' || patch.op === 'replace') {
+          table.put(patch.value)
+        }
+      })
+
       table.toArray().then(rows => {
         applySnapshot(self, {
-          vertexById: Object.fromEntries(rows.map(r => [r.id, r])),
-        })
-
-        onPatch(self, patch => {
-          const match = patch.path.match(pathFilter)
-          if (!match) {
-            return
-          }
-
-          if (patch.op === 'add' || patch.op === 'replace') {
-            table.put(patch.value)
-          }
+          nodesById: Object.fromEntries(rows.map(r => [r.id, r])),
         })
       })
     },

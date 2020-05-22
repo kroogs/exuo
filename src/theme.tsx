@@ -1,5 +1,4 @@
-import React from 'react'
-
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 // '#9ce12e', // green
 // '#a378fe', // purple
 // '#34c3ff' // blue
@@ -10,7 +9,7 @@ export const palette = {
     main: '#34c3ff',
   },
   background: {
-    default: 'inherit',
+    default: 'black',
   },
   text: {
     primary: 'inherit',
@@ -19,16 +18,21 @@ export const palette = {
 }
 
 export const typography = {
+  fontSize: 12,
   fontFamily:
     '-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
 }
 
-export default {
-  palette,
-  typography,
-  props: {
-    MuiButtonBase: {
-      disableRipple: true,
+export const theme = responsiveFontSizes(
+  createMuiTheme({
+    palette,
+    typography,
+    props: {
+      MuiButtonBase: {
+        disableRipple: true,
+      },
     },
-  },
-}
+  }),
+)
+
+export default theme

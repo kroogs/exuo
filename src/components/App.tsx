@@ -4,8 +4,7 @@
  * Copyright © 2020 Ty Dira */
 
 import React from 'react'
-import { Router, RouteComponentProps } from '@reach/router'
-import { useObserver } from 'mobx-react-lite'
+import { RouteComponentProps, Router } from '@reach/router'
 
 import { useStore } from 'store'
 import RootRegion from './RootRegion'
