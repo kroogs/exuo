@@ -38,8 +38,8 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
     return (
       <List
         className={classes.root}
-        dense={true}
-        disablePadding={true}
+        dense
+        disablePadding
         subheader={<li />}
       >
         {edgeKeys.map(key => (
@@ -47,15 +47,15 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
             <ul className={classes.group}>
               {edgeKeys.length > 1 && (
                 <ListSubheader
-                  disableGutters={true}
+                  disableGutters
                   className={classes.groupHeader}
                 >{`${key}`}</ListSubheader>
               )}
               {node.edgeMap.get(key)?.map((item: IAnyStateTreeNode) => (
                 <ListItem
                   className={classes.listItem}
-                  dense={true}
-                  disableGutters={true}
+                  dense
+                  disableGutters
                   key={`edge-${key}-${item.id}`}
                 >
                   <ListItemText

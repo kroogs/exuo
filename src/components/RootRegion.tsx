@@ -53,7 +53,8 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
       event.preventDefault()
       if (createText) {
         graph.createNode('Node', { label: createText })
-        setCreateText(null)
+        setCreateText('')
+        console.log('createText', createText)
       }
     }
 

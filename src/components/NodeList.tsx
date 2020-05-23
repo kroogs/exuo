@@ -4,7 +4,7 @@
  * Copyright © 2020 Ty Dira */
 
 import React from 'react'
-import { List, ListItem, ListItemText, ListSubheader } from '@material-ui/core'
+import { List, ListItem, ListItemText } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { useObserver } from 'mobx-react-lite'
 import { IAnyModelType, IAnyStateTreeNode, Instance } from 'mobx-state-tree'
@@ -34,15 +34,14 @@ export const NodeList: React.FunctionComponent<NodeListProps> = ({ nodes }) => {
   const classes = useStyles()
 
   return useObserver(() => {
-    console.log('nodes', nodes)
     return (
-      <List className={classes.root} dense={true} disablePadding={true}>
+      <List className={classes.root} dense disablePadding>
         {nodes.map(node => (
           <ListItem
             className={classes.listItem}
             key={`node-${node.id}`}
-            dense={true}
-            disableGutters={true}
+            dense
+            disableGutters
           >
             <ListItemText
               className={classes.itemText}
