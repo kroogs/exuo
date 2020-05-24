@@ -3,5 +3,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * Copyright © 2020 Ty Dira */
 
+export * from './EdgeMap'
 export * from './EventLog'
+export * from './Graph'
 export * from './Label'
+export * from './Node'

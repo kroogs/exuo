@@ -6,8 +6,7 @@
 import React from 'react'
 import { types as t, Instance } from 'mobx-state-tree'
 
-import { graphFactory, nodeFactory } from './graph'
-import { Label } from 'store/models'
+import { graphFactory, nodeFactory, Label } from './models'
 
 const Node = nodeFactory(() => Node, [Label])
 const Graph = graphFactory({ Node })
@@ -19,7 +18,7 @@ export const Root = t.model('Root', {
 export const initStore = (): Instance<typeof Root> => {
   const store = Root.create({ graph: {} })
 
-  store.graph.persist()
+  // store.graph.persist() TODO Causes error when adding edges
 
   return store
 }

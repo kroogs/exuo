@@ -4,5 +4,4 @@
  * Copyright © 2020 Ty Dira */
 
 export * from './setup'
-export * from './graph'
-export * from './utils'
+export * from './models'
