@@ -13,7 +13,9 @@
   ],
   "rules": {
     "no-console": ["warn"],
-    "@typescript-eslint/ban-ts-ignore": ["off"],
+    "@typescript-eslint/ban-ts-comment": {
+      "ts-ignore": false
+    },
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
