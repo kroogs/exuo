@@ -3,6 +3,7 @@
 !.circleci
 !.eslintrc
 !.prettierrc
+!.env
 
 node_modules
 coverage
