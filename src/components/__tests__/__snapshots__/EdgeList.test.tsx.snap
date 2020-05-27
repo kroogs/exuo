@@ -6,14 +6,14 @@ exports[`Renders a list of associated nodes 1`] = `
     Object {
       "edgeMap": Object {
         "child": Array [
+          "3",
           "4",
           "5",
           "6",
           "7",
-          "8",
         ],
       },
-      "id": "2",
+      "id": "1",
     }
   }
 >
@@ -48,6 +48,117 @@ exports[`Renders a list of associated nodes 1`] = `
           <ul
             className="makeStyles-group-5"
           >
+            <WithStyles(ForwardRef(ListItem))
+              className="makeStyles-listItem-3"
+              dense={true}
+              disableGutters={true}
+              key="edge-child-3"
+            >
+              <ForwardRef(ListItem)
+                className="makeStyles-listItem-3"
+                classes={
+                  Object {
+                    "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                    "button": "MuiListItem-button",
+                    "container": "MuiListItem-container",
+                    "dense": "MuiListItem-dense",
+                    "disabled": "Mui-disabled",
+                    "divider": "MuiListItem-divider",
+                    "focusVisible": "Mui-focusVisible",
+                    "gutters": "MuiListItem-gutters",
+                    "root": "MuiListItem-root",
+                    "secondaryAction": "MuiListItem-secondaryAction",
+                    "selected": "Mui-selected",
+                  }
+                }
+                dense={true}
+                disableGutters={true}
+              >
+                <li
+                  className="MuiListItem-root makeStyles-listItem-3 MuiListItem-dense"
+                  disabled={false}
+                >
+                  <WithStyles(ForwardRef(ListItemText))
+                    className="makeStyles-itemText-4"
+                    key=".0"
+                    primary="3"
+                  >
+                    <ForwardRef(ListItemText)
+                      className="makeStyles-itemText-4"
+                      classes={
+                        Object {
+                          "dense": "MuiListItemText-dense",
+                          "inset": "MuiListItemText-inset",
+                          "multiline": "MuiListItemText-multiline",
+                          "primary": "MuiListItemText-primary",
+                          "root": "MuiListItemText-root",
+                          "secondary": "MuiListItemText-secondary",
+                        }
+                      }
+                      primary="3"
+                    >
+                      <div
+                        className="MuiListItemText-root makeStyles-itemText-4 MuiListItemText-dense"
+                      >
+                        <WithStyles(ForwardRef(Typography))
+                          className="MuiListItemText-primary"
+                          component="span"
+                          display="block"
+                          variant="body2"
+                        >
+                          <ForwardRef(Typography)
+                            className="MuiListItemText-primary"
+                            classes={
+                              Object {
+                                "alignCenter": "MuiTypography-alignCenter",
+                                "alignJustify": "MuiTypography-alignJustify",
+                                "alignLeft": "MuiTypography-alignLeft",
+                                "alignRight": "MuiTypography-alignRight",
+                                "body1": "MuiTypography-body1",
+                                "body2": "MuiTypography-body2",
+                                "button": "MuiTypography-button",
+                                "caption": "MuiTypography-caption",
+                                "colorError": "MuiTypography-colorError",
+                                "colorInherit": "MuiTypography-colorInherit",
+                                "colorPrimary": "MuiTypography-colorPrimary",
+                                "colorSecondary": "MuiTypography-colorSecondary",
+                                "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                "displayBlock": "MuiTypography-displayBlock",
+                                "displayInline": "MuiTypography-displayInline",
+                                "gutterBottom": "MuiTypography-gutterBottom",
+                                "h1": "MuiTypography-h1",
+                                "h2": "MuiTypography-h2",
+                                "h3": "MuiTypography-h3",
+                                "h4": "MuiTypography-h4",
+                                "h5": "MuiTypography-h5",
+                                "h6": "MuiTypography-h6",
+                                "noWrap": "MuiTypography-noWrap",
+                                "overline": "MuiTypography-overline",
+                                "paragraph": "MuiTypography-paragraph",
+                                "root": "MuiTypography-root",
+                                "srOnly": "MuiTypography-srOnly",
+                                "subtitle1": "MuiTypography-subtitle1",
+                                "subtitle2": "MuiTypography-subtitle2",
+                              }
+                            }
+                            component="span"
+                            display="block"
+                            variant="body2"
+                          >
+                            <span
+                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+                            >
+                              3
+                            </span>
+                          </ForwardRef(Typography)>
+                        </WithStyles(ForwardRef(Typography))>
+                      </div>
+                    </ForwardRef(ListItemText)>
+                  </WithStyles(ForwardRef(ListItemText))>
+                </li>
+              </ForwardRef(ListItem)>
+            </WithStyles(ForwardRef(ListItem))>
             <WithStyles(ForwardRef(ListItem))
               className="makeStyles-listItem-3"
               dense={true}
@@ -483,117 +594,6 @@ exports[`Renders a list of associated nodes 1`] = `
                               className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
                             >
                               7
-                            </span>
-                          </ForwardRef(Typography)>
-                        </WithStyles(ForwardRef(Typography))>
-                      </div>
-                    </ForwardRef(ListItemText)>
-                  </WithStyles(ForwardRef(ListItemText))>
-                </li>
-              </ForwardRef(ListItem)>
-            </WithStyles(ForwardRef(ListItem))>
-            <WithStyles(ForwardRef(ListItem))
-              className="makeStyles-listItem-3"
-              dense={true}
-              disableGutters={true}
-              key="edge-child-8"
-            >
-              <ForwardRef(ListItem)
-                className="makeStyles-listItem-3"
-                classes={
-                  Object {
-                    "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
-                    "button": "MuiListItem-button",
-                    "container": "MuiListItem-container",
-                    "dense": "MuiListItem-dense",
-                    "disabled": "Mui-disabled",
-                    "divider": "MuiListItem-divider",
-                    "focusVisible": "Mui-focusVisible",
-                    "gutters": "MuiListItem-gutters",
-                    "root": "MuiListItem-root",
-                    "secondaryAction": "MuiListItem-secondaryAction",
-                    "selected": "Mui-selected",
-                  }
-                }
-                dense={true}
-                disableGutters={true}
-              >
-                <li
-                  className="MuiListItem-root makeStyles-listItem-3 MuiListItem-dense"
-                  disabled={false}
-                >
-                  <WithStyles(ForwardRef(ListItemText))
-                    className="makeStyles-itemText-4"
-                    key=".0"
-                    primary="8"
-                  >
-                    <ForwardRef(ListItemText)
-                      className="makeStyles-itemText-4"
-                      classes={
-                        Object {
-                          "dense": "MuiListItemText-dense",
-                          "inset": "MuiListItemText-inset",
-                          "multiline": "MuiListItemText-multiline",
-                          "primary": "MuiListItemText-primary",
-                          "root": "MuiListItemText-root",
-                          "secondary": "MuiListItemText-secondary",
-                        }
-                      }
-                      primary="8"
-                    >
-                      <div
-                        className="MuiListItemText-root makeStyles-itemText-4 MuiListItemText-dense"
-                      >
-                        <WithStyles(ForwardRef(Typography))
-                          className="MuiListItemText-primary"
-                          component="span"
-                          display="block"
-                          variant="body2"
-                        >
-                          <ForwardRef(Typography)
-                            className="MuiListItemText-primary"
-                            classes={
-                              Object {
-                                "alignCenter": "MuiTypography-alignCenter",
-                                "alignJustify": "MuiTypography-alignJustify",
-                                "alignLeft": "MuiTypography-alignLeft",
-                                "alignRight": "MuiTypography-alignRight",
-                                "body1": "MuiTypography-body1",
-                                "body2": "MuiTypography-body2",
-                                "button": "MuiTypography-button",
-                                "caption": "MuiTypography-caption",
-                                "colorError": "MuiTypography-colorError",
-                                "colorInherit": "MuiTypography-colorInherit",
-                                "colorPrimary": "MuiTypography-colorPrimary",
-                                "colorSecondary": "MuiTypography-colorSecondary",
-                                "colorTextPrimary": "MuiTypography-colorTextPrimary",
-                                "colorTextSecondary": "MuiTypography-colorTextSecondary",
-                                "displayBlock": "MuiTypography-displayBlock",
-                                "displayInline": "MuiTypography-displayInline",
-                                "gutterBottom": "MuiTypography-gutterBottom",
-                                "h1": "MuiTypography-h1",
-                                "h2": "MuiTypography-h2",
-                                "h3": "MuiTypography-h3",
-                                "h4": "MuiTypography-h4",
-                                "h5": "MuiTypography-h5",
-                                "h6": "MuiTypography-h6",
-                                "noWrap": "MuiTypography-noWrap",
-                                "overline": "MuiTypography-overline",
-                                "paragraph": "MuiTypography-paragraph",
-                                "root": "MuiTypography-root",
-                                "srOnly": "MuiTypography-srOnly",
-                                "subtitle1": "MuiTypography-subtitle1",
-                                "subtitle2": "MuiTypography-subtitle2",
-                              }
-                            }
-                            component="span"
-                            display="block"
-                            variant="body2"
-                          >
-                            <span
-                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
-                            >
-                              8
                             </span>
                           </ForwardRef(Typography)>
                         </WithStyles(ForwardRef(Typography))>

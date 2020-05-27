@@ -7,15 +7,15 @@ import React from 'react'
 import { shallow } from 'enzyme'
 
 import RootRegion from '../RootRegion'
-import { graphFactory, Node } from 'store/graph'
+import { graphFactory, Node } from 'store/models'
 
 let nextId = 0
-const makeId = (): string => String(++nextId)
+const idGenerator = (): string => String(++nextId)
 
-const Graph = graphFactory({ Node }, makeId)
+const { Graph } = graphFactory({ Node }, { idGenerator })
 
 test('Renders a basic graph', () => {
-  const graph = Graph.create({ id: makeId() })
+  const graph = Graph.create()
   const first = graph.createNode()
   const last = graph.createNode()
 

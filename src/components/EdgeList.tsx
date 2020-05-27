@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface EdgeListProps {
   node: Instance<IAnyModelType>
+  onSelect?: React.MouseEventHandler
 }
 
 const getLabel = (item: IAnyStateTreeNode): string => item.label ?? item.id
@@ -36,12 +37,7 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
   return useObserver(() => {
     const edgeKeys = Array.from(node.edgeMap.keys())
     return (
-      <List
-        className={classes.root}
-        dense
-        disablePadding
-        subheader={<li />}
-      >
+      <List className={classes.root} dense disablePadding subheader={<li />}>
         {edgeKeys.map(key => (
           <li key={`edge-${key}`} className={classes.listSection}>
             <ul className={classes.group}>
@@ -53,14 +49,14 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
               )}
               {node.edgeMap.get(key)?.map((item: IAnyStateTreeNode) => (
                 <ListItem
-                  className={classes.listItem}
                   dense
                   disableGutters
                   key={`edge-${key}-${item.id}`}
+                  className={classes.listItem}
                 >
                   <ListItemText
-                    className={classes.itemText}
                     primary={getLabel(item)}
+                    className={classes.itemText}
                   />
                 </ListItem>
               ))}

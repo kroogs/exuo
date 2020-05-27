@@ -9,8 +9,8 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { useObserver } from 'mobx-react-lite'
 import { Instance } from 'mobx-state-tree'
 
-import { Graph } from 'store'
-import { NodeList } from './NodeList'
+import { Graph, Node } from 'store'
+import { EdgeList } from './EdgeList'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,16 +21,23 @@ const useStyles = makeStyles((theme: Theme) =>
     pane: {
       overflowY: 'auto',
       maxHeight: '100vh',
-      flexDirection: 'column',
       position: 'relative',
+      minWidth: '200px',
+    },
+    rootPane: {
+      position: 'sticky',
+      left: 0,
+      zIndex: 9,
+      overflowY: 'auto',
+      maxHeight: '100vh',
+      minWidth: '200px',
     },
     addItem: {
-      top: 0,
       position: 'sticky',
+      top: 0,
       zIndex: 9,
-      backgroundColor: theme.palette.background.default,
     },
-    title: {},
+    heading: {},
   }),
 )
 
@@ -42,42 +49,74 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
   graph,
 }) => {
   const classes = useStyles()
-  const [createText, setCreateText] = React.useState<null | string>(null)
+  const [activeNodes, setActiveNodes] = React.useState<
+    Array<Instance<typeof Node>>
+  >([])
+
+  const addActiveNode = (node: Instance<typeof Node>): void => {
+    setActiveNodes([...activeNodes, node])
+  }
+
+  const Pane: React.FC<{ node: Instance<typeof Node> }> = ({
+    children,
+    node,
+  }) => {
+    const [createText, setCreateText] = React.useState('')
+    const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
+      event.preventDefault()
+      if (createText) {
+        const newNode = graph.createNode('Node', { label: createText })
+        node.addEdge('child', newNode)
+        setCreateText('')
+      }
+    }
+
+    return (
+      <Box className={classes.pane}>
+        <Box className={classes.addItem}>
+          <Typography className={classes.heading} variant="h5">
+            {node.label}
+          </Typography>
+          <form onSubmit={handleSubmit} noValidate autoComplete="off">
+            <Input
+              onChange={e => setCreateText(e.target.value)}
+              value={createText}
+              disableUnderline
+              fullWidth
+              placeholder="Create Item"
+            />
+          </form>
+        </Box>
+        {children}
+      </Box>
+    )
+  }
 
   return useObserver(() => {
     if (!graph) {
       throw Error('no graph!')
     }
 
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
-      event.preventDefault()
-      if (createText) {
-        graph.createNode('Node', { label: createText })
-        setCreateText('')
-        console.log('createText', createText)
-      }
-    }
+    // TODO
+    // a composed graph type with a View node type that stores
+    // colors, sizes, history, etc. per view. Then we won't need
+    // a rootNode.
 
-    const nodes = Array.from(graph.nodesById.values()).reverse()
+    const allNodes = Array.from(graph.Node.values()).reverse()
 
     return (
-      <div className={classes.root}>
-        <Box className={classes.pane}>
-          <Box className={classes.addItem}>
-            <Typography className={classes.title} variant="h5">
-              Nodes
-            </Typography>
-            <form onSubmit={handleSubmit} noValidate autoComplete="off">
-              <Input
-                onChange={e => setCreateText(e.target.value)}
-                placeholder="Create Item"
-              />
-            </form>
-          </Box>
-
-          <NodeList nodes={nodes} />
-        </Box>
-      </div>
+      <Box
+        className={classes.root}
+        display="flex"
+        flexDirection="row"
+        flexWrap="nowrap"
+      >
+        {activeNodes.map(node => (
+          <Pane key={node.id} node={node}>
+            <EdgeList node={node} onSelect={addActiveNode} />
+          </Pane>
+        ))}
+      </Box>
     )
   })
 }

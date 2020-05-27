@@ -26,11 +26,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface NodeListProps {
   nodes: Array<Instance<IAnyModelType>>
+  onSelect: React.MouseEventHandler
 }
 
 const getLabel = (item: IAnyStateTreeNode): string => item.label ?? item.id
 
-export const NodeList: React.FunctionComponent<NodeListProps> = ({ nodes }) => {
+export const NodeList: React.FunctionComponent<NodeListProps> = ({
+  nodes,
+  onSelect,
+}) => {
   const classes = useStyles()
 
   return useObserver(() => {
@@ -38,10 +42,12 @@ export const NodeList: React.FunctionComponent<NodeListProps> = ({ nodes }) => {
       <List className={classes.root} dense disablePadding>
         {nodes.map(node => (
           <ListItem
-            className={classes.listItem}
             key={`node-${node.id}`}
+            className={classes.listItem}
+            button
             dense
             disableGutters
+            onClick={() => onSelect(node)}
           >
             <ListItemText
               className={classes.itemText}

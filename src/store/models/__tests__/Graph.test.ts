@@ -23,11 +23,11 @@ describe('#graphFactory', () => {
     expect(
       getSnapshot(
         Graph.create({
-          nodes: { Node: { one: { id: 'one', custom: 'one' } } },
+          Node: { one: { id: 'one', custom: 'one' } },
         }),
       ),
     ).toStrictEqual({
-      nodes: { Node: { one: { id: 'one', custom: 'one', edgeMap: {} } } },
+      Node: { one: { id: 'one', custom: 'one', edgeMap: {} } },
     })
   })
 
@@ -42,11 +42,11 @@ describe('#graphFactory', () => {
     const two = graph.createNode()
 
     two.addEdge('side', one)
-    expect(graph.nodes.Node.get(two.id).edgeMap.get('side')?.[0]).toBe(one)
+    expect(graph.Node.get(two.id).edgeMap.get('side')?.[0]).toBe(one)
 
     const potato = graph.createNode('Label', { label: 'potato' })
     one.addEdge('item', potato)
-    expect(graph.nodes.Node.get(one.id).edgeMap.get('item')?.[0]).toBe(potato)
+    expect(graph.Node.get(one.id).edgeMap.get('item')?.[0]).toBe(potato)
 
     potato.addEdge('inside', potato)
     expect(potato.edgeMap.get('inside')?.[0]).toBe(potato)

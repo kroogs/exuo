@@ -18,23 +18,18 @@ import { Node } from './Node'
 
 type ModelTable = Record<string, IAnyModelType>
 
-const nodeStoreFactory = (nodeModels: ModelTable) =>
-  types.model(
-    'NodeStore',
-    Object.fromEntries(
-      Object.keys(nodeModels).map(key => [key, types.map(nodeModels[key])]),
-    ),
-  )
-
 export const graphFactory = (
   nodeModels: ModelTable = { Node },
   options = { idGenerator: () => uuid() },
 ): ModelTable => ({
   ...nodeModels,
   Graph: types
-    .model('Graph', {
-      nodes: types.optional(nodeStoreFactory(nodeModels), {}),
-    })
+    .model(
+      'Graph',
+      Object.fromEntries(
+        Object.keys(nodeModels).map(key => [key, types.map(nodeModels[key])]),
+      ),
+    )
     .actions(self => ({
       createNode(
         modelName = 'Node',
@@ -49,7 +44,7 @@ export const graphFactory = (
           id: options.idGenerator(),
         })
 
-        self.nodes[modelName].put(node)
+        self[modelName].put(node)
 
         return node
       },

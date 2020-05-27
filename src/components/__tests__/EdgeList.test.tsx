@@ -7,15 +7,15 @@ import React from 'react'
 import { mount } from 'enzyme'
 
 import EdgeList from '../EdgeList'
-import { graphFactory, Node } from 'store/graph'
+import { graphFactory, Node } from 'store/models'
 
 let nextId = 0
-const makeId = (): string => String(++nextId)
+const idGenerator = (): string => String(++nextId)
 
-const Graph = graphFactory({ Node }, makeId)
+const { Graph } = graphFactory({ Node }, { idGenerator })
 
 test('Renders a list of associated nodes', () => {
-  const graph = Graph.create({ id: makeId() })
+  const graph = Graph.create()
   const first = graph.createNode()
   const last = graph.createNode()
 
