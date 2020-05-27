@@ -3,16 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * Copyright © 2020 Ty Dira */
 
-import {
-  applySnapshot,
-  getSnapshot,
-  IAnyModelType,
-  IAnyType,
-  Instance,
-  onPatch,
-  SnapshotIn,
-  types as t,
-} from 'mobx-state-tree'
+import { IAnyModelType, IAnyType, types as t } from 'mobx-state-tree'
 
 import { edgeMapFactory } from './EdgeMap'
 
@@ -33,6 +24,6 @@ export const nodeFactory = (
         }),
       ].map(item => (typeof item === 'function' ? item(getEdgeType) : item)),
     )
-    .named('Node')
+    .named('Node') // TODO composed names? ("Node+Label+Banana"?)
 
 export const Node = nodeFactory(() => Node)

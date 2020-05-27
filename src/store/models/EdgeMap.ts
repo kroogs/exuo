@@ -3,23 +3,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * Copyright © 2020 Ty Dira */
 
-import {
-  applySnapshot,
-  getSnapshot,
-  IAnyModelType,
-  IAnyType,
-  Instance,
-  onPatch,
-  SnapshotIn,
-  types as t,
-} from 'mobx-state-tree'
+import { IAnyModelType, IAnyType, Instance, types } from 'mobx-state-tree'
 
 type EdgeTypeFn = () => IAnyType
 
 export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
-  t
+  types
     .model('EdgeMap', {
-      edgeMap: t.map(t.array(t.reference(t.late(getEdgeType)))),
+      edgeMap: types.map(types.array(types.reference(types.late(getEdgeType)))),
     })
     .actions(self => ({
       hasEdge(tag: string, target: Instance<IAnyModelType>): boolean {
@@ -27,7 +18,7 @@ export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
       },
     }))
     .actions(self => ({
-      addEdge(tag: string, target: Instance<IAnyModelType>) {
+      addEdge(tag: string, target: Instance<IAnyModelType>): void {
         if (!self.edgeMap.has(tag)) {
           self.edgeMap.set(tag, [])
         }
@@ -39,7 +30,7 @@ export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
         return self.edgeMap.get(tag)
       },
 
-      removeEdge(tag: string, target: Instance<IAnyModelType>) {
+      removeEdge(tag: string, target: Instance<IAnyModelType>): void {
         if (!self.hasEdge(tag, target)) {
           throw Error(`Node '${self}' has no '${tag}' edge for '${target}'`)
         }

@@ -8,8 +8,13 @@ import { types as t, Instance } from 'mobx-state-tree'
 
 import { graphFactory, nodeFactory, Label } from './models'
 
-const Node = nodeFactory(() => Node, [Label])
-const Graph = graphFactory({ Node })
+export const Node = nodeFactory(() => Node, [Label])
+export const { Graph } = graphFactory({ Node })
+
+// TODO
+// a composed graph type with a View node type that stores
+// colors, sizes, history, etc. per view. Then we won't need
+// a rootNode.
 
 export const Root = t.model('Root', {
   graph: Graph,
