@@ -5,10 +5,10 @@
 
 import { Label } from '../Label'
 
-describe.skip('Label', () => {
-  it('?', () => {
-    // const x = Label.create({ label: 'apple' })
-    // x.setLabel('banana')
-    // expect(x.label).toBe('banana')
+describe('Label', () => {
+  it('#setLabel sets the #label property', () => {
+    const x = Label.create()
+    x.setLabel('ten')
+    expect(x.label).toBe('ten')
   })
 })
