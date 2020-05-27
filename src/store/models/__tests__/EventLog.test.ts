@@ -9,11 +9,11 @@ import EventLog from '../EventLog'
 
 describe('EventLog', () => {
   describe('#logEvent', () => {
-    it.skip('creates and stores an Event', () => {
+    it('creates and stores an Event', () => {
       const now = Date.now()
-      const spy = jest.spyOn(global, 'Date')
-      // @ts-ignore
-      spy.mockImplementation(() => new Date(now))
+      const spy = jest
+        .spyOn(global.Date, 'now')
+        .mockImplementationOnce(() => now)
 
       const item = EventLog.create()
 
@@ -21,7 +21,7 @@ describe('EventLog', () => {
       expect(getSnapshot(item).eventLog.thing[0]).toStrictEqual({
         type: 'thing',
         message: undefined,
-        date: new Date(),
+        date: now,
       })
 
       spy.mockClear()
