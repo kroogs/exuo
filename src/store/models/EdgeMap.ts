@@ -39,6 +39,6 @@ export const edgeMapFactory = (getEdgeType: EdgeTypeFn): IAnyModelType =>
       },
     }))
 
-export const getEdgeMapModels = (): void => {
-  return
-}
+// export const getEdgeMapModels = (): void => {
+//   return
+// }

@@ -119,6 +119,6 @@ describe('#edgeMapFactory', () => {
   })
 })
 
-test.skip('getEdgeMapModels', () => {
-  return
-})
+// test.skip('getEdgeMapModels', () => {
+//   return
+// })
