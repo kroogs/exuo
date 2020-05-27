@@ -24,6 +24,6 @@ export const nodeFactory = (
         }),
       ].map(item => (typeof item === 'function' ? item(getEdgeType) : item)),
     )
-    .named('Node') // TODO composed names? ("Node+Label+Banana"?)
+    .named('Node')
 
 export const Node = nodeFactory(() => Node)
