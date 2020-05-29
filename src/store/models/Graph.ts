@@ -34,6 +34,7 @@ export const nodeFactory = (
 
 export type ModelOrUnion = IAnyModelType | IAnyType
 export type EdgeResolver = () => ModelOrUnion
+export type ModelTable = Record<string, IAnyModelType>
 
 export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
   return types
@@ -69,8 +70,6 @@ export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
 }
 
 export const Node = nodeFactory(edgeMapFactory(() => Node))
-
-export type ModelTable = Record<string, IAnyModelType>
 
 export const graphFactory = (
   nodeModels: ModelTable = { Node },
