@@ -5,37 +5,46 @@
 
 import React from 'react'
 import { types as t, Instance } from 'mobx-state-tree'
+import { useObserver } from 'mobx-react-lite'
 
-import { graphFactory, nodeFactory, Label } from './models'
+import { graphFactory, nodeFactory, edgeMapFactory } from './models'
+import * as models from './models'
 
-export const Node = nodeFactory(() => Node, [Label])
-export const { Graph } = graphFactory({ Node })
+export const Config = nodeFactory(models.Config)
+export const Node = nodeFactory([
+  models.Label,
+  edgeMapFactory(() => t.union(Node, Config)),
+])
+export const Graph = graphFactory({ Node, Config })
 
-export const Root = t.model('Root', {
-  graph: Graph,
-})
-
-export const initStore = (): Instance<typeof Root> => {
-  const store = Root.create({ graph: {} })
+export const initStore = (): Instance<typeof Graph> => {
+  const graph = Graph.create()
 
   // store.graph.persist() TODO Causes error when adding edges
 
-  return store
+  const root = graph.createNode('Node', { label: 'Lists' })
+  graph.createNode('Config', {
+    id: 'graph',
+    name: 'Graph',
+    items: { rootNodeId: root.id },
+  })
+
+  return graph
 }
 
-export const storeContext = React.createContext<Instance<typeof Root> | null>(
+export const storeContext = React.createContext<Instance<typeof Graph> | null>(
   null,
 )
 
 export const StoreProvider: React.FunctionComponent = ({ children }) =>
   React.createElement(storeContext.Provider, { value: initStore() }, children)
 
-export function useStore<S>(selector: (s: Instance<typeof Root>) => S): S {
+export function useStore<S>(selector: (s: Instance<typeof Graph>) => S): S {
   const store = React.useContext(storeContext)
 
   if (!store) {
     throw Error('Cannot use store before setup.')
   }
 
-  return selector(store)
+  return useObserver(() => selector(store))
 }

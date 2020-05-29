@@ -5,7 +5,7 @@
 
 import { getSnapshot } from 'mobx-state-tree'
 
-import Config from '../Config'
+import { Config } from '../Config'
 
 describe('Config', () => {
   describe('#set', () => {

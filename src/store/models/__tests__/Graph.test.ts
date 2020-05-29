@@ -11,78 +11,156 @@ import {
   isType,
 } from 'mobx-state-tree'
 
-import { graphFactory } from '../Graph'
-import { nodeFactory } from '../Node'
-import { edgeMapFactory } from '../EdgeMap'
-import Label from '../Label'
+import { Label } from '../Label'
+import { nodeFactory, edgeMapFactory, graphFactory } from '../Graph'
 
-describe('#graphFactory', () => {
-  test('supports a custom base Node model', () => {
-    const Node = nodeFactory(() => Node, [t.model({ custom: t.string })])
-    const { Graph } = graphFactory({ Node })
-    expect(
-      getSnapshot(
-        Graph.create({
-          Node: { one: { id: 'one', custom: 'one' } },
-        }),
-      ),
-    ).toStrictEqual({
-      Node: { one: { id: 'one', custom: 'one', edgeMap: {} } },
+describe('graph', () => {
+  describe('#nodeFactory', () => {
+    test('composes models into a custom Node type', () => {
+      const Custom = nodeFactory([
+        edgeMapFactory(() => Custom),
+        t.model({ custom: t.string }),
+      ])
+
+      expect(isType(Custom)).toBe(true)
+
+      const keys = Object.keys(Custom.properties)
+
+      expect(keys).toContain('edgeMap')
+      expect(keys).toContain('custom')
+      expect(keys).toContain('id')
     })
   })
 
-  test('supports relationships with custom models', () => {
-    const Node = nodeFactory(() => t.union(Node, LabelNode))
-    const LabelNode = nodeFactory(() => t.union(Node, LabelNode), [Label])
-    const { Graph } = graphFactory({ Node, Label: LabelNode })
+  describe('#edgeMapFactory', () => {
+    const Item = t.compose(
+      t.model({
+        id: t.identifier,
+      }),
+      edgeMapFactory((): IAnyModelType => Item),
+    )
 
-    const graph = Graph.create()
+    const Container = t.model({
+      items: t.map(Item),
+    })
 
-    const one = graph.createNode()
-    const two = graph.createNode()
+    test('#addEdge stores a tagged reference to a target', () => {
+      const box = Container.create({
+        items: {
+          one: { id: 'one' },
+          two: { id: 'two' },
+        },
+      })
 
-    two.addEdge('side', one)
-    expect(graph.Node.get(two.id).edgeMap.get('side')?.[0]).toBe(one)
+      const one = box.items.get('one')
+      const two = box.items.get('two')
 
-    const potato = graph.createNode('Label', { label: 'potato' })
-    one.addEdge('item', potato)
-    expect(graph.Node.get(one.id).edgeMap.get('item')?.[0]).toBe(potato)
+      one?.addEdge('next', two)
+      two?.addEdge('prev', one)
 
-    potato.addEdge('inside', potato)
-    expect(potato.edgeMap.get('inside')?.[0]).toBe(potato)
+      expect(getSnapshot(box)).toStrictEqual({
+        items: {
+          one: { id: 'one', edgeMap: { next: ['two'] } },
+          two: { id: 'two', edgeMap: { prev: ['one'] } },
+        },
+      })
+    })
+
+    test('#hasEdge returns a boolean indicating whether a stored tagged reference exists', () => {
+      const box = Container.create({
+        items: {
+          one: { id: 'one', edgeMap: { next: ['two'] } },
+          two: { id: 'two' },
+        },
+      })
+
+      const one = box.items.get('one')
+      const two = box.items.get('two')
+
+      expect(one.hasEdge('next', two)).toBe(true)
+      expect(two.hasEdge('prev', one)).toBe(false)
+    })
+
+    describe('#removeEdge', () => {
+      test('removes the first stored tagged reference to a target', () => {
+        const box = Container.create({
+          items: {
+            one: { id: 'one', edgeMap: { next: ['two'] } },
+            two: { id: 'two', edgeMap: { prev: ['one'] } },
+          },
+        })
+
+        const one = box.items.get('one')
+        const two = box.items.get('two')
+
+        one.removeEdge('next', two)
+
+        expect(getSnapshot(box).items).toStrictEqual({
+          one: { id: 'one', edgeMap: { next: [] } },
+          two: { id: 'two', edgeMap: { prev: ['one'] } },
+        })
+
+        two.removeEdge('prev', one)
+
+        expect(getSnapshot(box).items).toStrictEqual({
+          one: { id: 'one', edgeMap: { next: [] } },
+          two: { id: 'two', edgeMap: { prev: [] } },
+        })
+      })
+
+      test("throws an exception when an edge ref isn't found", () => {
+        const box = Container.create({
+          items: {
+            one: { id: 'one' },
+          },
+        })
+
+        const one = box.items.get('one')
+
+        expect(() => one.removeEdge('next', one)).toThrowErrorMatchingSnapshot()
+      })
+    })
   })
 
-  // test.skip('#createTypeConfig creates and stores TypeConfig instances', () => {
-  //   // graph.createTypeConfig([
-  //   //   {
-  //   //     name: 'Test',
-  //   //     props: [['label', 'string']],
-  //   //   },
-  //   // ])
-  //   return
-  // })
+  describe('#graphFactory', () => {
+    test('supports a custom base Node model', () => {
+      const Node = nodeFactory([
+        t.model({ custom: t.string }),
+        edgeMapFactory(() => Node),
+      ])
+      const Graph = graphFactory({ Node })
+      expect(
+        getSnapshot(
+          Graph.create({
+            Node: { one: { id: 'one', custom: 'one' } },
+          }),
+        ),
+      ).toStrictEqual({
+        Node: { one: { id: 'one', custom: 'one', edgeMap: {} } },
+      })
+    })
 
-  // test.skip('#recompose produces a new graph with configured types', () => {
-  //   const Node = nodeFactory(() => Node)
-  //   const { Graph } = graphFactory({ Node })
+    test('supports relationships with custom models', () => {
+      const Node = nodeFactory(edgeMapFactory(() => t.union(Node, LabelNode)))
+      const LabelNode = nodeFactory([
+        Label,
+        edgeMapFactory(() => t.union(Node, LabelNode)),
+      ])
+      const Graph = graphFactory({ Node, Label: LabelNode })
 
-  //   const graph = Graph.create({
-  //     nodesById: {
-  //       one: {
-  //         id: 'one',
-  //       },
-  //     },
-  //     typesById: {
-  //       Custom: {
-  //         name: 'Custom',
-  //         compose: ['Node'],
-  //         props: [['custom', 'string']],
-  //       },
-  //     },
-  //   })
+      const graph = Graph.create()
+      const one = graph.createNode()
+      const two = graph.createNode()
 
-  //   const newGraph = graph.recompose()
-  //   const custom = newGraph.createNode('Custom', { custom: 'sure' })
-  //   newGraph.nodesById.get('one').addEdge('out', custom)
-  // })
+      two.addEdge('side', one)
+      expect(graph.Node.get(two.id).edgeMap.get('side')?.[0]).toBe(one)
+
+      const potato = graph.createNode('Label', { label: 'potato' })
+      one.addEdge('item', potato)
+      expect(graph.Node.get(one.id).edgeMap.get('item')?.[0]).toBe(potato)
+
+      potato.addEdge('inside', potato)
+      expect(potato.edgeMap.get('inside')?.[0]).toBe(potato)
+    })
+  })
 })

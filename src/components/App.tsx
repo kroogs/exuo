@@ -17,14 +17,12 @@ const Route: React.FunctionComponent<Props> = ({
   ...rest
 }) => <Component {...rest} />
 
-const App: React.FunctionComponent = () => {
-  const graph = useStore(store => store.graph)
-  return (
+const App: React.FunctionComponent = () =>
+  useStore(graph => (
     <Router>
       <Route path="/" component={() => <RootRegion graph={graph} />} />
       <Route path="/settings" component={Settings} />
     </Router>
-  )
-}
+  ))
 
 export default App

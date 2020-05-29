@@ -14,5 +14,3 @@ export const Label = t
       self.label = label
     },
   }))
-
-export default Label

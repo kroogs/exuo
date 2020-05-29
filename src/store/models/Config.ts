@@ -12,6 +12,7 @@ const Basic = t.union(
   t.late((): IAnyType => t.array(Basic)),
 )
 
+// set and setItem?
 export const Config = t
   .model('Config', {
     name: t.maybe(t.string),
@@ -22,5 +23,3 @@ export const Config = t
       self.items.set(key, value)
     },
   }))
-
-export default Config

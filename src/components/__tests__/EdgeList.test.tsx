@@ -10,9 +10,9 @@ import EdgeList from '../EdgeList'
 import { graphFactory, Node } from 'store/models'
 
 let nextId = 0
-const idGenerator = (): string => String(++nextId)
+const makeId = (): string => String(++nextId)
 
-const { Graph } = graphFactory({ Node }, { idGenerator })
+const Graph = graphFactory({ Node }, { makeId })
 
 test('Renders a list of associated nodes', () => {
   const graph = Graph.create()

@@ -15,7 +15,7 @@ export type EventLogOptions = Omit<SnapshotIn<typeof Event>, 'date'> & {
   replace?: boolean
 }
 
-export const Log = t
+export const EventLog = t
   .model('EventLog', {
     eventLog: t.map(t.array(Event)),
   })
@@ -36,5 +36,3 @@ export const Log = t
       })
     },
   }))
-
-export default Log

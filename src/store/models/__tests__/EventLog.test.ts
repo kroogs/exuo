@@ -5,7 +5,7 @@
 
 import { getSnapshot } from 'mobx-state-tree'
 
-import EventLog from '../EventLog'
+import { EventLog } from '../EventLog'
 
 describe('EventLog', () => {
   describe('#logEvent', () => {
