@@ -17,14 +17,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface PropertyListProps {
+interface PropListProps {
   model: IAnyStateTreeNode | null
   options?: Partial<{
     groupBy: null
   }>
 }
 
-export const PropertyList: React.FunctionComponent<PropertyListProps> = props => {
+const PropList: React.FunctionComponent<PropListProps> = props => {
   const classes = useStyles()
 
   return useObserver(() => {
@@ -57,4 +57,4 @@ export const PropertyList: React.FunctionComponent<PropertyListProps> = props =>
   })
 }
 
-export default PropertyList
+export default PropList

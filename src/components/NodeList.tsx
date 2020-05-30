@@ -31,7 +31,7 @@ interface NodeListProps {
 
 const getLabel = (item: IAnyStateTreeNode): string => item.label ?? item.id
 
-export const NodeList: React.FunctionComponent<NodeListProps> = ({
+const NodeList: React.FunctionComponent<NodeListProps> = ({
   nodes,
   onSelect,
 }) => {

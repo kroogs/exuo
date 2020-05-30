@@ -31,7 +31,7 @@ interface EdgeListProps {
 
 const getLabel = (item: IAnyStateTreeNode): string => item.label ?? item.id
 
-export const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
+const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
   const classes = useStyles()
 
   return useObserver(() => {

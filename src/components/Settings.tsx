@@ -6,7 +6,7 @@
 import React from 'react'
 import { Link } from '@reach/router'
 
-export const Settings: React.FunctionComponent = () => (
+const Settings: React.FunctionComponent = () => (
   <>
     <Link to="/">Root</Link>
     <Link to="/settings">Settings</Link>

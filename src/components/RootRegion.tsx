@@ -10,7 +10,7 @@ import { useObserver } from 'mobx-react-lite'
 import { Instance } from 'mobx-state-tree'
 
 import { Graph, Node, useStore } from 'store'
-import { EdgeList } from './EdgeList'
+import EdgeList from './EdgeList'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,8 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const RootRegion: React.FunctionComponent = () => {
-  const graph = useStore(graph => graph)
+const RootRegion: React.FunctionComponent = () => {
   const classes = useStyles()
   const [activeNodes, setActiveNodes] = React.useState<
     Array<Instance<typeof Node>>
@@ -52,46 +51,47 @@ export const RootRegion: React.FunctionComponent = () => {
     setActiveNodes([...activeNodes, node])
   }
 
-  const Pane: React.FC<{ node: Instance<typeof Node> }> = ({
-    children,
-    node,
-  }) => {
-    const [createText, setCreateText] = React.useState('')
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
-      event.preventDefault()
-      if (createText) {
-        const newNode = graph.createNode('Node', { label: createText })
-        node.addEdge('child', newNode)
-        setCreateText('')
+  return useStore(graph => {
+    // Pane shouldn't be here, hack
+    const Pane: React.FC<{ node: Instance<typeof Node> }> = ({
+      children,
+      node,
+    }) => {
+      const [createText, setCreateText] = React.useState('')
+      const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
+        event.preventDefault()
+        if (createText) {
+          const newNode = graph.createNode('Node', { label: createText })
+          node.addEdge('child', newNode)
+          setCreateText('')
+        }
       }
+
+      return (
+        <Box className={classes.pane}>
+          <Box className={classes.addItem}>
+            <Typography className={classes.heading} variant="h5">
+              {node.label}
+            </Typography>
+            <form onSubmit={handleSubmit} noValidate autoComplete="off">
+              <Input
+                onChange={e => setCreateText(e.target.value)}
+                value={createText}
+                disableUnderline
+                fullWidth
+                placeholder="Create Item"
+              />
+            </form>
+          </Box>
+          {children}
+        </Box>
+      )
     }
 
-    return (
-      <Box className={classes.pane}>
-        <Box className={classes.addItem}>
-          <Typography className={classes.heading} variant="h5">
-            {node.label}
-          </Typography>
-          <form onSubmit={handleSubmit} noValidate autoComplete="off">
-            <Input
-              onChange={e => setCreateText(e.target.value)}
-              value={createText}
-              disableUnderline
-              fullWidth
-              placeholder="Create Item"
-            />
-          </form>
-        </Box>
-        {children}
-      </Box>
-    )
-  }
-
-  return useObserver(() => {
     const rootNodeId = graph.Config.get('graph').items.get('rootNodeId')
     const rootNode = graph.Node.get(rootNodeId)
 
-    console.log(rootNode.label)
+    console.log('RootRegion render')
 
     return (
       <Box
