@@ -9,4 +9,4 @@ import { mount } from 'enzyme'
 import EdgeList from '../EdgeList'
 import { graphFactory, Node } from 'store/graph'
 
-test.skip('PropList renders', () => {})
+test.skip('Settings renders', () => {})

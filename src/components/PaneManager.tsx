@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-const RootRegion: React.FunctionComponent = () => {
+const PaneManager: React.FunctionComponent = () => {
   const classes = useStyles()
   const [activeNodes, setActiveNodes] = React.useState<
     Array<Instance<typeof Node>>
@@ -91,7 +91,7 @@ const RootRegion: React.FunctionComponent = () => {
     const rootNodeId = graph.Config.get('graph').items.get('rootNodeId')
     const rootNode = graph.Node.get(rootNodeId)
 
-    console.log('RootRegion render')
+    console.log('PaneManager render')
 
     return (
       <Box
@@ -110,4 +110,4 @@ const RootRegion: React.FunctionComponent = () => {
   })
 }
 
-export default RootRegion
+export default PaneManager

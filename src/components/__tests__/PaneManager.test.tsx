@@ -7,19 +7,13 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { types } from 'mobx-state-tree'
 
-import RootRegion from '../RootRegion'
+import PaneManager from '../PaneManager'
 import { StoreProvider, initStore } from 'store'
 
 test('Renders a basic graph', () => {
   const graph = initStore()
   const first = graph.createNode('Node', { id: '1' })
   const last = graph.createNode('Node', { id: '2' })
-
-  graph.createNode('Config', {
-    id: 'graph',
-    name: 'Graph',
-    items: { rootNodeId: first.id },
-  })
 
   let prev = null
 
@@ -41,7 +35,7 @@ test('Renders a basic graph', () => {
   expect(
     mount(
       <StoreProvider>
-        <RootRegion />
+        <PaneManager />
       </StoreProvider>,
     ),
   ).toMatchSnapshot()
