@@ -7,7 +7,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { types as t } from 'mobx-state-tree'
 
-import PropertyList from '../PropertyList'
+import PropList from '../PropList'
 
 test('Renders a list of properties', () => {
   const Model = t.model({
@@ -22,5 +22,5 @@ test('Renders a list of properties', () => {
     three: true,
   })
 
-  expect(shallow(<PropertyList model={instance} />)).toMatchSnapshot()
+  expect(shallow(<PropList model={instance} />)).toMatchSnapshot()
 })
