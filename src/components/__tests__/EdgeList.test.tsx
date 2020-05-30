@@ -7,7 +7,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 
 import EdgeList from '../EdgeList'
-import { graphFactory, Node } from 'store/models'
+import { graphFactory, Node } from 'store/graph'
 
 let nextId = 0
 const makeId = (): string => String(++nextId)

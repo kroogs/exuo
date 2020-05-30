@@ -4,25 +4,27 @@
  * Copyright © 2020 Ty Dira */
 
 import React from 'react'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
+import { types } from 'mobx-state-tree'
 
 import RootRegion from '../RootRegion'
-import { graphFactory, Node } from 'store/models'
-
-let nextId = 0
-const idGenerator = (): string => String(++nextId)
-
-const { Graph } = graphFactory({ Node }, { idGenerator })
+import { StoreProvider, initStore } from 'store'
 
 test('Renders a basic graph', () => {
-  const graph = Graph.create()
-  const first = graph.createNode()
-  const last = graph.createNode()
+  const graph = initStore()
+  const first = graph.createNode('Node', { id: '1' })
+  const last = graph.createNode('Node', { id: '2' })
+
+  graph.createNode('Config', {
+    id: 'graph',
+    name: 'Graph',
+    items: { rootNodeId: first.id },
+  })
 
   let prev = null
 
-  for (let i = 0; i < 5; i++) {
-    const node = graph.createNode()
+  for (let i = 6; i < 9; i++) {
+    const node = graph.createNode('Node', { id: String(i) })
 
     node.addEdge('last', last)
     node.addEdge('first', first)
@@ -36,5 +38,11 @@ test('Renders a basic graph', () => {
     prev = node
   }
 
-  expect(shallow(<RootRegion graph={graph} />)).toMatchSnapshot()
+  expect(
+    mount(
+      <StoreProvider>
+        <RootRegion />
+      </StoreProvider>,
+    ),
+  ).toMatchSnapshot()
 })

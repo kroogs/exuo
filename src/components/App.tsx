@@ -6,7 +6,6 @@
 import React from 'react'
 import { RouteComponentProps, Router } from '@reach/router'
 
-import { useStore } from 'store'
 import RootRegion from './RootRegion'
 import Settings from './Settings'
 
@@ -17,12 +16,11 @@ const Route: React.FunctionComponent<Props> = ({
   ...rest
 }) => <Component {...rest} />
 
-const App: React.FunctionComponent = () =>
-  useStore(graph => (
-    <Router>
-      <Route path="/" component={() => <RootRegion graph={graph} />} />
-      <Route path="/settings" component={Settings} />
-    </Router>
-  ))
+const App: React.FunctionComponent = () => (
+  <Router>
+    <Route path="/" component={() => <RootRegion />} />
+    <Route path="/settings" component={Settings} />
+  </Router>
+)
 
 export default App

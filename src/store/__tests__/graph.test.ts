@@ -11,7 +11,6 @@ import {
   isType,
 } from 'mobx-state-tree'
 
-import { Label } from '../Label'
 import { nodeFactory, edgeMapFactory, graphFactory } from '../Graph'
 
 describe('graph', () => {
@@ -141,6 +140,7 @@ describe('graph', () => {
     })
 
     test('supports relationships with custom models', () => {
+      const Label = t.model({ label: t.string })
       const Node = nodeFactory(edgeMapFactory(() => t.union(Node, LabelNode)))
       const LabelNode = nodeFactory([
         Label,

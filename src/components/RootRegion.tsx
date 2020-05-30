@@ -9,7 +9,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { useObserver } from 'mobx-react-lite'
 import { Instance } from 'mobx-state-tree'
 
-import { Graph, Node } from 'store'
+import { Graph, Node, useStore } from 'store'
 import { EdgeList } from './EdgeList'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -41,13 +41,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface RootRegionProps {
-  graph: Instance<typeof Graph>
-}
-
-export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
-  graph,
-}) => {
+export const RootRegion: React.FunctionComponent = () => {
+  const graph = useStore(graph => graph)
   const classes = useStyles()
   const [activeNodes, setActiveNodes] = React.useState<
     Array<Instance<typeof Node>>
@@ -93,16 +88,10 @@ export const RootRegion: React.FunctionComponent<RootRegionProps> = ({
   }
 
   return useObserver(() => {
-    if (!graph) {
-      throw Error('no graph!')
-    }
+    const rootNodeId = graph.Config.get('graph').items.get('rootNodeId')
+    const rootNode = graph.Node.get(rootNodeId)
 
-    // TODO
-    // a composed graph type with a View node type that stores
-    // colors, sizes, history, etc. per view. Then we won't need
-    // a rootNode.
-
-    const allNodes = Array.from(graph.Node.values()).reverse()
+    console.log(rootNode.label)
 
     return (
       <Box

@@ -7,7 +7,8 @@ import React from 'react'
 import { types as t, Instance } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 
-import { graphFactory, nodeFactory, edgeMapFactory } from './models'
+import { graphFactory, nodeFactory, edgeMapFactory } from './graph'
+
 import * as models from './models'
 
 export const Config = nodeFactory(models.Config)
@@ -19,9 +20,6 @@ export const Graph = graphFactory({ Node, Config })
 
 export const initStore = (): Instance<typeof Graph> => {
   const graph = Graph.create()
-
-  // store.graph.persist() TODO Causes error when adding edges
-
   const root = graph.createNode('Node', { label: 'Lists' })
   graph.createNode('Config', {
     id: 'graph',
@@ -36,14 +34,20 @@ export const storeContext = React.createContext<Instance<typeof Graph> | null>(
   null,
 )
 
-export const StoreProvider: React.FunctionComponent = ({ children }) =>
-  React.createElement(storeContext.Provider, { value: initStore() }, children)
+export const StoreProvider: React.FunctionComponent<{
+  value?: Instance<typeof Graph>
+}> = ({ children, value }) =>
+  React.createElement(
+    storeContext.Provider,
+    { value: value ?? initStore() },
+    children,
+  )
 
 export function useStore<S>(selector: (s: Instance<typeof Graph>) => S): S {
   const store = React.useContext(storeContext)
 
   if (!store) {
-    throw Error('Cannot use store before setup.')
+    throw Error('Cannot use store before setup')
   }
 
   return useObserver(() => selector(store))

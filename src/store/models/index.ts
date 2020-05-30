@@ -5,5 +5,4 @@
 
 export * from './Config'
 export * from './EventLog'
-export * from './Graph'
 export * from './Label'
