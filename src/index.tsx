@@ -6,16 +6,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import 'mobx-react-lite/batchingForReactDom'
-import { ThemeProvider } from '@material-ui/core/styles'
-import App from './components/App'
 import * as serviceWorker from './serviceWorker'
+
+import App from './components/App'
 import { StoreProvider } from './store'
-import theme from './theme'
+import { ThemeProvider } from './theme'
 
 ReactDOM.render(
   <React.StrictMode>
     <StoreProvider>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider>
         <App />
       </ThemeProvider>
     </StoreProvider>
