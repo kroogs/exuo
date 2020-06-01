@@ -4,31 +4,24 @@
  * Copyright © 2020 Ty Dira */
 
 import React from 'react'
-import { Box, Input, Typography } from '@material-ui/core'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import { useObserver } from 'mobx-react-lite'
-import { Instance } from 'mobx-state-tree'
+import { Container } from '@material-ui/core'
 
-import { Graph, Node, useStore } from 'store'
-import EdgeList from './EdgeList'
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      backgroundColor: theme.palette.background.default,
-      color: theme.palette.text.primary,
-    },
-  }),
-)
+import { useStore } from 'store'
+import PaneManager from './PaneManager'
 
 const GraphViewer: React.FunctionComponent = () => {
-  const classes = useStyles()
-
   return useStore(graph => {
     const rootNodeId = graph.Config.get('graph').items.get('rootNodeId')
     const rootNode = graph.Node.get(rootNodeId)
+    const nodes = [rootNode]
 
-    return <Box className={classes.root}>rootregion</Box>
+    console.log('GraphViewer render')
+
+    return (
+      <Container maxWidth={'xl'} disableGutters>
+        <PaneManager nodes={nodes} />
+      </Container>
+    )
   })
 }
 

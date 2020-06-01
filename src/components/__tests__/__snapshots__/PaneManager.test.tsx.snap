@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders a basic graph 1`] = `
+<StoreProvider>
+  <PaneManager>
+    <Styled(MuiBox)
+      className="makeStyles-root-1"
+      display="flex"
+      flexDirection="row"
+      flexWrap="nowrap"
+    >
+      <div
+        className="MuiBox-root MuiBox-root-6 makeStyles-root-1"
+      />
+    </Styled(MuiBox)>
+  </PaneManager>
+</StoreProvider>
+`;

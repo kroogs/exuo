@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   createMuiTheme,
-  ThemeProvider as MUIThemeProvider,
+  ThemeProvider as MuiThemeProvider,
 } from '@material-ui/core/styles'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -27,11 +27,14 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
   const theme = React.useMemo(
     () =>
       createMuiTheme({
+        typography,
         palette: {
           ...palette,
           type: prefersDarkMode ? 'dark' : 'light',
+          background: {
+            default: prefersDarkMode ? '#000000' : '#ffffff',
+          },
         },
-        typography,
         props: {
           MuiButtonBase: {
             disableRipple: true,
@@ -42,9 +45,9 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
   )
 
   return (
-    <MUIThemeProvider theme={theme}>
+    <MuiThemeProvider theme={theme}>
       <CssBaseline />
       {children}
-    </MUIThemeProvider>
+    </MuiThemeProvider>
   )
 }

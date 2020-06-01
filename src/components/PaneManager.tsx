@@ -4,20 +4,17 @@
  * Copyright © 2020 Ty Dira */
 
 import React from 'react'
-import { Box, Input, Typography } from '@material-ui/core'
+import { Grid, TextField, Box, Input, Typography } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { useObserver } from 'mobx-react-lite'
 import { Instance } from 'mobx-state-tree'
 
-import { Graph, Node, useStore } from 'store'
+import { Graph, Node } from 'store'
 import EdgeList from './EdgeList'
+import CreateNode from './CreateNode'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      backgroundColor: theme.palette.background.default,
-      color: theme.palette.text.primary,
-    },
     pane: {
       overflowY: 'auto',
       maxHeight: '100vh',
@@ -41,71 +38,36 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-const PaneManager: React.FunctionComponent = () => {
-  const classes = useStyles()
-  const [activeNodes, setActiveNodes] = React.useState<
-    Array<Instance<typeof Node>>
-  >([])
+type MakeCreateHandler = (
+  p: Instance<typeof Node>,
+) => (c: Instance<typeof Node>) => void
 
-  const addActiveNode = (node: Instance<typeof Node>): void => {
-    setActiveNodes([...activeNodes, node])
+interface PaneManagerProps {
+  nodes: Array<Instance<typeof Node>>
+}
+
+const PaneManager: React.FunctionComponent<PaneManagerProps> = ({ nodes }) => {
+  const classes = useStyles()
+
+  const makeCreateHandler: MakeCreateHandler = parent => child => {
+    parent.addEdge('child', child)
+    child.addEdge('parent', parent)
   }
 
-  return useStore(graph => {
-    // Pane shouldn't be here, hack
-    const Pane: React.FC<{ node: Instance<typeof Node> }> = ({
-      children,
-      node,
-    }) => {
-      const [createText, setCreateText] = React.useState('')
-      const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
-        event.preventDefault()
-        if (createText) {
-          const newNode = graph.createNode('Node', { label: createText })
-          node.addEdge('child', newNode)
-          setCreateText('')
-        }
-      }
-
-      return (
-        <Box className={classes.pane}>
-          <Box className={classes.addItem}>
+  return useObserver(() => {
+    console.log('PaneManager render')
+    return (
+      <Grid container spacing={0}>
+        {nodes.map(node => (
+          <Grid item key={node.id}>
             <Typography className={classes.heading} variant="h5">
               {node.label}
             </Typography>
-            <form onSubmit={handleSubmit} noValidate autoComplete="off">
-              <Input
-                onChange={e => setCreateText(e.target.value)}
-                value={createText}
-                disableUnderline
-                fullWidth
-                placeholder="Create Item"
-              />
-            </form>
-          </Box>
-          {children}
-        </Box>
-      )
-    }
-
-    const rootNodeId = graph.Config.get('graph').items.get('rootNodeId')
-    const rootNode = graph.Node.get(rootNodeId)
-
-    console.log('PaneManager render')
-
-    return (
-      <Box
-        className={classes.root}
-        display="flex"
-        flexDirection="row"
-        flexWrap="nowrap"
-      >
-        {activeNodes.map(node => (
-          <Pane key={node.id} node={node}>
-            <EdgeList node={node} onSelect={addActiveNode} />
-          </Pane>
+            <CreateNode onCreate={makeCreateHandler(node)} />
+            <EdgeList node={node} />
+          </Grid>
         ))}
-      </Box>
+      </Grid>
     )
   })
 }

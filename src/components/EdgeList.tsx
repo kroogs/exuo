@@ -4,7 +4,15 @@
  * Copyright © 2020 Ty Dira */
 
 import React from 'react'
-import { List, ListItem, ListItemText, ListSubheader } from '@material-ui/core'
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListSubheader,
+  ListItemIcon,
+  Divider,
+} from '@material-ui/core'
+import * as icons from '@material-ui/icons'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { useObserver } from 'mobx-react-lite'
 import { IAnyModelType, IAnyStateTreeNode, Instance } from 'mobx-state-tree'
@@ -15,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
     listSection: {},
     listItem: {},
     itemText: { margin: 0 },
-    group: { padding: theme.spacing(0) },
+    group: { padding: 0 },
     groupHeader: {
       color: 'inherit',
       fontWeight: 'bold',
@@ -29,41 +37,55 @@ interface EdgeListProps {
   onSelect?: React.MouseEventHandler
 }
 
-const getLabel = (item: IAnyStateTreeNode): string => item.label ?? item.id
-
 const EdgeList: React.FunctionComponent<EdgeListProps> = ({ node }) => {
   const classes = useStyles()
+  const [selectedId, setSelectedId] = React.useState('')
+
+  const handleListItemClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    id: string,
+  ): void => {
+    setSelectedId(id)
+  }
 
   return useObserver(() => {
     const edgeKeys = Array.from(node.edgeMap.keys())
+
     return (
-      <List className={classes.root} dense disablePadding subheader={<li />}>
-        {edgeKeys.map(key => (
-          <li key={`edge-${key}`} className={classes.listSection}>
-            <ul className={classes.group}>
-              {edgeKeys.length > 1 && (
-                <ListSubheader
-                  disableGutters
-                  className={classes.groupHeader}
-                >{`${key}`}</ListSubheader>
-              )}
-              {node.edgeMap.get(key)?.map((item: IAnyStateTreeNode) => (
-                <ListItem
-                  dense
-                  disableGutters
-                  key={`edge-${key}-${item.id}`}
-                  className={classes.listItem}
-                >
-                  <ListItemText
-                    primary={getLabel(item)}
-                    className={classes.itemText}
-                  />
-                </ListItem>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </List>
+      <>
+        <List disablePadding aria-label="edge list" subheader={<li />}>
+          {edgeKeys.map(key => (
+            <li key={`edge-${key}`} className={classes.listSection}>
+              <ul className={classes.group}>
+                {edgeKeys.length > 1 && (
+                  <ListSubheader
+                    className={classes.groupHeader}
+                  >{`${key}`}</ListSubheader>
+                )}
+                {node.edgeMap
+                  .get(key)
+                  ?.reverse()
+                  .map((item: IAnyStateTreeNode) => (
+                    <ListItem
+                      dense
+                      button
+                      disableGutters
+                      onClick={event => handleListItemClick(event, item.id)}
+                      selected={selectedId === item.id}
+                      key={`edge-${key}-${item.id}`}
+                      className={classes.listItem}
+                    >
+                      <ListItemText
+                        primary={item.label ?? item.id}
+                        className={classes.itemText}
+                      />
+                    </ListItem>
+                  ))}
+              </ul>
+            </li>
+          ))}
+        </List>
+      </>
     )
   })
 }

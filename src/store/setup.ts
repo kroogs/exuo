@@ -8,7 +8,6 @@ import { types as t, Instance } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 
 import { graphFactory, nodeFactory, edgeMapFactory } from './graph'
-
 import * as models from './models'
 
 export const Config = nodeFactory(models.Config)
@@ -21,6 +20,7 @@ export const Graph = graphFactory({ Node, Config })
 export const initStore = (): Instance<typeof Graph> => {
   const graph = Graph.create()
   const root = graph.createNode('Node', { label: 'Lists' })
+
   graph.createNode('Config', {
     id: 'graph',
     name: 'Graph',
