@@ -19,7 +19,7 @@ import Dexie from 'dexie'
 import { graphFactory, nodeFactory, edgeMapFactory } from './graph'
 import * as models from './models'
 
-async function persist(graph: Instance<typeof Graph>): Promise<void> {
+export async function persist(graph: Instance<typeof Graph>): Promise<void> {
   const db = new Dexie('default')
   const tableNames = Object.keys(getMembers(graph).properties)
   const tableConfig = Object.fromEntries(tableNames.map(name => [name, 'id']))
