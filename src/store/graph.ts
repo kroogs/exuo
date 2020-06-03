@@ -4,14 +4,11 @@
  * Copyright © 2020 Ty Dira */
 
 import {
-  applySnapshot,
-  getSnapshot,
   IAnyModelType,
+  IAnyStateTreeNode,
   IAnyType,
   Instance,
-  getType,
   isIdentifierType,
-  onPatch,
   SnapshotIn,
   isModelType,
   types,
@@ -42,8 +39,12 @@ export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
       edgeMap: types.map(types.array(types.reference(types.late(getEdgeType)))),
     })
     .actions(self => ({
-      hasEdge(tag: string, target: Instance<IAnyModelType>): boolean {
-        return Boolean(self.edgeMap.get(tag)?.includes(target))
+      hasEdge(tag: string, target?: Instance<IAnyModelType>): boolean {
+        if (target) {
+          return Boolean(self.edgeMap.get(tag)?.includes(target))
+        } else {
+          return Boolean(self.edgeMap.get(tag)?.length)
+        }
       },
     }))
     .actions(self => ({
@@ -71,9 +72,14 @@ export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
 
 export const Node = nodeFactory(edgeMapFactory(() => Node))
 
+interface GraphFactoryOptions {
+  makeId?: () => string
+  adapters?: Array<(s: IAnyStateTreeNode) => void>
+}
+
 export const graphFactory = (
   nodeModels: ModelTable = { Node },
-  options = { makeId: () => uuid() },
+  options: GraphFactoryOptions = {},
 ): IAnyModelType =>
   types
     .model(
@@ -92,6 +98,15 @@ export const graphFactory = (
       ),
     )
     .actions(self => ({
+      afterCreate() {
+        if (options.adapters) {
+          options.adapters.reduce(async (prev, next) => {
+            await prev
+            return next(self)
+          }, Promise.resolve())
+        }
+      },
+
       createNode(
         modelName = 'Node',
         props: Omit<SnapshotIn<IAnyModelType>, 'id'> = {},
@@ -101,7 +116,7 @@ export const graphFactory = (
         }
 
         const node = nodeModels[modelName].create({
-          id: options.makeId(),
+          id: options.makeId?.() ?? uuid(),
           ...props,
         })
 
