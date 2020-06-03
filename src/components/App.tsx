@@ -6,7 +6,7 @@
 import React from 'react'
 import { RouteComponentProps, Router } from '@reach/router'
 
-import GraphViewer from './GraphViewer'
+import PaneManager from './PaneManager'
 import Settings from './Settings'
 
 type Props = { component: React.FunctionComponent } & RouteComponentProps
@@ -18,7 +18,7 @@ const Route: React.FunctionComponent<Props> = ({
 
 const App: React.FunctionComponent = () => (
   <Router>
-    <Route path="/" component={() => <GraphViewer />} />
+    <Route path="/" component={() => <PaneManager />} />
     <Route path="/settings" component={Settings} />
   </Router>
 )

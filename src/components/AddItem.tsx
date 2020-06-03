@@ -5,45 +5,39 @@
 
 import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
 import InputBase from '@material-ui/core/InputBase'
-import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
 import AddIcon from '@material-ui/icons/Add'
-import DirectionsIcon from '@material-ui/icons/Directions'
-import { Instance } from 'mobx-state-tree'
+import { SnapshotIn } from 'mobx-state-tree'
 
-import { Node, useStore } from 'store'
+import { Node } from 'store'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      padding: 0,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
     },
-    input: {
-      margin: 0,
+    inputBase: {
       fontSize: theme.typography.fontSize,
     },
     iconButton: {
       padding: 0,
-    },
-    divider: {
-      height: 28,
-      margin: 4,
+      color: theme.palette.common.white,
+      backgroundColor: theme.palette.success.main,
     },
   }),
 )
 
-interface CreateNodeProps {
-  onCreate?: (node: Instance<typeof Node>) => void
+interface AddItemProps {
+  onSubmit: (node: SnapshotIn<typeof Node>) => void
 }
 
-export const CreateNode: React.FunctionComponent<CreateNodeProps> = ({
-  onCreate,
+export const AddItem: React.FunctionComponent<AddItemProps> = ({
+  onSubmit,
 }) => {
   const classes = useStyles()
-  const graph = useStore(graph => graph)
   const [createInputText, setCreateInputText] = React.useState('')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void =>
@@ -52,33 +46,36 @@ export const CreateNode: React.FunctionComponent<CreateNodeProps> = ({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
 
-    const node = graph.createNode('Node', { label: createInputText })
-    setCreateInputText('')
-
-    if (typeof onCreate === 'function') {
-      onCreate(node)
+    if (!createInputText) {
+      return
     }
+
+    onSubmit({ label: createInputText })
+    setCreateInputText('')
   }
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
       <InputBase
-        id="node-create-label"
+        placeholder="Add item"
+        inputProps={{ 'aria-label': 'item name' }}
         onChange={handleChange}
         value={createInputText}
-        className={classes.input}
-        placeholder="Add item"
-        inputProps={{ 'aria-label': 'add item' }}
+        className={classes.inputBase}
+        margin={'none'}
+        fullWidth
       />
-      <IconButton
-        type="submit"
-        className={classes.iconButton}
-        aria-label="search"
-      >
-        <AddIcon />
-      </IconButton>
+      {createInputText && (
+        <IconButton
+          type="submit"
+          aria-label="add item"
+          className={classes.iconButton}
+        >
+          <AddIcon />
+        </IconButton>
+      )}
     </form>
   )
 }
 
-export default CreateNode
+export default AddItem
