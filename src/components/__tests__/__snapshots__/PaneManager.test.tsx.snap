@@ -1,18 +1,136 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Renders a basic graph 1`] = `
-<StoreProvider>
-  <PaneManager>
-    <Styled(MuiBox)
-      className="makeStyles-root-1"
-      display="flex"
-      flexDirection="row"
-      flexWrap="nowrap"
-    >
-      <div
-        className="MuiBox-root MuiBox-root-6 makeStyles-root-1"
-      />
-    </Styled(MuiBox)>
-  </PaneManager>
+exports[`Renders a edge list panes from a graph 1`] = `
+<StoreProvider
+  value={
+    Object {
+      "Config": Object {},
+      "Node": Object {
+        "1": Object {
+          "edgeMap": Object {
+            "child": Array [
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+            ],
+          },
+          "id": "1",
+          "label": undefined,
+        },
+        "2": Object {
+          "edgeMap": Object {},
+          "id": "2",
+          "label": undefined,
+        },
+        "3": Object {
+          "edgeMap": Object {
+            "first": Array [
+              "1",
+            ],
+            "last": Array [
+              "2",
+            ],
+            "next": Array [
+              "4",
+            ],
+          },
+          "id": "3",
+          "label": undefined,
+        },
+        "4": Object {
+          "edgeMap": Object {
+            "first": Array [
+              "1",
+            ],
+            "last": Array [
+              "2",
+            ],
+            "next": Array [
+              "5",
+            ],
+            "prev": Array [
+              "3",
+            ],
+          },
+          "id": "4",
+          "label": undefined,
+        },
+        "5": Object {
+          "edgeMap": Object {
+            "first": Array [
+              "1",
+            ],
+            "last": Array [
+              "2",
+            ],
+            "next": Array [
+              "6",
+            ],
+            "prev": Array [
+              "4",
+            ],
+          },
+          "id": "5",
+          "label": undefined,
+        },
+        "6": Object {
+          "edgeMap": Object {
+            "first": Array [
+              "1",
+            ],
+            "last": Array [
+              "2",
+            ],
+            "next": Array [
+              "7",
+            ],
+            "prev": Array [
+              "5",
+            ],
+          },
+          "id": "6",
+          "label": undefined,
+        },
+        "7": Object {
+          "edgeMap": Object {
+            "first": Array [
+              "1",
+            ],
+            "last": Array [
+              "2",
+            ],
+            "next": Array [
+              "8",
+            ],
+            "prev": Array [
+              "6",
+            ],
+          },
+          "id": "7",
+          "label": undefined,
+        },
+        "8": Object {
+          "edgeMap": Object {
+            "first": Array [
+              "1",
+            ],
+            "last": Array [
+              "2",
+            ],
+            "prev": Array [
+              "7",
+            ],
+          },
+          "id": "8",
+          "label": undefined,
+        },
+      },
+    }
+  }
+>
+  <PaneManager />
 </StoreProvider>
 `;

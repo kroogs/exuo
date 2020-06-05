@@ -56,16 +56,17 @@ export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
         self.edgeMap.get(tag)?.push(target)
       },
 
-      getEdgeTag(tag: string): void | Array<Instance<IAnyModelType>> {
-        return self.edgeMap.get(tag)
-      },
-
       removeEdge(tag: string, target: Instance<IAnyModelType>): void {
         if (!self.hasEdge(tag, target)) {
           throw Error(`Node '${self}' has no '${tag}' edge for '${target}'`)
         }
 
         self.edgeMap.get(tag)?.remove(target)
+      },
+    }))
+    .views(self => ({
+      getEdgeTag(tag: string): void | Array<Instance<IAnyModelType>> {
+        return self.edgeMap.get(tag)
       },
     }))
 }
@@ -100,10 +101,14 @@ export const graphFactory = (
     .actions(self => ({
       afterCreate() {
         if (options.adapters) {
-          options.adapters.reduce(async (prev, next) => {
-            await prev
-            return next(self)
-          }, Promise.resolve())
+          options.adapters
+            .reduce(async (prev, next) => {
+              await prev
+              return next(self)
+            }, Promise.resolve())
+            .catch(error => {
+              throw Error(`Adapter failed: ${error}`)
+            })
         }
       },
 

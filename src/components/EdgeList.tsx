@@ -33,14 +33,14 @@ interface EdgeListProps {
     parent: Instance<typeof Node>,
     selected: Instance<typeof Node>,
   ) => void
-  mapKeyFilter?: Array<string>
+  excludeMapKeys?: Array<string>
   className?: string
 }
 
 const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   node,
   onSelect,
-  mapKeyFilter,
+  excludeMapKeys,
   className,
 }) => {
   const classes = useStyles()
@@ -49,8 +49,8 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
     const config = node.getEdgeTag('config')?.[0]
     let edgeKeys = Array.from(node.edgeMap.keys())
 
-    if (mapKeyFilter) {
-      edgeKeys = edgeKeys.filter(key => mapKeyFilter.indexOf(key as string))
+    if (excludeMapKeys) {
+      edgeKeys = edgeKeys.filter(key => !excludeMapKeys.includes(key as string))
     }
 
     return (

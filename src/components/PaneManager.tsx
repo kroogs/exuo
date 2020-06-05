@@ -14,7 +14,13 @@ import AddItem from './AddItem'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
+    root: {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
+      height: '100vh',
+    },
     paneHeader: {},
     paneBody: {
       overflowY: 'auto',
@@ -22,16 +28,19 @@ const useStyles = makeStyles((theme: Theme) =>
     pane: {
       display: 'flex',
       flexDirection: 'column',
-      maxHeight: '100vh',
+      maxHeight: '100%',
       minWidth: '200px',
+      maxWidth: '350px',
     },
     rootPane: {
+      backgroundColor: theme.palette.background.default,
       position: 'sticky',
       left: 0,
       zIndex: 9,
       overflowY: 'auto',
-      maxHeight: '100vh',
+      maxHeight: '100%',
       minWidth: '200px',
+      maxWidth: '350px',
     },
   }),
 )
@@ -45,20 +54,14 @@ const PaneManager: React.FunctionComponent = () => {
 
   return useStore(graph => {
     const rootNodeId = graph.Config.get('graph')?.items?.get('rootNodeId')
-
     if (!rootNodeId) {
       return <></> // Loading
     }
 
-    const rootNode = graph.Node.get(rootNodeId)
-    const selectedNodeId = rootNode
-      .getEdgeTag('config')?.[0]
-      ?.items.get('selectedNodeId')
-
-    let nodes = [rootNode]
-
-    if (selectedNodeId) {
-      nodes = nodes.concat()
+    const makeAddItemHandler: MakeAddItemHandler = parent => snapshot => {
+      const child = graph.createNode('Node', snapshot)
+      parent.addEdge('child', child)
+      child.addEdge('parent', parent)
     }
 
     const selectNodeHandler = (
@@ -75,20 +78,29 @@ const PaneManager: React.FunctionComponent = () => {
       config.set('selectedNodeId', selected.id)
     }
 
-    const makeAddItemHandler: MakeAddItemHandler = parent => snapshot => {
-      const child = graph.createNode('Node', snapshot)
-      parent.addEdge('child', child)
-      child.addEdge('parent', parent)
-    }
+    const rootNode = graph.Node.get(rootNodeId)
+    const nodes = [rootNode]
+    let currentNode = rootNode
 
-    // don't do nodes.map; recurse on selectedNodeId
+    for (let i = 0; i < 5; i++) {
+      const selectedNodeId = currentNode
+        .getEdgeTag('config')?.[0]
+        ?.items.get('selectedNodeId')
+
+      if (!selectedNodeId) {
+        break
+      }
+
+      currentNode = graph.Node.get(selectedNodeId)
+      nodes.push(currentNode)
+    }
 
     return (
       <Grid className={classes.root} container>
         {nodes.map((node, i) => (
           <Grid
             item
-            key={node.id}
+            key={i + node.id}
             className={i === 0 ? classes.rootPane : classes.pane}
           >
             <div className={classes.paneHeader}>
@@ -98,7 +110,7 @@ const PaneManager: React.FunctionComponent = () => {
             <EdgeList
               node={node}
               onSelect={selectNodeHandler}
-              mapKeyFilter={['config']}
+              excludeMapKeys={['config', 'parent']}
               className={classes.paneBody}
             />
           </Grid>

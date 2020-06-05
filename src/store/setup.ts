@@ -5,13 +5,12 @@
 
 import React from 'react'
 import {
-  types as t,
+  types,
   Instance,
   onPatch,
   getSnapshot,
   getMembers,
   applySnapshot,
-  IAnyStateTreeNode,
 } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 import Dexie from 'dexie'
@@ -33,19 +32,15 @@ export async function persist(graph: Instance<typeof Graph>): Promise<void> {
         .toArray()
         .then(rows => [name, Object.fromEntries(rows.map(r => [r.id, r]))]),
     ),
-  )
-    .then(resolved => {
-      applySnapshot(graph, Object.fromEntries(resolved))
-      onPatch(graph, patch => {
-        const [typeName, id] = patch.path.split('/').slice(1)
-        if (patch.op === 'add' || patch.op === 'replace') {
-          db.table(typeName).put(getSnapshot(graph[typeName].get(id)))
-        }
-      })
+  ).then(resolved => {
+    applySnapshot(graph, Object.fromEntries(resolved))
+    onPatch(graph, patch => {
+      const [typeName, id] = patch.path.split('/').slice(1)
+      if (patch.op === 'add' || patch.op === 'replace') {
+        db.table(typeName).put(getSnapshot(graph[typeName].get(id)))
+      }
     })
-    .catch(error => {
-      throw Error(error)
-    })
+  })
 }
 
 export async function initialize(graph: Instance<typeof Graph>): Promise<void> {
@@ -63,17 +58,14 @@ export async function initialize(graph: Instance<typeof Graph>): Promise<void> {
 export const Config = nodeFactory(models.Config)
 export const Node = nodeFactory([
   models.Label,
-  edgeMapFactory(() => t.union(Node, Config)),
+  edgeMapFactory(() => types.union(Node, Config)),
 ])
 export const Graph = graphFactory(
   { Node, Config },
   { adapters: [persist, initialize] },
 )
 
-export const storeContext = React.createContext<Instance<typeof Graph> | null>(
-  null,
-)
-
+export const storeContext = React.createContext<Instance<typeof Graph>>(null)
 export const StoreProvider: React.FunctionComponent<{
   value?: Instance<typeof Graph>
 }> = ({ children, value }) =>

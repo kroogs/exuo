@@ -7,17 +7,26 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { types } from 'mobx-state-tree'
 
+import { StoreProvider } from 'store'
+import * as models from 'store/models'
+import { nodeFactory, edgeMapFactory, graphFactory } from 'store/graph'
 import PaneManager from '../PaneManager'
-import { StoreProvider, initStore } from 'store'
 
-test('Renders a basic graph', () => {
-  const graph = initStore()
+export const Config = nodeFactory(models.Config)
+export const Node = nodeFactory([
+  models.Label,
+  edgeMapFactory(() => types.union(Node, Config)),
+])
+export const Graph = graphFactory({ Node, Config })
+
+test('Renders a edge list panes from a graph', () => {
+  const graph = Graph.create()
   const first = graph.createNode('Node', { id: '1' })
   const last = graph.createNode('Node', { id: '2' })
 
   let prev = null
 
-  for (let i = 6; i < 9; i++) {
+  for (let i = 3; i < 9; i++) {
     const node = graph.createNode('Node', { id: String(i) })
 
     node.addEdge('last', last)
@@ -34,7 +43,7 @@ test('Renders a basic graph', () => {
 
   expect(
     mount(
-      <StoreProvider>
+      <StoreProvider value={graph}>
         <PaneManager />
       </StoreProvider>,
     ),
