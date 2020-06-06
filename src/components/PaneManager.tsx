@@ -20,8 +20,14 @@ const useStyles = makeStyles((theme: Theme) =>
       flexWrap: 'nowrap',
       overflowX: 'auto',
       height: '100vh',
+      padding: theme.spacing(1),
     },
     paneHeader: {},
+    paneHeaderText: {
+      overflowX: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+    },
     paneBody: {
       overflowY: 'auto',
     },
@@ -29,18 +35,21 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       maxHeight: '100%',
-      minWidth: '200px',
-      maxWidth: '350px',
+      padding: theme.spacing(0, 1, 0, 1),
     },
     rootPane: {
       backgroundColor: theme.palette.background.default,
       position: 'sticky',
       left: 0,
       zIndex: 9,
-      overflowY: 'auto',
-      maxHeight: '100%',
-      minWidth: '200px',
-      maxWidth: '350px',
+    },
+    selectedPane: {
+      '& .Mui-selected': {
+        backgroundColor: theme.palette.primary.main,
+        '&:hover': {
+          backgroundColor: theme.palette.primary.light,
+        },
+      },
     },
   }),
 )
@@ -53,7 +62,8 @@ const PaneManager: React.FunctionComponent = () => {
   const classes = useStyles()
 
   return useStore(graph => {
-    const rootNodeId = graph.Config.get('graph')?.items?.get('rootNodeId')
+    const rootConfig = graph.Config.get('graph')
+    const rootNodeId = rootConfig?.get('rootNodeId')
     if (!rootNodeId) {
       return <></> // Loading
     }
@@ -75,6 +85,7 @@ const PaneManager: React.FunctionComponent = () => {
         parent.addEdge('config', config)
       }
 
+      rootConfig.set('selectedParentNodeId', parent.id)
       config.set('selectedNodeId', selected.id)
     }
 
@@ -95,16 +106,24 @@ const PaneManager: React.FunctionComponent = () => {
       nodes.push(currentNode)
     }
 
+    const selectedParentNodeId = rootConfig.get('selectedParentNodeId')
+
     return (
       <Grid className={classes.root} container>
         {nodes.map((node, i) => (
           <Grid
             item
             key={i + node.id}
-            className={i === 0 ? classes.rootPane : classes.pane}
+            className={[
+              classes.pane,
+              i === 0 ? classes.rootPane : '',
+              node.id === selectedParentNodeId ? classes.selectedPane : '',
+            ].join(' ')}
           >
             <div className={classes.paneHeader}>
-              <Typography variant="h5">{node.label}</Typography>
+              <Typography className={classes.paneHeaderText} variant="h5">
+                {node.label}
+              </Typography>
               <AddItem onSubmit={makeAddItemHandler(node)} />
             </div>
             <EdgeList

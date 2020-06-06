@@ -54,6 +54,7 @@ exports[`Renders a list of associated nodes 1`] = `
               disableGutters={true}
               key="edge-child-7"
               onClick={[Function]}
+              onDoubleClick={[Function]}
             >
               <ForwardRef(ListItem)
                 button={true}
@@ -76,6 +77,7 @@ exports[`Renders a list of associated nodes 1`] = `
                 dense={true}
                 disableGutters={true}
                 onClick={[Function]}
+                onDoubleClick={[Function]}
               >
                 <WithStyles(ForwardRef(ButtonBase))
                   className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -83,6 +85,7 @@ exports[`Renders a list of associated nodes 1`] = `
                   disabled={false}
                   focusVisibleClassName="Mui-focusVisible"
                   onClick={[Function]}
+                  onDoubleClick={[Function]}
                 >
                   <ForwardRef(ButtonBase)
                     className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -97,12 +100,14 @@ exports[`Renders a list of associated nodes 1`] = `
                     disabled={false}
                     focusVisibleClassName="Mui-focusVisible"
                     onClick={[Function]}
+                    onDoubleClick={[Function]}
                   >
                     <div
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
                       onBlur={[Function]}
                       onClick={[Function]}
+                      onDoubleClick={[Function]}
                       onDragLeave={[Function]}
                       onFocus={[Function]}
                       onKeyDown={[Function]}
@@ -234,6 +239,7 @@ exports[`Renders a list of associated nodes 1`] = `
               disableGutters={true}
               key="edge-child-6"
               onClick={[Function]}
+              onDoubleClick={[Function]}
             >
               <ForwardRef(ListItem)
                 button={true}
@@ -256,6 +262,7 @@ exports[`Renders a list of associated nodes 1`] = `
                 dense={true}
                 disableGutters={true}
                 onClick={[Function]}
+                onDoubleClick={[Function]}
               >
                 <WithStyles(ForwardRef(ButtonBase))
                   className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -263,6 +270,7 @@ exports[`Renders a list of associated nodes 1`] = `
                   disabled={false}
                   focusVisibleClassName="Mui-focusVisible"
                   onClick={[Function]}
+                  onDoubleClick={[Function]}
                 >
                   <ForwardRef(ButtonBase)
                     className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -277,12 +285,14 @@ exports[`Renders a list of associated nodes 1`] = `
                     disabled={false}
                     focusVisibleClassName="Mui-focusVisible"
                     onClick={[Function]}
+                    onDoubleClick={[Function]}
                   >
                     <div
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
                       onBlur={[Function]}
                       onClick={[Function]}
+                      onDoubleClick={[Function]}
                       onDragLeave={[Function]}
                       onFocus={[Function]}
                       onKeyDown={[Function]}
@@ -414,6 +424,7 @@ exports[`Renders a list of associated nodes 1`] = `
               disableGutters={true}
               key="edge-child-5"
               onClick={[Function]}
+              onDoubleClick={[Function]}
             >
               <ForwardRef(ListItem)
                 button={true}
@@ -436,6 +447,7 @@ exports[`Renders a list of associated nodes 1`] = `
                 dense={true}
                 disableGutters={true}
                 onClick={[Function]}
+                onDoubleClick={[Function]}
               >
                 <WithStyles(ForwardRef(ButtonBase))
                   className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -443,6 +455,7 @@ exports[`Renders a list of associated nodes 1`] = `
                   disabled={false}
                   focusVisibleClassName="Mui-focusVisible"
                   onClick={[Function]}
+                  onDoubleClick={[Function]}
                 >
                   <ForwardRef(ButtonBase)
                     className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -457,12 +470,14 @@ exports[`Renders a list of associated nodes 1`] = `
                     disabled={false}
                     focusVisibleClassName="Mui-focusVisible"
                     onClick={[Function]}
+                    onDoubleClick={[Function]}
                   >
                     <div
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
                       onBlur={[Function]}
                       onClick={[Function]}
+                      onDoubleClick={[Function]}
                       onDragLeave={[Function]}
                       onFocus={[Function]}
                       onKeyDown={[Function]}
@@ -594,6 +609,7 @@ exports[`Renders a list of associated nodes 1`] = `
               disableGutters={true}
               key="edge-child-4"
               onClick={[Function]}
+              onDoubleClick={[Function]}
             >
               <ForwardRef(ListItem)
                 button={true}
@@ -616,6 +632,7 @@ exports[`Renders a list of associated nodes 1`] = `
                 dense={true}
                 disableGutters={true}
                 onClick={[Function]}
+                onDoubleClick={[Function]}
               >
                 <WithStyles(ForwardRef(ButtonBase))
                   className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -623,6 +640,7 @@ exports[`Renders a list of associated nodes 1`] = `
                   disabled={false}
                   focusVisibleClassName="Mui-focusVisible"
                   onClick={[Function]}
+                  onDoubleClick={[Function]}
                 >
                   <ForwardRef(ButtonBase)
                     className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -637,12 +655,14 @@ exports[`Renders a list of associated nodes 1`] = `
                     disabled={false}
                     focusVisibleClassName="Mui-focusVisible"
                     onClick={[Function]}
+                    onDoubleClick={[Function]}
                   >
                     <div
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
                       onBlur={[Function]}
                       onClick={[Function]}
+                      onDoubleClick={[Function]}
                       onDragLeave={[Function]}
                       onFocus={[Function]}
                       onKeyDown={[Function]}
@@ -774,6 +794,7 @@ exports[`Renders a list of associated nodes 1`] = `
               disableGutters={true}
               key="edge-child-3"
               onClick={[Function]}
+              onDoubleClick={[Function]}
             >
               <ForwardRef(ListItem)
                 button={true}
@@ -796,6 +817,7 @@ exports[`Renders a list of associated nodes 1`] = `
                 dense={true}
                 disableGutters={true}
                 onClick={[Function]}
+                onDoubleClick={[Function]}
               >
                 <WithStyles(ForwardRef(ButtonBase))
                   className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -803,6 +825,7 @@ exports[`Renders a list of associated nodes 1`] = `
                   disabled={false}
                   focusVisibleClassName="Mui-focusVisible"
                   onClick={[Function]}
+                  onDoubleClick={[Function]}
                 >
                   <ForwardRef(ButtonBase)
                     className="MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
@@ -817,12 +840,14 @@ exports[`Renders a list of associated nodes 1`] = `
                     disabled={false}
                     focusVisibleClassName="Mui-focusVisible"
                     onClick={[Function]}
+                    onDoubleClick={[Function]}
                   >
                     <div
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-2 MuiListItem-dense MuiListItem-button"
                       onBlur={[Function]}
                       onClick={[Function]}
+                      onDoubleClick={[Function]}
                       onDragLeave={[Function]}
                       onFocus={[Function]}
                       onKeyDown={[Function]}

@@ -14,8 +14,19 @@ import { Node } from 'store'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listSection: {},
-    listItem: {},
-    itemText: { margin: 0 },
+    listItem: {
+      paddingLeft: theme.spacing(1),
+      paddingRight: theme.spacing(1),
+      borderRadius: theme.shape.borderRadius,
+    },
+    itemText: {
+      margin: 0,
+      '& > .MuiListItemText-primary': {
+        overflowX: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+      },
+    },
     group: { padding: 0 },
     groupHeader: {
       top: 0,
@@ -76,10 +87,11 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
                   .reverse()
                   .map((item: Instance<typeof Node>) => (
                     <ListItem
-                      dense
                       button
+                      dense
                       disableGutters
                       onClick={() => onSelect(node, item)}
+                      onDoubleClick={() => console.log('boop')}
                       selected={
                         config && config.items.get('selectedNodeId') === item.id
                       }

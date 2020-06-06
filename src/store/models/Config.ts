@@ -3,7 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  * Copyright © 2020 Ty Dira */
 
-import { types as t, SnapshotIn, IAnyType } from 'mobx-state-tree'
+import { types as t, SnapshotIn, IAnyType, Instance } from 'mobx-state-tree'
 
 const Basic = t.union(
   t.boolean,
@@ -21,5 +21,10 @@ export const Config = t
   .actions(self => ({
     set(key: string, value: SnapshotIn<typeof Basic>) {
       self.items.set(key, value)
+    },
+  }))
+  .views(self => ({
+    get(key: string): Instance<typeof Basic> {
+      return self.items.get(key)
     },
   }))

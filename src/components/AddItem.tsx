@@ -15,6 +15,7 @@ import { Node } from 'store'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      padding: theme.spacing(0, 1, 0, 1),
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
