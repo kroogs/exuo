@@ -15,12 +15,7 @@ import AddItem from './AddItem'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-      overflowX: 'auto',
       height: '100vh',
-      padding: theme.spacing(1),
     },
     paneHeader: {},
     paneHeaderText: {
@@ -32,16 +27,11 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowY: 'auto',
     },
     pane: {
-      display: 'flex',
-      flexDirection: 'column',
       maxHeight: '100%',
-      padding: theme.spacing(0, 1, 0, 1),
+      padding: theme.spacing(1),
     },
     rootPane: {
       backgroundColor: theme.palette.background.default,
-      position: 'sticky',
-      left: 0,
-      zIndex: 9,
     },
     selectedPane: {
       '& .Mui-selected': {
@@ -51,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
+    contentPane: {},
   }),
 )
 
@@ -85,7 +76,7 @@ const PaneManager: React.FunctionComponent = () => {
         parent.addEdge('config', config)
       }
 
-      rootConfig.set('selectedParentNodeId', parent.id)
+      rootConfig.set('selectedPaneNodeId', parent.id)
       config.set('selectedNodeId', selected.id)
     }
 
@@ -93,7 +84,7 @@ const PaneManager: React.FunctionComponent = () => {
     const nodes = [rootNode]
     let currentNode = rootNode
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 2; i++) {
       const selectedNodeId = currentNode
         .getEdgeTag('config')?.[0]
         ?.items.get('selectedNodeId')
@@ -106,18 +97,20 @@ const PaneManager: React.FunctionComponent = () => {
       nodes.push(currentNode)
     }
 
-    const selectedParentNodeId = rootConfig.get('selectedParentNodeId')
+    const selectedPaneNodeId = rootConfig.get('selectedPaneNodeId')
 
     return (
       <Grid className={classes.root} container>
         {nodes.map((node, i) => (
           <Grid
             item
+            sm={4}
+            lg={2}
             key={i + node.id}
             className={[
               classes.pane,
               i === 0 ? classes.rootPane : '',
-              node.id === selectedParentNodeId ? classes.selectedPane : '',
+              node.id === selectedPaneNodeId ? classes.selectedPane : '',
             ].join(' ')}
           >
             <div className={classes.paneHeader}>
@@ -134,6 +127,14 @@ const PaneManager: React.FunctionComponent = () => {
             />
           </Grid>
         ))}
+        <Grid
+          item
+          sm={12}
+          lg={6}
+          className={[classes.pane, classes.contentPane].join(' ')}
+        >
+          Bananas
+        </Grid>
       </Grid>
     )
   })

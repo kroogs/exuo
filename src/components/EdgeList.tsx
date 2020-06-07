@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listSection: {},
     listItem: {
+      marginBottom: '1px',
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
       borderRadius: theme.shape.borderRadius,
@@ -66,12 +67,7 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
 
     return (
       <>
-        <List
-          disablePadding
-          aria-label="edge list"
-          subheader={<li />}
-          className={className}
-        >
+        <List aria-label="edge list" subheader={<li />} className={className}>
           {edgeKeys.map(key => (
             <li key={`edge-${key}`} className={classes.listSection}>
               <ul className={classes.group}>
