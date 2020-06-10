@@ -17,28 +17,23 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { Instance } from 'mobx-state-tree'
-import { useObserver } from 'mobx-react-lite'
+import { types, IAnyType } from 'mobx-state-tree'
 
-import { Graph } from './models'
+import { nodeFactory, edgeMapFactory } from 'graph/factories'
+import * as models from 'graph/models'
 
-export const storeContext = React.createContext<Instance<typeof Graph>>(null)
-export const StoreProvider: React.FunctionComponent<{
-  value?: Instance<typeof Graph>
-}> = ({ children, value }) =>
-  React.createElement(
-    storeContext.Provider,
-    { value: value ?? Graph.create() },
-    children,
-  )
+export const Config = nodeFactory(models.Config)
 
-export function useStore<S>(selector: (s: Instance<typeof Graph>) => S): S {
-  const store = React.useContext(storeContext)
-
-  if (store) {
-    return useObserver(() => selector(store))
-  }
-
-  throw Error('Cannot use store before setup')
-}
+export const Node = nodeFactory([
+  models.Label,
+  edgeMapFactory(() =>
+    types.union(
+      types.late((): IAnyType => Node),
+      Config,
+    ),
+  ),
+]).actions(self => ({
+  boop() {
+    console.log(self)
+  },
+}))

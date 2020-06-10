@@ -25,7 +25,7 @@ import {
   isType,
 } from 'mobx-state-tree'
 
-import { nodeFactory, edgeMapFactory, graphFactory } from '../Graph'
+import { nodeFactory, edgeMapFactory, graphFactory } from '../factories'
 
 describe('graph', () => {
   describe('#nodeFactory', () => {

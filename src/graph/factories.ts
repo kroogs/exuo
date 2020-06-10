@@ -46,8 +46,8 @@ export type ModelOrUnion = IAnyModelType | IAnyType
 export type EdgeResolver = () => ModelOrUnion
 export type ModelTable = Record<string, IAnyModelType>
 
-export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
-  return types
+export const edgeMapFactory = (getEdgeType: EdgeResolver): IAnyModelType =>
+  types
     .model('EdgeMap', {
       edgeMap: types.map(types.array(types.reference(types.late(getEdgeType)))),
     })
@@ -80,7 +80,6 @@ export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
         return self.edgeMap.get(tag)
       },
     }))
-}
 
 export const Node = nodeFactory(edgeMapFactory(() => Node))
 

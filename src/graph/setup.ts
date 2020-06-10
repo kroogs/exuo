@@ -17,23 +17,28 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types, IAnyType } from 'mobx-state-tree'
+import React from 'react'
+import { Instance } from 'mobx-state-tree'
+import { useObserver } from 'mobx-react-lite'
 
-import { nodeFactory, edgeMapFactory } from 'store/graph'
-import * as models from 'store/models'
+import { Graph } from './models'
 
-export const Config = nodeFactory(models.Config)
+export const graphContext = React.createContext<Instance<typeof Graph>>(null)
+export const GraphProvider: React.FunctionComponent<{
+  value?: Instance<typeof Graph>
+}> = ({ children, value }) =>
+  React.createElement(
+    graphContext.Provider,
+    { value: value ?? Graph.create() },
+    children,
+  )
 
-export const Node = nodeFactory([
-  models.Label,
-  edgeMapFactory(() =>
-    types.union(
-      types.late((): IAnyType => Node),
-      Config,
-    ),
-  ),
-]).actions(self => ({
-  boop() {
-    console.log(self)
-  },
-}))
+export function useGraph<S>(selector: (s: Instance<typeof Graph>) => S): S {
+  const graph = React.useContext(graphContext)
+
+  if (graph) {
+    return useObserver(() => selector(graph))
+  }
+
+  throw Error('Cannot use graph before setup')
+}

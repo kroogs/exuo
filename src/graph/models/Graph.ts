@@ -26,7 +26,7 @@ import {
 } from 'mobx-state-tree'
 import Dexie from 'dexie'
 
-import { graphFactory } from 'store/graph'
+import { graphFactory } from 'graph/factories'
 import { Node, Config } from './Node'
 
 async function persist(graph: Instance<typeof Graph>): Promise<void> {
