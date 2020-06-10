@@ -17,27 +17,23 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types as t, SnapshotIn, IAnyType, Instance } from 'mobx-state-tree'
+import { types, IAnyType } from 'mobx-state-tree'
 
-const Basic = t.union(
-  t.boolean,
-  t.string,
-  t.number,
-  t.late((): IAnyType => t.array(Basic)),
-)
+import { nodeFactory, edgeMapFactory } from 'store/graph'
+import * as models from 'store/models'
 
-export const Config = t
-  .model('Config', {
-    name: t.maybe(t.string),
-    items: t.map(Basic),
-  })
-  .actions(self => ({
-    set(key: string, value: SnapshotIn<typeof Basic>) {
-      self.items.set(key, value)
-    },
-  }))
-  .views(self => ({
-    get(key: string): Instance<typeof Basic> {
-      return self.items.get(key)
-    },
-  }))
+export const Config = nodeFactory(models.Config)
+
+export const Node = nodeFactory([
+  models.Label,
+  edgeMapFactory(() =>
+    types.union(
+      types.late((): IAnyType => Node),
+      Config,
+    ),
+  ),
+]).actions(self => ({
+  boop() {
+    console.log(self)
+  },
+}))

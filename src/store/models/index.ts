@@ -20,3 +20,5 @@
 export * from './Config'
 export * from './EventLog'
 export * from './Label'
+export { Node } from './Node'
+export * from './Graph'

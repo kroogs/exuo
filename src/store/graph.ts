@@ -19,7 +19,6 @@
 
 import {
   IAnyModelType,
-  IAnyStateTreeNode,
   IAnyType,
   Instance,
   isIdentifierType,
@@ -71,11 +70,9 @@ export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
       },
 
       removeEdge(tag: string, target: Instance<IAnyModelType>): void {
-        if (!self.hasEdge(tag, target)) {
+        if (!self.edgeMap.get(tag)?.remove(target)) {
           throw Error(`Node '${self}' has no '${tag}' edge for '${target}'`)
         }
-
-        self.edgeMap.get(tag)?.remove(target)
       },
     }))
     .views(self => ({
@@ -88,8 +85,7 @@ export function edgeMapFactory(getEdgeType: EdgeResolver): IAnyModelType {
 export const Node = nodeFactory(edgeMapFactory(() => Node))
 
 interface GraphFactoryOptions {
-  makeId?: () => string
-  adapters?: Array<(s: IAnyStateTreeNode) => void>
+  getId?: () => string
 }
 
 export const graphFactory = (
@@ -107,25 +103,12 @@ export const graphFactory = (
             return [key, types.map(nodeModels[key])]
           }
 
-          // We can't add an identifier ourselves because the model may already be referenced
+          // Can't add an identifier because the model may be referenced
           throw Error(`Model '${key}' requires 'id' identifier`)
         }),
       ),
     )
     .actions(self => ({
-      afterCreate() {
-        if (options.adapters) {
-          options.adapters
-            .reduce(async (prev, next) => {
-              await prev
-              return next(self)
-            }, Promise.resolve())
-            .catch(error => {
-              throw Error(`Adapter failed: ${error}`)
-            })
-        }
-      },
-
       createNode(
         modelName = 'Node',
         props: Omit<SnapshotIn<IAnyModelType>, 'id'> = {},
@@ -135,7 +118,7 @@ export const graphFactory = (
         }
 
         const node = nodeModels[modelName].create({
-          id: options.makeId?.() ?? uuid(),
+          id: options.getId?.() ?? uuid(),
           ...props,
         })
 
