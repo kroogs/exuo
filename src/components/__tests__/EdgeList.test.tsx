@@ -21,12 +21,13 @@ import React from 'react'
 import { mount } from 'enzyme'
 
 import EdgeList from '../EdgeList'
-import { graphFactory, Node } from 'store/graph'
+import { Node } from 'graph'
+import { graphFactory } from 'graph/factories'
 
 let nextId = 0
-const makeId = (): string => String(++nextId)
+const getId = (): string => String(++nextId)
 
-const Graph = graphFactory({ Node }, { makeId })
+const Graph = graphFactory({ Node }, { getId })
 
 test('Renders a list of associated nodes', () => {
   const graph = Graph.create()

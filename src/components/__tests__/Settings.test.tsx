@@ -21,6 +21,6 @@ import React from 'react'
 import { mount } from 'enzyme'
 
 import EdgeList from '../EdgeList'
-import { graphFactory, Node } from 'store/graph'
+import { graphFactory, Node } from 'graph'
 
 test.skip('Settings renders', () => {})

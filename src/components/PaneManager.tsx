@@ -20,29 +20,37 @@
 import React from 'react'
 import { Grid, Typography } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import { Instance, SnapshotIn } from 'mobx-state-tree'
+import { Instance, getSnapshot, SnapshotIn } from 'mobx-state-tree'
 
-import { Node, useStore } from 'store'
+import { Node, useGraph } from 'graph'
 import EdgeList from './EdgeList'
 import AddItem from './AddItem'
+import TextEditor from './TextEditor'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       height: '100vh',
+      padding: theme.spacing(1),
     },
     paneHeader: {},
     paneHeaderText: {
-      overflowX: 'hidden',
+      overflow: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
     },
+    pane: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      [theme.breakpoints.down('sm')]: {
+        height: '30%',
+      },
+      padding: theme.spacing(1),
+      outline: 0,
+    },
     paneBody: {
       overflowY: 'auto',
-    },
-    pane: {
-      maxHeight: '100%',
-      padding: theme.spacing(1),
     },
     rootPane: {
       backgroundColor: theme.palette.background.default,
@@ -55,7 +63,11 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
-    contentPane: {},
+    contentPane: {
+      [theme.breakpoints.down('sm')]: {
+        height: '70%',
+      },
+    },
   }),
 )
 
@@ -63,95 +75,128 @@ type MakeAddItemHandler = (
   p: Instance<typeof Node>,
 ) => (s: SnapshotIn<typeof Node>) => void
 
-const PaneManager: React.FunctionComponent = () => {
+interface PaneManagerProps {
+  paneLimit?: number
+  visibleContentPane?: boolean
+}
+
+const PaneManager: React.FunctionComponent<PaneManagerProps> = props => {
   const classes = useStyles()
+  return <></>
 
-  return useStore(graph => {
-    const rootConfig = graph.Config.get('graph')
-    const rootNodeId = rootConfig?.get('rootNodeId')
-    if (!rootNodeId) {
-      return <></> // Loading
-    }
+  /* return useGraph(graph => { */
+  /*   const rootConfig = graph.Config.get('graph') */
+  /*   const rootNodeId = rootConfig?.get('rootNodeId') */
 
-    const makeAddItemHandler: MakeAddItemHandler = parent => snapshot => {
-      const child = graph.createNode('Node', snapshot)
-      parent.addEdge('child', child)
-      child.addEdge('parent', parent)
-    }
+  /*   if (!rootNodeId) { */
+  /*     return <></> // Loading */
+  /*   } */
 
-    const selectNodeHandler = (
-      parent: Instance<typeof Node>,
-      selected: Instance<typeof Node>,
-    ): void => {
-      let config = parent.getEdgeTag('config')?.[0]
+  /*   const makeAddItemHandler: MakeAddItemHandler = parent => snapshot => { */
+  /*     const child = graph.createNode('Node', snapshot) */
+  /*     parent.addEdge('child', child) */
+  /*     child.addEdge('parent', parent) */
+  /*   } */
 
-      if (!config) {
-        config = graph.createNode('Config')
-        parent.addEdge('config', config)
-      }
+  /*   const selectNodeHandler = ( */
+  /*     parent: Instance<typeof Node>, */
+  /*     selected: Instance<typeof Node>, */
+  /*   ): void => { */
+  /*     let config = parent.getEdgeTag('config')?.[0] */
 
-      rootConfig.set('selectedPaneNodeId', parent.id)
-      config.set('selectedNodeId', selected.id)
-    }
+  /*     if (!config) { */
+  /*       config = graph.createNode('Config') */
+  /*       parent.addEdge('config', config) */
+  /*     } */
 
-    const rootNode = graph.Node.get(rootNodeId)
-    const nodes = [rootNode]
-    let currentNode = rootNode
+  /*     rootConfig.set('selectedPaneNodeId', parent.id) */
+  /*     config.set('selectedNodeId', selected.id) */
+  /*   } */
 
-    for (let i = 0; i < 2; i++) {
-      const selectedNodeId = currentNode
-        .getEdgeTag('config')?.[0]
-        ?.items.get('selectedNodeId')
+  /*   const paneLimit = props.paneLimit ?? 3 */
+  /*   const visibleContentPane = props.visibleContentPane ?? false */
+  /*   const selectedPaneNodeId = rootConfig.get('selectedPaneNodeId') */
+  /*   const rootNode = graph.Node.get(rootNodeId) */
 
-      if (!selectedNodeId) {
-        break
-      }
+  /*   const nodes = [rootNode] */
+  /*   let currentNode = rootNode */
 
-      currentNode = graph.Node.get(selectedNodeId)
-      nodes.push(currentNode)
-    }
+  /*   for (let i = 1; i < paneLimit; i++) { */
+  /*     const selectedNodeId = currentNode */
+  /*       .getEdgeTag('config')?.[0] */
+  /*       ?.items.get('selectedNodeId') */
 
-    const selectedPaneNodeId = rootConfig.get('selectedPaneNodeId')
+  /*     if (!selectedNodeId) { */
+  /*       break */
+  /*     } */
 
-    return (
-      <Grid className={classes.root} container>
-        {nodes.map((node, i) => (
-          <Grid
-            item
-            sm={4}
-            lg={2}
-            key={i + node.id}
-            className={[
-              classes.pane,
-              i === 0 ? classes.rootPane : '',
-              node.id === selectedPaneNodeId ? classes.selectedPane : '',
-            ].join(' ')}
-          >
-            <div className={classes.paneHeader}>
-              <Typography className={classes.paneHeaderText} variant="h5">
-                {node.label}
-              </Typography>
-              <AddItem onSubmit={makeAddItemHandler(node)} />
-            </div>
-            <EdgeList
-              node={node}
-              onSelect={selectNodeHandler}
-              excludeMapKeys={['config', 'parent']}
-              className={classes.paneBody}
-            />
-          </Grid>
-        ))}
-        <Grid
-          item
-          sm={12}
-          lg={6}
-          className={[classes.pane, classes.contentPane].join(' ')}
-        >
-          Bananas
-        </Grid>
-      </Grid>
-    )
-  })
+  /*     currentNode = graph.Node.get(selectedNodeId) */
+  /*     nodes.push(currentNode) */
+  /*   } */
+
+  /*   const gridKeyDownHandler: React.EventHandler<React.SyntheticEvent> = e => { */
+  /*     console.log('gridKeyDownHandler', e) */
+  /*   } */
+
+  /*   const makePaneKeyDownHandler: NodeEventHandlerFactory = node => { */
+  /*     return e => { */
+  /*       console.log('paneKeyDownHandler', e) */
+  /*       console.log('event handler') */
+  /*     } */
+  /*   } */
+
+  /*   return ( */
+  /*     <Grid */
+  /*       className={classes.root} */
+  /*       container */
+  /*       tabIndex={0} */
+  /*       onKeyDown={gridKeyDownHandler} */
+  /*     > */
+  /*       {nodes.map((node, i) => ( */
+  /*         <Grid */
+  /*           item */
+  /*           xs={6} */
+  /*           md={2} */
+  /*           key={node.id} */
+  /*           tabIndex={0} */
+  /*           onClick={e => console.log('pane click', e)} */
+  /*           onKeyDown={makePaneKeyDownHandler(node)} */
+  /*           className={[ */
+  /*             classes.pane, */
+  /*             i === 0 ? classes.rootPane : '', */
+  /*             node.id === selectedPaneNodeId ? classes.selectedPane : '', */
+  /*           ].join(' ')} */
+  /*         > */
+  /*           <div className={classes.paneHeader}> */
+  /*             <Typography className={classes.paneHeaderText} variant="h5"> */
+  /*               {node.label} */
+  /*             </Typography> */
+  /*             <AddItem onSubmit={makeAddItemHandler(node)} /> */
+  /*           </div> */
+  /*           {/1* <EdgeList *1/} */
+  /*           {/1*   node={node} *1/} */
+  /*           {/1*   onSelect={selectNodeHandler} *1/} */
+  /*           {/1*   excludeMapKeys={['config', 'parent']} *1/} */
+  /*           {/1*   className={classes.paneBody} *1/} */
+  /*           {/1* /> *1/} */
+  /*         </Grid> */
+  /*       ))} */
+  /*       {visibleContentPane && ( */
+  /*         <Grid */
+  /*           item */
+  /*           xs={12} */
+  /*           md={8} */
+  /*           className={[classes.pane, classes.contentPane].join(' ')} */
+  /*         > */
+  /*           <Typography className={classes.paneHeaderText} variant="h5"> */
+  /*             {currentNode.label} */
+  /*           </Typography> */
+  /*           <TextEditor node={currentNode} /> */
+  /*         </Grid> */
+  /*       )} */
+  /*     </Grid> */
+  /*   ) */
+  /* }) */
 }
 
 export default PaneManager

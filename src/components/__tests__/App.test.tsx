@@ -21,7 +21,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 
-import { StoreProvider } from 'store'
+import { GraphProvider } from 'graph'
 
 import App from '../App'
 
@@ -29,11 +29,11 @@ const theme = createMuiTheme()
 
 const Wrapper: React.FunctionComponent = () => (
   <React.StrictMode>
-    <StoreProvider>
+    <GraphProvider>
       <ThemeProvider theme={theme}>
         <App />
       </ThemeProvider>
-    </StoreProvider>
+    </GraphProvider>
   </React.StrictMode>
 )
 

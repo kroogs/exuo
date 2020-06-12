@@ -2,7 +2,7 @@
 
 exports[`Renders 1`] = `
 <StrictMode>
-  <StoreProvider>
+  <GraphProvider>
     <ThemeProvider
       theme={
         Object {
@@ -297,6 +297,6 @@ exports[`Renders 1`] = `
     >
       <App />
     </ThemeProvider>
-  </StoreProvider>
+  </GraphProvider>
 </StrictMode>
 `;

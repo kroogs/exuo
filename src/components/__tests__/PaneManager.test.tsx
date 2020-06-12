@@ -21,9 +21,9 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { types } from 'mobx-state-tree'
 
-import { StoreProvider } from 'store'
-import * as models from 'store/models'
-import { nodeFactory, edgeMapFactory, graphFactory } from 'store/graph'
+import { nodeFactory, edgeMapFactory, graphFactory } from 'graph/factories'
+import { GraphProvider } from 'graph'
+import * as models from 'graph/models'
 import PaneManager from '../PaneManager'
 
 export const Config = nodeFactory(models.Config)
@@ -57,9 +57,9 @@ test('Renders a edge list panes from a graph', () => {
 
   expect(
     mount(
-      <StoreProvider value={graph}>
+      <GraphProvider value={graph}>
         <PaneManager />
-      </StoreProvider>,
+      </GraphProvider>,
     ),
   ).toMatchSnapshot()
 })

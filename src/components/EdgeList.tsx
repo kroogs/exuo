@@ -18,21 +18,25 @@
  */
 
 import React from 'react'
-import { List, ListItem, ListItemText, ListSubheader } from '@material-ui/core'
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+} from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { IAnyModelType, Instance } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 
-import { Node } from 'store'
+import { Node } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listSection: {},
     listItem: {
-      marginBottom: '1px',
-      paddingLeft: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-      borderRadius: theme.shape.borderRadius,
+      padding: theme.spacing(2),
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
     },
     itemText: {
       margin: 0,
@@ -53,72 +57,50 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
+type SelectHandler = (
+  event: React.SyntheticEvent,
+  parent: Instance<typeof Node>,
+  selected: Instance<typeof Node>,
+) => void
+
 interface EdgeListProps {
   node: Instance<IAnyModelType>
-  onSelect: (
-    parent: Instance<typeof Node>,
-    selected: Instance<typeof Node>,
-  ) => void
-  excludeMapKeys?: Array<string>
+  tag: string
+  onSelect?: SelectHandler
   className?: string
 }
 
 const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   node,
   onSelect,
-  excludeMapKeys,
+  tag,
   className,
 }) => {
   const classes = useStyles()
 
   return useObserver(() => {
-    const config = node.getEdgeTag('config')?.[0]
-    let edgeKeys = Array.from(node.edgeMap.keys())
-
-    if (excludeMapKeys) {
-      edgeKeys = edgeKeys.filter(key => !excludeMapKeys.includes(key as string))
-    }
-
     return (
-      <>
-        <List aria-label="edge list" subheader={<li />} className={className}>
-          {edgeKeys.map(key => (
-            <li key={`edge-${key}`} className={classes.listSection}>
-              <ul className={classes.group}>
-                {edgeKeys.length > 1 && (
-                  <ListSubheader
-                    disableGutters
-                    className={classes.groupHeader}
-                  >{`${key}`}</ListSubheader>
-                )}
-                {node.edgeMap
-                  .get(key)
-                  ?.slice()
-                  .reverse()
-                  .map((item: Instance<typeof Node>) => (
-                    <ListItem
-                      button
-                      dense
-                      disableGutters
-                      onClick={() => onSelect(node, item)}
-                      onDoubleClick={() => console.log('boop')}
-                      selected={
-                        config && config.items.get('selectedNodeId') === item.id
-                      }
-                      key={`edge-${key}-${item.id}`}
-                      className={classes.listItem}
-                    >
-                      <ListItemText
-                        primary={item.label ?? item.id}
-                        className={classes.itemText}
-                      />
-                    </ListItem>
-                  ))}
-              </ul>
-            </li>
+      <List aria-label="edge list" className={className}>
+        {node.edgeMap
+          .get(tag)
+          ?.slice()
+          .reverse()
+          .map((item: Instance<typeof Node>) => (
+            <ListItem
+              button
+              onClick={e => onSelect?.(e, node, item)}
+              onDoubleClick={e => console.log('banana')}
+              key={`${tag}-${item.id}`}
+              className={classes.listItem}
+            >
+              <ListItemText
+                primary={item.label ?? item.id}
+                className={classes.itemText}
+              />
+              <ListItemSecondaryAction>99</ListItemSecondaryAction>
+            </ListItem>
           ))}
-        </List>
-      </>
+      </List>
     )
   })
 }

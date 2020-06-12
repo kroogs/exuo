@@ -18,60 +18,24 @@
  */
 
 import React from 'react'
-import { List, ListItem, ListItemText } from '@material-ui/core'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import { List } from '@material-ui/core'
 import { useObserver } from 'mobx-react-lite'
-import { IAnyModelType, IAnyStateTreeNode, Instance } from 'mobx-state-tree'
+import { IAnyModelType, Instance } from 'mobx-state-tree'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {},
-    listSection: {},
-    listItem: {},
-    itemText: { margin: 0 },
-    group: { padding: theme.spacing(0) },
-    groupHeader: {
-      color: 'inherit',
-      fontWeight: 'bold',
-      lineHeight: 2,
-    },
-  }),
-)
+import NodeListItem from './NodeListItem'
 
 interface NodeListProps {
   nodes: Array<Instance<IAnyModelType>>
-  onSelect: React.MouseEventHandler
 }
 
-const getLabel = (item: IAnyStateTreeNode): string => item.label ?? item.id
-
-const NodeList: React.FunctionComponent<NodeListProps> = ({
-  nodes,
-  onSelect,
-}) => {
-  const classes = useStyles()
-
-  return useObserver(() => {
-    return (
-      <List className={classes.root} dense disablePadding>
-        {nodes.map(node => (
-          <ListItem
-            key={`node-${node.id}`}
-            className={classes.listItem}
-            button
-            dense
-            disableGutters
-            onClick={() => onSelect(node)}
-          >
-            <ListItemText
-              className={classes.itemText}
-              primary={getLabel(node)}
-            />
-          </ListItem>
-        ))}
-      </List>
-    )
-  })
-}
+const NodeList: React.FunctionComponent<NodeListProps> = ({ nodes }) =>
+  useObserver(() => (
+    <List dense disablePadding>
+      boop
+      {/* {nodes.map(node => ( */}
+      {/*   <NodeListItem node={node} /> */}
+      {/* ))} */}
+    </List>
+  ))
 
 export default NodeList

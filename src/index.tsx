@@ -23,16 +23,16 @@ import 'mobx-react-lite/batchingForReactDom'
 import * as serviceWorker from './serviceWorker'
 
 import App from './components/App'
-import { StoreProvider } from './store'
+import { GraphProvider } from './graph'
 import { ThemeProvider } from './theme'
 
 ReactDOM.render(
   <React.StrictMode>
-    <StoreProvider>
+    <GraphProvider>
       <ThemeProvider>
         <App />
       </ThemeProvider>
-    </StoreProvider>
+    </GraphProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 )

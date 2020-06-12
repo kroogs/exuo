@@ -46,9 +46,21 @@ async function persist(graph: Instance<typeof Graph>): Promise<void> {
   ).then(resolved => {
     applySnapshot(graph, Object.fromEntries(resolved))
     onPatch(graph, patch => {
-      const [typeName, id] = patch.path.split('/').slice(1)
-      if (patch.op === 'add' || patch.op === 'replace') {
+      const [typeName, id, propName] = patch.path.split('/').slice(1)
+      if (patch.op === 'add') {
         db.table(typeName).put(getSnapshot(graph[typeName].get(id)))
+      } else if (patch.op === 'replace') {
+        db.table(typeName).update(id, {
+          [propName]: getSnapshot(graph[typeName].get(id)[propName]),
+        })
+      } else if (patch.op === 'remove') {
+        if (propName) {
+          db.table(typeName).update(id, {
+            [propName]: getSnapshot(graph[typeName].get(id)[propName]),
+          })
+        } else {
+          db.table(typeName).delete(id)
+        }
       }
     })
   })
@@ -62,7 +74,7 @@ async function initialize(graph: Instance<typeof Graph>): Promise<void> {
   const root = graph.createNode('Node', { label: 'Root' })
   graph.createNode('Config', {
     id: 'graph',
-    items: { rootNodeId: root.id },
+    items: { rootNodeId: root.id, history: [] },
   })
 }
 
@@ -75,7 +87,17 @@ export const Graph = graphFactory({ Node, Config }).actions(self => ({
         return next(self)
       }, Promise.resolve())
       .catch(error => {
-        throw Error(`Graph adapter error: ${error}`)
+        throw Error(`Adapter error: ${error}`)
       })
+  },
+
+  historyPush(id: string) {
+    const config = self.Config.get('graph')
+    config.items.get('history').push(id)
+  },
+
+  historyPop() {
+    const config = self.Config.get('graph')
+    config.items.get('history').pop()
   },
 }))
