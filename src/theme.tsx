@@ -40,6 +40,15 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
             disableRipple: true,
           },
         },
+        overrides: {
+          MuiCssBaseline: {
+            '@global': {
+              html: {
+                userSelect: 'none',
+              },
+            },
+          },
+        },
       }),
     [prefersDarkMode],
   )
