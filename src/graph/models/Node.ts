@@ -32,8 +32,4 @@ export const Node = nodeFactory([
       Config,
     ),
   ),
-]).actions(self => ({
-  boop() {
-    console.log(self)
-  },
-}))
+])
