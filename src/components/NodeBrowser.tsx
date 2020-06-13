@@ -18,43 +18,25 @@
  */
 
 import React from 'react'
-import { Instance } from 'mobx-state-tree'
 
-import { useGraph, Node } from 'graph'
-import ActionBar from './ActionBar'
+import { useGraph } from 'graph'
+import Header from './Header'
 import EdgeList from './EdgeList'
 
 const NodeBrowser: React.FunctionComponent = () => {
   return useGraph(graph => {
-    const rootConfig = graph.Config.get('graph')
-    const rootNodeId = rootConfig?.get('rootNodeId')
-    const rootNode = graph.Node.get(rootNodeId)
-
-    if (!rootNode) {
+    if (!graph.currentNode) {
       return <></> // Loading
-    }
-
-    const history = rootConfig.items.get('history')
-    let currentNode = graph.Node.get(history[history.length - 1])
-
-    /* const activeNode = graph.getActiveNode() */
-
-    if (!currentNode) {
-      currentNode = rootNode
-    }
-
-    const selectNodeHandler = (
-      event: React.SyntheticEvent,
-      parent: Instance<typeof Node>,
-      selected: Instance<typeof Node>,
-    ): void => {
-      graph.historyPush(selected.id)
     }
 
     return (
       <>
-        <ActionBar node={currentNode} />
-        <EdgeList node={currentNode} tag="child" onSelect={selectNodeHandler} />
+        <Header node={graph.currentNode} />
+        <EdgeList
+          node={graph.currentNode}
+          tag="child"
+          onSelect={selected => graph.historyPush(selected.id)}
+        />
       </>
     )
   })

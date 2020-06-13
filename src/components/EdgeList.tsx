@@ -29,10 +29,11 @@ import { IAnyModelType, Instance } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 
 import { Node } from 'graph'
+import AddItem from './AddItem'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    listSection: {},
+    list: {},
     listItem: {
       padding: theme.spacing(2),
       paddingTop: theme.spacing(1),
@@ -46,22 +47,19 @@ const useStyles = makeStyles((theme: Theme) =>
         textOverflow: 'ellipsis',
       },
     },
-    group: { padding: 0 },
-    groupHeader: {
-      top: 0,
+    secondaryActions: {
+      color: theme.palette.text.secondary,
+    },
+    addItem: {
       position: 'sticky',
-      fontWeight: 'bold',
-      lineHeight: 2.5,
-      backgroundColor: theme.palette.background.default,
+      bottom: 0,
+      marginTop: -theme.spacing(1),
+      ...theme.typography.body1,
     },
   }),
 )
 
-type SelectHandler = (
-  event: React.SyntheticEvent,
-  parent: Instance<typeof Node>,
-  selected: Instance<typeof Node>,
-) => void
+type SelectHandler = (selected: Instance<typeof Node>) => void
 
 interface EdgeListProps {
   node: Instance<IAnyModelType>
@@ -77,32 +75,29 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   className,
 }) => {
   const classes = useStyles()
-
-  return useObserver(() => {
-    return (
-      <List aria-label="edge list" className={className}>
-        {node.edgeMap
-          .get(tag)
-          ?.slice()
-          .reverse()
-          .map((item: Instance<typeof Node>) => (
-            <ListItem
-              button
-              onClick={e => onSelect?.(e, node, item)}
-              onDoubleClick={e => console.log('banana')}
-              key={`${tag}-${item.id}`}
-              className={classes.listItem}
-            >
-              <ListItemText
-                primary={item.label ?? item.id}
-                className={classes.itemText}
-              />
-              <ListItemSecondaryAction>99</ListItemSecondaryAction>
-            </ListItem>
-          ))}
+  return useObserver(() => (
+    <>
+      <List aria-label="edge list" className={classes.list}>
+        {node.edgeMap.get(tag)?.map((item: Instance<typeof Node>) => (
+          <ListItem
+            button
+            onClick={e => onSelect?.(item)}
+            key={`${tag}-${item.id}`}
+            className={classes.listItem}
+          >
+            <ListItemText
+              primary={item.label ?? item.id}
+              className={classes.itemText}
+            />
+            <ListItemSecondaryAction className={classes.secondaryActions}>
+              {item.childCount}
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
       </List>
-    )
-  })
+      <AddItem node={node} className={classes.addItem} />
+    </>
+  ))
 }
 
 export default EdgeList

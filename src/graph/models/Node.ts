@@ -32,4 +32,8 @@ export const Node = nodeFactory([
       Config,
     ),
   ),
-])
+]).views(self => ({
+  get childCount() {
+    return self.edgeMap.get('child')?.length
+  },
+}))

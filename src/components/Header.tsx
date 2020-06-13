@@ -19,12 +19,11 @@
 
 import React from 'react'
 import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core'
-import { ArrowBack, MoreVert } from '@material-ui/icons'
+import { ArrowBack, Settings } from '@material-ui/icons'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 
 import { Node, useGraph } from 'graph'
-import AddItem from './AddItem'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,33 +49,21 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
     },
-    toolbar: {
-      position: 'fixed',
-      width: '100%',
-      bottom: theme.spacing(2),
-      textAlign: 'center',
-    },
-    floatingButton: {},
   }),
 )
 
-interface ActionBarProps {
+interface HeaderProps {
   node: Instance<typeof Node>
   showTitle?: boolean
 }
 
-const ActionBar: React.FunctionComponent<ActionBarProps> = ({
-  node,
-  showTitle,
-}) => {
+const Header: React.FunctionComponent<HeaderProps> = ({ node, showTitle }) => {
   const classes = useStyles()
   return useGraph(graph => (
     <AppBar elevation={0} position="sticky" className={classes.root}>
       <Toolbar variant="dense">
         <IconButton
-          disabled={
-            graph.Config.get('graph')?.get('history')?.length ? undefined : true
-          }
+          disabled={graph.historyLength ? undefined : true}
           edge="start"
           color="primary"
           aria-label="back"
@@ -92,21 +79,19 @@ const ActionBar: React.FunctionComponent<ActionBarProps> = ({
         )}
         <IconButton
           edge="end"
-          color="inherit"
           aria-label="more"
           onClick={e => console.log('moreButton', e)}
           className={classes.moreButton}
         >
-          <MoreVert />
+          <Settings fontSize="small" />
         </IconButton>
       </Toolbar>
-      <AddItem node={node} />
     </AppBar>
   ))
 }
 
-ActionBar.defaultProps = {
+Header.defaultProps = {
   showTitle: true,
 }
 
-export default ActionBar
+export default Header

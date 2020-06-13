@@ -23,6 +23,8 @@ import {
   getSnapshot,
   getMembers,
   applySnapshot,
+  SnapshotIn,
+  IAnyModelType,
 } from 'mobx-state-tree'
 import Dexie from 'dexie'
 
@@ -49,11 +51,7 @@ async function persist(graph: Instance<typeof Graph>): Promise<void> {
       const [typeName, id, propName] = patch.path.split('/').slice(1)
       if (patch.op === 'add') {
         db.table(typeName).put(getSnapshot(graph[typeName].get(id)))
-      } else if (patch.op === 'replace') {
-        db.table(typeName).update(id, {
-          [propName]: getSnapshot(graph[typeName].get(id)[propName]),
-        })
-      } else if (patch.op === 'remove') {
+      } else if (patch.op === 'replace' || patch.op === 'remove') {
         if (propName) {
           db.table(typeName).update(id, {
             [propName]: getSnapshot(graph[typeName].get(id)[propName]),
@@ -61,6 +59,8 @@ async function persist(graph: Instance<typeof Graph>): Promise<void> {
         } else {
           db.table(typeName).delete(id)
         }
+      } else {
+        throw Error(`Unknown patch op '${patch.op}'`)
       }
     })
   })
@@ -78,26 +78,60 @@ async function initialize(graph: Instance<typeof Graph>): Promise<void> {
   })
 }
 
-export const Graph = graphFactory({ Node, Config }).actions(self => ({
-  afterCreate() {
-    const adapters = [persist, initialize]
-    adapters
-      .reduce(async (prev, next) => {
-        await prev
-        return next(self)
-      }, Promise.resolve())
-      .catch(error => {
-        throw Error(`Adapter error: ${error}`)
-      })
-  },
+export const Graph = graphFactory({ Node, Config })
+  .actions(self => ({
+    afterCreate() {
+      const adapters = [persist, initialize]
+      adapters
+        .reduce(async (prev, next) => {
+          await prev
+          return next(self)
+        }, Promise.resolve())
+        .catch(error => {
+          throw Error(`Adapter error: ${error}`)
+        })
+    },
 
-  historyPush(id: string) {
-    const config = self.Config.get('graph')
-    config.items.get('history').push(id)
-  },
+    historyPush(id: string) {
+      const config = self.Config.get('graph')
+      config.items.get('history').push(id)
+    },
 
-  historyPop() {
-    const config = self.Config.get('graph')
-    config.items.get('history').pop()
-  },
-}))
+    historyPop() {
+      const config = self.Config.get('graph')
+      config.items.get('history').pop()
+    },
+
+    createChild<T extends IAnyModelType>(
+      node: Instance<typeof Node>,
+      edgeProps: SnapshotIn<T>,
+      edgeType = 'Node',
+    ): Instance<typeof Node> {
+      const child = self.createNode(edgeType, edgeProps)
+
+      node.addEdge('child', child)
+      child.addEdge('parent', node)
+
+      return
+    },
+  }))
+  .views(self => ({
+    get historyLength() {
+      return self.Config.get('graph')?.get('history')?.length
+    },
+
+    get currentNode() {
+      const config = self.Config.get('graph')
+      const history = config?.items.get('history')
+      const currentNode = self.Node.get(history?.[history?.length - 1])
+      const rootNode = self.Node.get(config?.get('rootNodeId'))
+
+      if (currentNode) {
+        return currentNode
+      } else if (rootNode) {
+        return rootNode
+      } else {
+        return undefined
+      }
+    },
+  }))

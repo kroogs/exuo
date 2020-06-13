@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      padding: theme.spacing(1, 2, 0, 2),
+      padding: theme.spacing(1, 2, 1, 2),
+      background: theme.palette.background.default,
     },
     inputBase: {
       ...theme.typography.body1,
@@ -54,9 +55,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface AddItemProps {
   node: Instance<typeof Node>
+  className: string
 }
 
-export const AddItem: React.FunctionComponent<AddItemProps> = ({ node }) => {
+export const AddItem: React.FunctionComponent<AddItemProps> = ({
+  node,
+  className,
+}) => {
   const classes = useStyles()
   const [createInputText, setCreateInputText] = React.useState('')
 
@@ -66,20 +71,17 @@ export const AddItem: React.FunctionComponent<AddItemProps> = ({ node }) => {
   return useGraph(graph => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
       event.preventDefault()
-
-      if (!createInputText) {
-        return
+      if (createInputText) {
+        graph.createChild(node, { label: createInputText })
+        setCreateInputText('')
       }
-
-      const child = graph.createNode('Node', { label: createInputText })
-      node.addEdge('child', child)
-      child.addEdge('parent', node)
-
-      setCreateInputText('')
     }
 
     return (
-      <form className={classes.root} onSubmit={handleSubmit}>
+      <form
+        className={[className, classes.root].join(' ')}
+        onSubmit={handleSubmit}
+      >
         <InputBase
           placeholder="Add item"
           inputProps={{ 'aria-label': 'item name' }}
