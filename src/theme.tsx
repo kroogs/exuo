@@ -45,6 +45,7 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
             '@global': {
               html: {
                 userSelect: 'none',
+                overscrollBehavior: 'none',
               },
             },
           },
