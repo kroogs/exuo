@@ -74,7 +74,7 @@ async function initialize(graph: Instance<typeof Graph>): Promise<void> {
   const root = graph.createNode('Node', { label: 'Root' })
   graph.createNode('Config', {
     id: 'graph',
-    items: { rootNodeId: root.id, history: [] },
+    items: { rootNodeId: root.id },
   })
 }
 
@@ -92,16 +92,6 @@ export const Graph = graphFactory({ Node, Config })
         })
     },
 
-    historyPush(id: string) {
-      const config = self.Config.get('graph')
-      config.items.get('history').push(id)
-    },
-
-    historyPop() {
-      const config = self.Config.get('graph')
-      config.items.get('history').pop()
-    },
-
     createChild<T extends IAnyModelType>(
       node: Instance<typeof Node>,
       edgeProps: SnapshotIn<T>,
@@ -116,22 +106,8 @@ export const Graph = graphFactory({ Node, Config })
     },
   }))
   .views(self => ({
-    get historyLength() {
-      return self.Config.get('graph')?.get('history')?.length
-    },
-
-    get currentNode() {
+    get rootNode() {
       const config = self.Config.get('graph')
-      const history = config?.items.get('history')
-      const currentNode = self.Node.get(history?.[history?.length - 1])
-      const rootNode = self.Node.get(config?.get('rootNodeId'))
-
-      if (currentNode) {
-        return currentNode
-      } else if (rootNode) {
-        return rootNode
-      } else {
-        return undefined
-      }
+      return self.Node.get(config?.get('rootNodeId'))
     },
   }))

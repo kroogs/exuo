@@ -22,15 +22,15 @@ import ReactDOM from 'react-dom'
 import 'mobx-react-lite/batchingForReactDom'
 import * as serviceWorker from './serviceWorker'
 
-import App from './components/App'
 import { GraphProvider } from './graph'
 import { ThemeProvider } from './theme'
+import Router from './components/Router'
 
 ReactDOM.render(
   <React.StrictMode>
     <GraphProvider>
       <ThemeProvider>
-        <App />
+        <Router />
       </ThemeProvider>
     </GraphProvider>
   </React.StrictMode>,

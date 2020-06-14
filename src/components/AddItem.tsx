@@ -18,11 +18,11 @@
  */
 
 import React from 'react'
+import { Instance } from 'mobx-state-tree'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import InputBase from '@material-ui/core/InputBase'
 import IconButton from '@material-ui/core/IconButton'
 import AddIcon from '@material-ui/icons/Add'
-import { Instance } from 'mobx-state-tree'
 
 import { useGraph, Node } from 'graph'
 

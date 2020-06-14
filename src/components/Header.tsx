@@ -63,11 +63,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({ node, showTitle }) => {
     <AppBar elevation={0} position="sticky" className={classes.root}>
       <Toolbar variant="dense">
         <IconButton
-          disabled={graph.historyLength ? undefined : true}
+          disabled={graph.rootNode.id === node.id ? true : undefined}
           edge="start"
           color="primary"
           aria-label="back"
-          onClick={() => graph.historyPop()}
+          onClick={() => window.history.back()}
           className={classes.backButton}
         >
           <ArrowBack />

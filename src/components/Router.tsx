@@ -18,23 +18,26 @@
  */
 
 import React from 'react'
-import { RouteComponentProps, Router } from '@reach/router'
+import { RouteComponentProps, Router as ReachRouter } from '@reach/router'
 
 import NodeBrowser from './NodeBrowser'
 import Settings from './Settings'
 
-type Props = { component: React.FunctionComponent } & RouteComponentProps
+type Props<T = unknown> = {
+  component: React.FunctionComponent<T>
+} & RouteComponentProps
 
 const Route: React.FunctionComponent<Props> = ({
   component: Component,
   ...rest
 }) => <Component {...rest} />
 
-const App: React.FunctionComponent = () => (
-  <Router>
-    <Route path="/" component={() => <NodeBrowser />} />
+export const Router: React.FunctionComponent = () => (
+  <ReachRouter>
+    <Route path="/" component={NodeBrowser} />
+    <Route path="/:nodeId" component={NodeBrowser} />
     <Route path="/settings" component={Settings} />
-  </Router>
+  </ReachRouter>
 )
 
-export default App
+export default Router

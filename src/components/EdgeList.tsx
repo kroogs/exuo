@@ -18,9 +18,11 @@
  */
 
 import React from 'react'
+import { Link } from '@reach/router'
 import {
   List,
   ListItem,
+  ListItemProps,
   ListItemText,
   ListItemSecondaryAction,
 } from '@material-ui/core'
@@ -38,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
+      '& a:visited': {
+        ...theme.typography.body1,
+      },
     },
     itemText: {
       margin: 0,
@@ -64,13 +69,11 @@ type SelectHandler = (selected: Instance<typeof Node>) => void
 interface EdgeListProps {
   node: Instance<IAnyModelType>
   tag: string
-  onSelect?: SelectHandler
   className?: string
 }
 
 const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   node,
-  onSelect,
   tag,
   className,
 }) => {
@@ -81,17 +84,18 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
         {node.edgeMap.get(tag)?.map((item: Instance<typeof Node>) => (
           <ListItem
             button
-            onClick={e => onSelect?.(item)}
             key={`${tag}-${item.id}`}
             className={classes.listItem}
           >
-            <ListItemText
-              primary={item.label ?? item.id}
-              className={classes.itemText}
-            />
-            <ListItemSecondaryAction className={classes.secondaryActions}>
-              {item.childCount}
-            </ListItemSecondaryAction>
+            <Link to={`/${item.id}`}>
+              <ListItemText
+                primary={item.label ?? item.id}
+                className={classes.itemText}
+              />
+              <ListItemSecondaryAction className={classes.secondaryActions}>
+                {item.childCount}
+              </ListItemSecondaryAction>
+            </Link>
           </ListItem>
         ))}
       </List>

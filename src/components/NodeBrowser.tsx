@@ -23,20 +23,26 @@ import { useGraph } from 'graph'
 import Header from './Header'
 import EdgeList from './EdgeList'
 
-const NodeBrowser: React.FunctionComponent = () => {
+interface NodeBrowserProps {
+  nodeId?: string
+}
+
+const NodeBrowser: React.FunctionComponent<NodeBrowserProps> = ({ nodeId }) => {
   return useGraph(graph => {
-    if (!graph.currentNode) {
+    let currentNode = graph.Node.get(nodeId)
+
+    if (!currentNode) {
+      currentNode = graph.rootNode
+    }
+
+    if (!currentNode) {
       return <></> // Loading
     }
 
     return (
       <>
-        <Header node={graph.currentNode} />
-        <EdgeList
-          node={graph.currentNode}
-          tag="child"
-          onSelect={selected => graph.historyPush(selected.id)}
-        />
+        <Header node={currentNode} />
+        <EdgeList node={currentNode} tag="child" />
       </>
     )
   })
