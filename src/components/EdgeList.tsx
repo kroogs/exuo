@@ -22,7 +22,6 @@ import { Link } from '@reach/router'
 import {
   List,
   ListItem,
-  ListItemProps,
   ListItemText,
   ListItemSecondaryAction,
 } from '@material-ui/core'
@@ -40,17 +39,14 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
-      '& a:visited': {
-        ...theme.typography.body1,
-      },
     },
     itemText: {
+      display: 'inline-block',
       margin: 0,
-      '& > .MuiListItemText-primary': {
-        overflowX: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-      },
+      overflowX: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      ...theme.typography.body1,
     },
     secondaryActions: {
       color: theme.palette.text.secondary,
@@ -63,8 +59,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 )
-
-type SelectHandler = (selected: Instance<typeof Node>) => void
 
 interface EdgeListProps {
   node: Instance<IAnyModelType>
@@ -84,18 +78,18 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
         {node.edgeMap.get(tag)?.map((item: Instance<typeof Node>) => (
           <ListItem
             button
+            to={`/${item.id}`}
             key={`${tag}-${item.id}`}
+            component={Link}
             className={classes.listItem}
           >
-            <Link to={`/${item.id}`}>
-              <ListItemText
-                primary={item.label ?? item.id}
-                className={classes.itemText}
-              />
-              <ListItemSecondaryAction className={classes.secondaryActions}>
-                {item.childCount}
-              </ListItemSecondaryAction>
-            </Link>
+            <ListItemText
+              primary={item.label ?? item.id}
+              className={classes.itemText}
+            />
+            <ListItemSecondaryAction className={classes.secondaryActions}>
+              {item.childCount}
+            </ListItemSecondaryAction>
           </ListItem>
         ))}
       </List>
