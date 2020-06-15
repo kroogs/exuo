@@ -24,12 +24,13 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  IconButton,
 } from '@material-ui/core'
+import { Clear } from '@material-ui/icons'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { IAnyModelType, Instance } from 'mobx-state-tree'
-import { useObserver } from 'mobx-react-lite'
 
-import { Node } from 'graph'
+import { Node, useGraph } from 'graph'
 import AddItem from './AddItem'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -57,6 +58,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: -theme.spacing(1),
       ...theme.typography.body1,
     },
+    deleteButton: {
+      color: theme.palette.error.main,
+    },
   }),
 )
 
@@ -72,7 +76,7 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   className,
 }) => {
   const classes = useStyles()
-  return useObserver(() => (
+  return useGraph(graph => (
     <>
       <List aria-label="edge list" className={classes.list}>
         {node.edgeMap.get(tag)?.map((item: Instance<typeof Node>) => (
@@ -89,6 +93,16 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
             />
             <ListItemSecondaryAction className={classes.secondaryActions}>
               {item.childCount}
+              {graph.editMode && (
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  onClick={() => graph.deleteNode(item)}
+                  className={classes.deleteButton}
+                >
+                  <Clear fontSize="small" />
+                </IconButton>
+              )}
             </ListItemSecondaryAction>
           </ListItem>
         ))}

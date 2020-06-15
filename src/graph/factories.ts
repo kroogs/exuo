@@ -49,7 +49,13 @@ export type ModelTable = Record<string, IAnyModelType>
 export const edgeMapFactory = (getEdgeType: EdgeResolver): IAnyModelType =>
   types
     .model('EdgeMap', {
-      edgeMap: types.map(types.array(types.reference(types.late(getEdgeType)))),
+      edgeMap: types.map(
+        types.array(
+          types.safeReference(types.late(getEdgeType), {
+            acceptsUndefined: false,
+          }),
+        ),
+      ),
     })
     .actions(self => ({
       hasEdge(tag: string, target?: Instance<IAnyModelType>): boolean {

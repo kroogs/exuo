@@ -19,7 +19,7 @@
 
 import React from 'react'
 import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core'
-import { ArrowBack, Settings } from '@material-ui/icons'
+import { ChevronLeft, MoreHoriz } from '@material-ui/icons'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 
@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       backgroundColor: theme.palette.background.default,
       color: theme.palette.text.primary,
+      marginBottom: -theme.spacing(1),
     },
     backButton: {
       color: theme.palette.primary.main,
@@ -38,10 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
         pointerEvents: 'none',
       },
     },
-    moreButton: {
-      visibility: 'hidden',
-      pointerEvents: 'none',
-    },
+    moreButton: {},
     title: {
       flexGrow: 1,
       textAlign: 'center',
@@ -70,7 +68,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({ node, showTitle }) => {
           onClick={() => window.history.back()}
           className={classes.backButton}
         >
-          <ArrowBack />
+          <ChevronLeft />
         </IconButton>
         {showTitle && (
           <Typography variant="h6" className={classes.title}>
@@ -80,10 +78,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({ node, showTitle }) => {
         <IconButton
           edge="end"
           aria-label="more"
-          onClick={e => console.log('moreButton', e)}
+          onClick={() => graph.toggleEditMode()}
           className={classes.moreButton}
         >
-          <Settings fontSize="small" />
+          <MoreHoriz fontSize="small" />
         </IconButton>
       </Toolbar>
     </AppBar>

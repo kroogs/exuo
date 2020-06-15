@@ -74,7 +74,7 @@ async function initialize(graph: Instance<typeof Graph>): Promise<void> {
   const root = graph.createNode('Node', { label: 'Root' })
   graph.createNode('Config', {
     id: 'graph',
-    items: { rootNodeId: root.id },
+    items: { rootNodeId: root.id, editMode: false },
   })
 }
 
@@ -102,12 +102,26 @@ export const Graph = graphFactory({ Node, Config })
       node.addEdge('child', child)
       child.addEdge('parent', node)
 
-      return
+      return child
+    },
+
+    deleteNode(node: Instance<typeof Node>) {
+      self.Node.delete(node.id)
+    },
+
+    toggleEditMode() {
+      const editMode = self.Config.get('graph').get('editMode')
+      self.Config.get('graph').set('editMode', !editMode)
     },
   }))
   .views(self => ({
     get rootNode() {
       const config = self.Config.get('graph')
       return self.Node.get(config?.get('rootNodeId'))
+    },
+
+    get editMode() {
+      const config = self.Config.get('graph')
+      return config?.get('editMode')
     },
   }))
