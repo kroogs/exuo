@@ -23,17 +23,29 @@ import { nodeFactory, edgeMapFactory } from 'graph/factories'
 import * as models from 'graph/models'
 
 export const Config = nodeFactory(models.Config)
-
 export const Node = nodeFactory([
-  models.Label,
+  models.Log,
   edgeMapFactory(() =>
     types.union(
       types.late((): IAnyType => Node),
       Config,
     ),
   ),
-]).views(self => ({
-  get childCount() {
-    return self.edgeMap.get('child')?.length
-  },
-}))
+])
+  .props({
+    label: types.maybe(types.string),
+  })
+  .actions(self => ({
+    afterCreate() {
+      self.logEvent('create')
+    },
+  }))
+  .views(self => ({
+    get childCount(): number {
+      return self.edgeMap.get('child')?.length ?? 0
+    },
+
+    get createDate(): Date {
+      return self.events[0]?.date
+    },
+  }))

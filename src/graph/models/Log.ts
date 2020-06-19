@@ -17,14 +17,33 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types as t } from 'mobx-state-tree'
+import { types, IAnyType } from 'mobx-state-tree'
 
-export const Label = t
-  .model('Label', {
-    label: t.maybe(t.string),
+const Basic = types.union(
+  types.boolean,
+  types.string,
+  types.number,
+  types.late((): IAnyType => types.array(Basic)),
+)
+
+export const Event = types.model('Event', {
+  type: types.string,
+  date: types.Date,
+  payload: types.maybe(Basic),
+})
+
+export const Log = types
+  .model('Log', {
+    events: types.array(Event),
   })
   .actions(self => ({
-    setLabel(label: string) {
-      self.label = label
+    logEvent(type: string, payload?: typeof Basic) {
+      self.events.push(
+        Event.create({
+          date: Date.now(),
+          payload,
+          type,
+        }),
+      )
     },
   }))
