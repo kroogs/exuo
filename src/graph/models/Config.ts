@@ -23,7 +23,8 @@ const Basic = t.union(
   t.boolean,
   t.string,
   t.number,
-  t.late((): IAnyType => t.array(Basic)),
+  t.array(t.late((): IAnyType => Basic)),
+  t.map(t.late((): IAnyType => Basic)),
 )
 
 export const Config = t
