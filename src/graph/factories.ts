@@ -28,20 +28,6 @@ import {
 } from 'mobx-state-tree'
 import { v4 as uuid } from 'uuid'
 
-export const nodeFactory = (
-  models: IAnyModelType | Array<IAnyModelType> = [],
-): IAnyModelType =>
-  types
-    .compose(
-      // @ts-ignore
-      ...[
-        types.model({
-          id: types.identifier,
-        }),
-      ].concat(models),
-    )
-    .named('Node')
-
 export type ModelOrUnion = IAnyModelType | IAnyType
 export type EdgeResolver = () => ModelOrUnion
 export type ModelTable = Record<string, IAnyModelType>
@@ -86,6 +72,20 @@ export const edgeMapFactory = (getEdgeType: EdgeResolver): IAnyModelType =>
         return self.edgeMap.get(tag)
       },
     }))
+
+export const nodeFactory = (
+  models: IAnyModelType | Array<IAnyModelType> = [],
+): IAnyModelType =>
+  types
+    .compose(
+      // @ts-ignore
+      ...[
+        types.model({
+          id: types.identifier,
+        }),
+      ].concat(models),
+    )
+    .named('Node')
 
 export const Node = nodeFactory(edgeMapFactory(() => Node))
 
