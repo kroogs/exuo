@@ -6,46 +6,50 @@ import {
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-// '#9ce12e', // green
-// '#a378fe', // purple
-// '#34c3ff' // blue
-// rgb(220, 0, 78) // pink?
-
-export const palette = {
-  primary: {
-    main: '#34c3ff',
-  },
-}
-
-export const typography = {
-  fontFamily:
-    '-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-}
-
 export const ThemeProvider: React.FunctionComponent = ({ children }) => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   const theme = React.useMemo(
     () =>
       createMuiTheme({
-        typography,
+        typography: {
+          fontFamily: [
+            '-apple-system',
+            'system-ui',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+          ].join(', '),
+        },
+
         palette: {
-          ...palette,
+          primary: { main: '#f94d94' },
           type: prefersDarkMode ? 'dark' : 'light',
           background: {
             default: prefersDarkMode ? '#000000' : '#ffffff',
           },
         },
+
+        shape: {
+          borderRadius: 3,
+        },
+
         props: {
           MuiButtonBase: {
             disableRipple: true,
           },
         },
+
         overrides: {
           MuiCssBaseline: {
             '@global': {
               html: {
                 userSelect: 'none',
                 overscrollBehavior: 'none',
+                maxWidth: '600px',
+                margin: 'auto',
               },
             },
           },
