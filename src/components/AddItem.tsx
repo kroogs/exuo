@@ -23,27 +23,34 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import InputBase from '@material-ui/core/InputBase'
 import IconButton from '@material-ui/core/IconButton'
 import AddIcon from '@material-ui/icons/Add'
+import { Editor, EditorState } from 'draft-js'
+import 'draft-js/dist/Draft.css'
 
+import NodeActions from './NodeActions'
 import { useGraph, Node } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: theme.spacing(1, 2, 1, 2),
+      position: 'sticky',
+      bottom: 0,
+      marginTop: -theme.spacing(1),
+      ...theme.typography.body1,
+      padding: 0,
       background: theme.palette.background.default,
     },
+
     inputBase: {
       ...theme.typography.body1,
       '& input': {
-        padding: 0,
+        padding: theme.spacing(1, 2, 1, 2),
         height: 'auto',
       },
     },
+
     iconButton: {
       padding: 0,
+      marginLeft: -theme.spacing(4),
       color: theme.palette.common.white,
       backgroundColor: theme.palette.success.main,
       '&:hover': {
@@ -55,18 +62,18 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface AddItemProps {
   node: Instance<typeof Node>
-  className: string
 }
 
-export const AddItem: React.FunctionComponent<AddItemProps> = ({
-  node,
-  className,
-}) => {
+export const AddItem: React.FunctionComponent<AddItemProps> = ({ node }) => {
   const classes = useStyles()
   const [createInputText, setCreateInputText] = React.useState('')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void =>
     setCreateInputText(event.target.value)
+
+  /* const [editorState, setEditorState] = React.useState(() => */
+  /*   EditorState.createEmpty(), */
+  /* ) */
 
   return useGraph(graph => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
@@ -77,31 +84,40 @@ export const AddItem: React.FunctionComponent<AddItemProps> = ({
       }
     }
 
+    /* <Editor */
+    /*   placeholder="Add item" */
+    /*   editorState={editorState} */
+    /*   onChange={setEditorState} */
+    /* /> */
+
     return (
-      <form
-        className={[className, classes.root].join(' ')}
-        onSubmit={handleSubmit}
-      >
-        <InputBase
-          placeholder="Add item"
-          inputProps={{ 'aria-label': 'item name' }}
-          onChange={handleChange}
-          value={createInputText}
-          className={classes.inputBase}
-          margin={'none'}
-          autoFocus
-          fullWidth
-        />
-        {createInputText && (
-          <IconButton
-            type="submit"
-            aria-label="add item"
-            className={classes.iconButton}
-          >
-            <AddIcon fontSize="small" />
-          </IconButton>
+      <div className={classes.root}>
+        {graph.editMode ? (
+          <NodeActions node={node} />
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <InputBase
+              placeholder="Add item"
+              inputProps={{ 'aria-label': 'item name' }}
+              onChange={handleChange}
+              value={createInputText}
+              className={classes.inputBase}
+              margin={'none'}
+              autoFocus
+              fullWidth
+            />
+            {createInputText && (
+              <IconButton
+                type="submit"
+                aria-label="add item"
+                className={classes.iconButton}
+              >
+                <AddIcon fontSize="small" />
+              </IconButton>
+            )}
+          </form>
         )}
-      </form>
+      </div>
     )
   })
 }

@@ -20,7 +20,8 @@
 import React from 'react'
 import { RouteComponentProps, Router as ReachRouter } from '@reach/router'
 
-import NodeBrowser from './NodeBrowser'
+import PropertyEditor from './PropertyEditor'
+import NodeViewer from './NodeViewer'
 import Settings from './Settings'
 
 type Props<T = unknown> = {
@@ -34,8 +35,9 @@ const Route: React.FunctionComponent<Props> = ({
 
 export const Router: React.FunctionComponent = () => (
   <ReachRouter>
-    <Route path="/" component={NodeBrowser} />
-    <Route path="/:nodeId" component={NodeBrowser} />
+    <Route path="/" component={NodeViewer} />
+    <Route path="/:node" component={NodeViewer} />
+    <Route path="/:node/edit" component={PropertyEditor} />
     <Route path="/settings" component={Settings} />
   </ReachRouter>
 )

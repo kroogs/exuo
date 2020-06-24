@@ -41,9 +41,31 @@ export const Graph = graphFactory({ Node, Config })
       self.Node.delete(node.id)
     },
 
+    toggleSelectNode(node: Instance<typeof Node>) {
+      const selectedNodes = self.Config.get('system').get('selectedNodes')
+      if (selectedNodes?.includes(node.id)) {
+        selectedNodes?.remove(node.id)
+      } else {
+        selectedNodes?.push(node.id)
+      }
+    },
+
+    clearSelectedNodes() {
+      self.Config.get('system').get('selectedNodes')?.clear()
+    },
+
+    deleteSelectedNodes() {
+      const selectedNodes = self.Config.get('system')?.get('selectedNodes')
+      selectedNodes.forEach((id: string) => self.Node.delete(id))
+      self.clearSelectedNodes()
+    },
+
     toggleEditMode() {
       const editMode = self.Config.get('system').get('editMode')
       self.Config.get('system').set('editMode', !editMode)
+      if (editMode) {
+        self.clearSelectedNodes()
+      }
     },
   }))
   .views(self => ({
@@ -55,5 +77,9 @@ export const Graph = graphFactory({ Node, Config })
     get editMode() {
       const config = self.Config.get('system')
       return config?.get('editMode')
+    },
+
+    get selectedNodes() {
+      return self.Config.get('system')?.get('selectedNodes')
     },
   }))

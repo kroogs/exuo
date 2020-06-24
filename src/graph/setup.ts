@@ -36,6 +36,7 @@ async function initialize(graph: Instance<typeof Graph>): Promise<void> {
     items: {
       rootNodeId: root.id,
       editMode: false,
+      selectedNodes: [],
     },
   })
 
@@ -51,6 +52,8 @@ async function initialize(graph: Instance<typeof Graph>): Promise<void> {
         number: false,
         checkbox: false,
         dividers: false,
+        showChildCount: true,
+        showEdgeChips: false,
       },
     },
   })

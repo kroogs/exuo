@@ -20,8 +20,9 @@
 import React from 'react'
 import { List, ListItem, ListItemText } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import { useObserver } from 'mobx-react-lite'
-import { getMembers, IAnyStateTreeNode, isStateTreeNode } from 'mobx-state-tree'
+import { getMembers, Instance, isStateTreeNode } from 'mobx-state-tree'
+
+import { useGraph, Node } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,44 +32,48 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface PropListProps {
-  model: IAnyStateTreeNode | null
-  options?: Partial<{
-    groupBy: null
-  }>
+interface NodeEditorProps {
+  node?: Instance<typeof Node> | string
+  propName?: string
+  minimal?: boolean
 }
 
-const PropList: React.FunctionComponent<PropListProps> = props => {
+const NodeEditor: React.FunctionComponent<NodeEditorProps> = props => {
   const classes = useStyles()
 
-  return useObserver(() => {
-    if (!isStateTreeNode(props.model)) {
-      throw Error('Invalid model')
+  return useGraph(graph => {
+    let node = props.node
+    if (typeof node === 'string') {
+      node = graph.Node.get(props.node)
     }
 
-    const members = getMembers(props.model)
+    if (!isStateTreeNode(node)) {
+      return <></> // Loading
+    }
+
+    const members = getMembers(node)
     const properties = Object.keys(members.properties)
 
+    const handleSubmit: React.EventHandler<React.SyntheticEvent> = () => {
+      console.log('submit')
+    }
+
     return (
-      <List className={classes.root}>
-        {properties.map(value => (
-          <ListItem
-            className={classes.item}
-            key={value}
-            role={undefined}
-            dense
-            button
-          >
-            <ListItemText
-              className={classes.itemText}
-              id={`list-label-${value}`}
-              primary={value}
-            />
-          </ListItem>
-        ))}
-      </List>
+      <form onSubmit={handleSubmit}>
+        <List className={classes.root}>
+          {properties.map(value => (
+            <ListItem dense button key={value} className={classes.item}>
+              <ListItemText
+                primary={value}
+                id={`list-label-${value}`}
+                className={classes.itemText}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </form>
     )
   })
 }
 
-export default PropList
+export default NodeEditor

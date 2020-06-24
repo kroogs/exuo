@@ -19,7 +19,8 @@
 
 import React from 'react'
 import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core'
-import { ChevronLeft, MoreHoriz } from '@material-ui/icons'
+import ChevronLeft from '@material-ui/icons/ChevronLeft'
+import Settings from '@material-ui/icons/Settings'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 
@@ -32,6 +33,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       marginBottom: -theme.spacing(1),
     },
+    toolbar: {
+      padding: theme.spacing(0, 2, 0, 2),
+    },
     backButton: {
       color: theme.palette.primary.main,
       '&[disabled]': {
@@ -39,7 +43,10 @@ const useStyles = makeStyles((theme: Theme) =>
         pointerEvents: 'none',
       },
     },
-    moreButton: {},
+    settingsButton: {
+      visibility: 'hidden',
+      pointerEvents: 'none',
+    },
     title: {
       flexGrow: 1,
       textAlign: 'center',
@@ -59,7 +66,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({ node, showTitle }) => {
   const classes = useStyles()
   return useGraph(graph => (
     <AppBar elevation={0} position="sticky" className={classes.root}>
-      <Toolbar variant="dense">
+      <Toolbar variant="dense" className={classes.toolbar}>
         <IconButton
           disabled={graph.rootNode.id === node.id ? true : undefined}
           edge="start"
@@ -70,18 +77,19 @@ const Header: React.FunctionComponent<HeaderProps> = ({ node, showTitle }) => {
         >
           <ChevronLeft />
         </IconButton>
-        {showTitle && (
-          <Typography variant="h6" className={classes.title}>
-            {node.label}
-          </Typography>
-        )}
+        <Typography variant="h6" className={classes.title}>
+          {showTitle && node.label}
+        </Typography>
         <IconButton
           edge="end"
-          aria-label="more"
+          aria-label="settings"
           onClick={() => graph.toggleEditMode()}
-          className={classes.moreButton}
+          className={[
+            classes.settingsButton,
+            graph.editMode ? 'editMode' : '',
+          ].join(' ')}
         >
-          <MoreHoriz fontSize="small" />
+          <Settings fontSize="small" />
         </IconButton>
       </Toolbar>
     </AppBar>

@@ -24,12 +24,12 @@ import Header from './Header'
 import EdgeList from './EdgeList'
 
 interface NodeBrowserProps {
-  nodeId?: string
+  node?: string
 }
 
-const NodeBrowser: React.FunctionComponent<NodeBrowserProps> = ({ nodeId }) => {
+const NodeBrowser: React.FunctionComponent<NodeBrowserProps> = ({ node }) => {
   return useGraph(graph => {
-    let currentNode = graph.Node.get(nodeId)
+    let currentNode = graph.Node.get(node)
 
     if (!currentNode) {
       currentNode = graph.rootNode
@@ -42,7 +42,7 @@ const NodeBrowser: React.FunctionComponent<NodeBrowserProps> = ({ nodeId }) => {
     return (
       <>
         <Header node={currentNode} />
-        <EdgeList node={currentNode} tag="child" />
+        <EdgeList node={currentNode} edgeTag="child" />
       </>
     )
   })
