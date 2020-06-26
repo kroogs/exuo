@@ -20,7 +20,7 @@
 import React from 'react'
 
 import { useGraph } from 'graph'
-import Header from './Header'
+import Layout from './Layout'
 import EdgeList from './EdgeList'
 
 interface NodeBrowserProps {
@@ -40,10 +40,9 @@ const NodeBrowser: React.FunctionComponent<NodeBrowserProps> = ({ node }) => {
     }
 
     return (
-      <>
-        <Header node={currentNode} />
+      <Layout title={currentNode.label}>
         <EdgeList node={currentNode} edgeTag="child" />
-      </>
+      </Layout>
     )
   })
 }

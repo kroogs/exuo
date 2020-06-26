@@ -20,8 +20,9 @@
 import React from 'react'
 import { RouteComponentProps, Router as ReachRouter } from '@reach/router'
 
-import PropertyEditor from './PropertyEditor'
+import Debug from './Debug'
 import NodeViewer from './NodeViewer'
+import PropertyEditor from './PropertyEditor'
 import Settings from './Settings'
 
 type Props<T = unknown> = {

@@ -26,18 +26,13 @@ import AddIcon from '@material-ui/icons/Add'
 import { Editor, EditorState } from 'draft-js'
 import 'draft-js/dist/Draft.css'
 
-import NodeActions from './NodeActions'
 import { useGraph, Node } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      position: 'sticky',
-      bottom: 0,
-      marginTop: -theme.spacing(1),
       ...theme.typography.body1,
       padding: 0,
-      background: theme.palette.background.default,
     },
 
     inputBase: {
@@ -60,20 +55,20 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface AddItemProps {
+interface LabelEditorProps {
   node: Instance<typeof Node>
+  placeholder: string
 }
 
-export const AddItem: React.FunctionComponent<AddItemProps> = ({ node }) => {
+export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
+  node,
+  placeholder,
+}) => {
   const classes = useStyles()
   const [createInputText, setCreateInputText] = React.useState('')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void =>
     setCreateInputText(event.target.value)
-
-  /* const [editorState, setEditorState] = React.useState(() => */
-  /*   EditorState.createEmpty(), */
-  /* ) */
 
   return useGraph(graph => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
@@ -84,42 +79,31 @@ export const AddItem: React.FunctionComponent<AddItemProps> = ({ node }) => {
       }
     }
 
-    /* <Editor */
-    /*   placeholder="Add item" */
-    /*   editorState={editorState} */
-    /*   onChange={setEditorState} */
-    /* /> */
-
     return (
       <div className={classes.root}>
-        {graph.editMode ? (
-          <NodeActions node={node} />
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <InputBase
-              placeholder="Add item"
-              inputProps={{ 'aria-label': 'item name' }}
-              onChange={handleChange}
-              value={createInputText}
-              className={classes.inputBase}
-              margin={'none'}
-              autoFocus
-              fullWidth
-            />
-            {createInputText && (
-              <IconButton
-                type="submit"
-                aria-label="add item"
-                className={classes.iconButton}
-              >
-                <AddIcon fontSize="small" />
-              </IconButton>
-            )}
-          </form>
-        )}
+        <form onSubmit={handleSubmit}>
+          <InputBase
+            placeholder={placeholder}
+            inputProps={{ 'aria-label': 'item name' }}
+            onChange={handleChange}
+            value={createInputText}
+            className={classes.inputBase}
+            margin={'none'}
+            fullWidth
+          />
+          {createInputText && (
+            <IconButton
+              type="submit"
+              aria-label="add item"
+              className={classes.iconButton}
+            >
+              <AddIcon fontSize="small" />
+            </IconButton>
+          )}
+        </form>
       </div>
     )
   })
 }
 
-export default AddItem
+export default LabelEditor

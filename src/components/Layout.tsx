@@ -18,19 +18,26 @@
  */
 
 import React from 'react'
-import { Typography, AppBar, Toolbar, IconButton } from '@material-ui/core'
-import ChevronLeft from '@material-ui/icons/ChevronLeft'
-import Settings from '@material-ui/icons/Settings'
+import {
+  Typography,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Button,
+} from '@material-ui/core'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import SettingsIcon from '@material-ui/icons/Settings'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
+import { Link } from '@reach/router'
 
 import { Node, useGraph } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      backgroundColor: theme.palette.background.default,
+    appBar: {
       color: theme.palette.text.primary,
+      backgroundColor: theme.palette.background.default,
       marginBottom: -theme.spacing(1),
     },
     toolbar: {
@@ -43,10 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
         pointerEvents: 'none',
       },
     },
-    settingsButton: {
-      visibility: 'hidden',
-      pointerEvents: 'none',
-    },
+    settingsButton: {},
     title: {
       flexGrow: 1,
       textAlign: 'center',
@@ -57,47 +61,50 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface HeaderProps {
-  node: Instance<typeof Node>
-  showTitle?: boolean
+interface LayoutProps {
+  title?: string
+  currentNode?: Instance<typeof Node>
 }
 
-const Header: React.FunctionComponent<HeaderProps> = ({ node, showTitle }) => {
+const Layout: React.FunctionComponent<LayoutProps> = ({
+  title,
+  currentNode,
+  children,
+}) => {
   const classes = useStyles()
   return useGraph(graph => (
-    <AppBar elevation={0} position="sticky" className={classes.root}>
-      <Toolbar variant="dense" className={classes.toolbar}>
-        <IconButton
-          disabled={graph.rootNode.id === node.id ? true : undefined}
-          edge="start"
-          color="primary"
-          aria-label="back"
-          onClick={() => window.history.back()}
-          className={classes.backButton}
-        >
-          <ChevronLeft />
-        </IconButton>
-        <Typography variant="h6" className={classes.title}>
-          {showTitle && node.label}
-        </Typography>
-        <IconButton
-          edge="end"
-          aria-label="settings"
-          onClick={() => graph.toggleEditMode()}
-          className={[
-            classes.settingsButton,
-            graph.editMode ? 'editMode' : '',
-          ].join(' ')}
-        >
-          <Settings fontSize="small" />
-        </IconButton>
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar elevation={0} position="sticky" className={classes.appBar}>
+        <Toolbar variant="dense" className={classes.toolbar}>
+          <IconButton
+            edge="start"
+            color="primary"
+            aria-label="back"
+            onClick={() => window.history.back()}
+            className={classes.backButton}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
+          {title && (
+            <Typography variant="h6" className={classes.title}>
+              {title}
+            </Typography>
+          )}
+          <Button
+            component={Link}
+            to={`/settings/`}
+            endIcon={<SettingsIcon fontSize="small" />}
+            aria-label="settings"
+            className={[
+              classes.settingsButton,
+              graph.editMode ? 'editMode' : '',
+            ].join(' ')}
+          />
+        </Toolbar>
+      </AppBar>
+      {children}
+    </>
   ))
 }
 
-Header.defaultProps = {
-  showTitle: true,
-}
-
-export default Header
+export default Layout

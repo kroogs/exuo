@@ -20,13 +20,14 @@
 import React from 'react'
 import { useNavigate, Link } from '@reach/router'
 import {
-  Checkbox,
   Chip,
+  Checkbox,
   InputBase,
   Button,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
+  lighten,
 } from '@material-ui/core'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import NoteIcon from '@material-ui/icons/Note'
@@ -49,15 +50,18 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
       ...theme.typography.body1,
+      '&:hover': {
+        color: theme.palette.primary.main,
+      },
     },
-    listItemIcon: {
-      minWidth: 'auto',
-    },
-    checkbox: {
+    listItemSelectCheckbox: {
       padding: theme.spacing(0, 1, 0, 1),
       '&:hover, &.Mui-checked:hover': {
         backgroundColor: 'unset',
       },
+    },
+    listItemIcon: {
+      minWidth: 'auto',
     },
     editItemText: {
       display: 'inline-block',
@@ -159,9 +163,12 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       }
     }
 
+    const isSelected = graph.selectedNodes.includes(node.id)
+
     return (
       <ListItem
         button
+        selected={isSelected}
         component={'li'}
         onMouseDown={downHandler}
         onTouchStart={downHandler}
@@ -169,28 +176,20 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         onTouchEnd={upHandler}
         className={classes.listItem}
       >
-        {graph.editMode ? (
-          <>
-            <Checkbox
-              checked={graph.selectedNodes.includes(node.id)}
-              tabIndex={-1}
-              color="primary"
-              edge="start"
-              className={classes.checkbox}
-            />
-            <ListItemText
-              primary={node.label}
-              primaryTypographyProps={{ display: 'inline' }}
-              className={classes.itemText}
-            />
-          </>
-        ) : (
-          <ListItemText
-            primary={node.label}
-            primaryTypographyProps={{ display: 'inline' }}
-            className={classes.itemText}
+        {graph.editMode && (
+          <Checkbox
+            checked={isSelected}
+            tabIndex={-1}
+            color="primary"
+            edge="start"
+            className={classes.listItemSelectCheckbox}
           />
         )}
+        <ListItemText
+          primary={node.label}
+          primaryTypographyProps={{ display: 'inline' }}
+          className={classes.itemText}
+        />
         <ListItemSecondaryAction className={classes.secondaryActions}>
           {showEdgeChips && (
             <>

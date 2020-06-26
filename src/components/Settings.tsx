@@ -19,12 +19,72 @@
 
 import React from 'react'
 import { Link } from '@reach/router'
+import {
+  Chip,
+  Checkbox,
+  InputBase,
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  ListSubheader,
+  Switch,
+  lighten,
+} from '@material-ui/core'
+import WifiIcon from '@material-ui/icons/Wifi'
+import BluetoothIcon from '@material-ui/icons/Bluetooth'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-const Settings: React.FunctionComponent = () => (
-  <>
-    <Link to="/">Root</Link>
-    <Link to="/settings">Settings</Link>
-  </>
+import Layout from './Layout'
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: '100%',
+      maxWidth: 360,
+      backgroundColor: theme.palette.background.paper,
+    },
+  }),
 )
+
+const Settings: React.FunctionComponent = () => {
+  const classes = useStyles()
+
+  return (
+    <Layout title="Settings">
+      <List
+        subheader={<ListSubheader>Settings</ListSubheader>}
+        className={classes.root}
+      >
+        <ListItem>
+          <ListItemIcon>
+            <WifiIcon />
+          </ListItemIcon>
+          <ListItemText id="switch-list-label-wifi" primary="Wi-Fi" />
+          <ListItemSecondaryAction>
+            <Switch
+              edge="end"
+              inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemIcon>
+            <BluetoothIcon />
+          </ListItemIcon>
+          <ListItemText id="switch-list-label-bluetooth" primary="Bluetooth" />
+          <ListItemSecondaryAction>
+            <Switch
+              edge="end"
+              inputProps={{ 'aria-labelledby': 'switch-list-label-bluetooth' }}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
+    </Layout>
+  )
+}
 
 export default Settings

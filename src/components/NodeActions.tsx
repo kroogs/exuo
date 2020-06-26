@@ -45,11 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface NodeActionsProps {
-  node: Instance<typeof Node>
-}
-
-const NodeActions: React.FunctionComponent<NodeActionsProps> = ({ node }) => {
+const NodeActions: React.FunctionComponent = () => {
   const classes = useStyles()
   return useGraph(graph => (
     <div className={classes.root}>
