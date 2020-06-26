@@ -48,6 +48,10 @@ export const Graph = graphFactory({ Node, Config })
       } else {
         selectedNodes?.push(node.id)
       }
+
+      if (selectedNodes.length === 0) {
+        self.toggleEditMode()
+      }
     },
 
     clearSelectedNodes() {
@@ -62,10 +66,10 @@ export const Graph = graphFactory({ Node, Config })
 
     toggleEditMode() {
       const editMode = self.Config.get('system').get('editMode')
-      self.Config.get('system').set('editMode', !editMode)
       if (editMode) {
         self.clearSelectedNodes()
       }
+      self.Config.get('system').set('editMode', !editMode)
     },
   }))
   .views(self => ({
