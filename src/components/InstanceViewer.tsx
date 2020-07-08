@@ -23,28 +23,36 @@ import { useGraph } from 'graph'
 import Layout from './Layout'
 import EdgeList from './EdgeList'
 
-interface NodeBrowserProps {
-  node?: string
+interface InstanceViewerProps {
+  type?: string
+  id?: string
 }
 
-const NodeBrowser: React.FunctionComponent<NodeBrowserProps> = ({ node }) => {
+const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
+  type,
+  id,
+}) => {
   return useGraph(graph => {
-    let currentNode = graph.Node.get(node)
-
-    if (!currentNode) {
-      currentNode = graph.rootNode
+    if (!type || !id) {
+      return <></>
     }
 
-    if (!currentNode) {
+    let instance = graph[type]?.get(id)
+
+    if (!instance) {
+      instance = graph.rootNode
+    }
+
+    if (!instance) {
       return <></> // Loading
     }
 
     return (
-      <Layout title={currentNode.label}>
-        <EdgeList node={currentNode} edgeTag="child" />
+      <Layout title={instance.label}>
+        <EdgeList node={instance} edgeTag="child" />
       </Layout>
     )
   })
 }
 
-export default NodeBrowser
+export default InstanceViewer

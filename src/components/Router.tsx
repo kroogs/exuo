@@ -19,9 +19,11 @@
 
 import React from 'react'
 import { RouteComponentProps, Router as ReachRouter } from '@reach/router'
+import { useNavigate } from '@reach/router'
 
+import { useGraph } from 'graph'
 import Debug from './Debug'
-import NodeViewer from './NodeViewer'
+import InstanceViewer from './InstanceViewer'
 import PropertyEditor from './PropertyEditor'
 import Settings from './Settings'
 
@@ -34,11 +36,20 @@ const Route: React.FunctionComponent<Props> = ({
   ...rest
 }) => <Component {...rest} />
 
+const Root: React.FunctionComponent = () => {
+  const navigate = useNavigate()
+  useGraph(graph => {
+    if (graph.rootNode) {
+      navigate(`/node/${graph.rootNode.id}/`)
+    }
+  })
+  return <></>
+}
+
 export const Router: React.FunctionComponent = () => (
   <ReachRouter>
-    <Route path="/" component={NodeViewer} />
-    <Route path="/:node" component={NodeViewer} />
-    <Route path="/:node/edit" component={PropertyEditor} />
+    <Route path="/" component={Root} />
+    <Route path="/:type/:id/" component={InstanceViewer} />
     <Route path="/settings" component={Settings} />
   </ReachRouter>
 )
