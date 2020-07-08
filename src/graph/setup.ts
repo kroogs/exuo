@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -44,12 +44,9 @@ async function initialize(graph: Instance<typeof Graph>): Promise<void> {
     id: 'user',
     items: {
       global: {
-        dateFormat: '',
-        timeFormat: '',
         dividers: false,
       },
       lists: {
-        number: false,
         checkbox: false,
         dividers: false,
         showChildCount: true,
