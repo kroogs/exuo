@@ -26,21 +26,19 @@ import EdgeList from './EdgeList'
 interface InstanceViewerProps {
   type?: string
   id?: string
+  action?: string
 }
 
 const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
   type,
   id,
+  action,
 }) => {
   return useGraph(graph => {
-    if (!type || !id) {
-      return <></>
-    }
+    let instance = graph.rootNode
 
-    let instance = graph[type]?.get(id)
-
-    if (!instance) {
-      instance = graph.rootNode
+    if (type && id) {
+      instance = graph[type]?.get(id)
     }
 
     if (!instance) {
