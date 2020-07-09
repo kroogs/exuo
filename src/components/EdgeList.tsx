@@ -18,25 +18,16 @@
  */
 
 import React from 'react'
-import { List, ClickAwayListener } from '@material-ui/core'
+import { List } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { IAnyModelType, Instance } from 'mobx-state-tree'
 
 import { Node, useGraph } from 'graph'
-import LabelEditor from './LabelEditor'
 import NodeListItem from './NodeListItem'
-import NodeActions from './NodeActions'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     list: {},
-    addItem: {},
-    stickyActions: {
-      position: 'sticky',
-      bottom: 0,
-      marginTop: -theme.spacing(1),
-      background: theme.palette.background.default,
-    },
   }),
 )
 
@@ -52,35 +43,17 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   className,
 }) => {
   const classes = useStyles()
-
-  return useGraph(graph => {
-    const handleClickAway = (): void => {
-      if (graph.editMode) {
-        graph.toggleEditMode()
-      }
-    }
-
-    return (
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <div>
-          <List aria-label="edge list" className={classes.list}>
-            {node.edgeMap.get(edgeTag)?.map((item: Instance<typeof Node>) => (
-              <NodeListItem node={item} key={`${edgeTag}-${item.id}`} />
-            ))}
-          </List>
-          <div className={classes.stickyActions}>
-            {graph.selectedNodes.length > -1 && graph.editMode ? (
-              <NodeActions />
-            ) : (
-              <>
-                <LabelEditor placeholder="Add item" node={node} />
-              </>
-            )}
-          </div>
-        </div>
-      </ClickAwayListener>
-    )
-  })
+  return useGraph(graph => (
+    <List aria-label="edge list" className={classes.list}>
+      {node.edgeMap
+        .get(edgeTag)
+        ?.slice()
+        .reverse()
+        .map((item: Instance<typeof Node>) => (
+          <NodeListItem node={item} key={`${edgeTag}-${item.id}`} />
+        ))}
+    </List>
+  ))
 }
 
 export default EdgeList

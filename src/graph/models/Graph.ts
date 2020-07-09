@@ -17,7 +17,13 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Instance, SnapshotIn, IAnyModelType } from 'mobx-state-tree'
+import {
+  Instance,
+  SnapshotIn,
+  IAnyModelType,
+  getSnapshot,
+} from 'mobx-state-tree'
+import Peer from 'peerjs'
 
 import { graphFactory } from 'graph/factories'
 import { Node, Config } from './Node'
@@ -50,8 +56,36 @@ export const Graph = graphFactory({ Node, Config })
       }
 
       if (selectedNodes.length === 0) {
-        self.toggleEditMode()
+        self.toggleActiveMode('select')
       }
+    },
+
+    // selectNode(node: Instance<typeof Node>) {
+
+    // },
+
+    // deselectNode(node: Instance<typeof Node>) {
+
+    // },
+
+    selectAllChildNodes(node: Instance<typeof Node>) {
+      node.edgeMap
+        .get('child')
+        .forEach((child: Instance<typeof Node>) => console.log('child'))
+    },
+
+    // deselectAllChildNodes(node: Instance<typeof Node>) {
+
+    // },
+
+    toggleGlobalDividerSetting() {
+      const value = self.Config.get('user').get('global')?.get('dividers')
+      self.Config.get('user').get('global')?.set('dividers', !value)
+    },
+
+    toggleListCheckboxSetting() {
+      const value = self.Config.get('user').get('lists')?.get('checkbox')
+      self.Config.get('user').get('lists')?.set('checkbox', !value)
     },
 
     clearSelectedNodes() {
@@ -64,12 +98,41 @@ export const Graph = graphFactory({ Node, Config })
       self.clearSelectedNodes()
     },
 
-    toggleEditMode() {
-      const editMode = self.Config.get('system').get('editMode')
-      if (editMode) {
+    setActiveMode(mode: string) {
+      const activeModes = self.Config.get('system').get('activeModes')
+      if (activeModes && !activeModes?.includes(mode)) {
+        activeModes.push(mode)
+      }
+    },
+
+    unsetActiveMode(mode: string) {
+      const activeModes = self.Config.get('system').get('activeModes')
+      if (activeModes?.includes(mode)) {
+        activeModes.remove(mode)
+      }
+    },
+
+    toggleActiveMode(mode: string) {
+      const activeModes = self.Config.get('system').get('activeModes')
+
+      if (!activeModes) {
+        return
+      }
+
+      if (self.activeModes.includes('select')) {
         self.clearSelectedNodes()
       }
-      self.Config.get('system').set('editMode', !editMode)
+
+      if (activeModes?.includes(mode)) {
+        activeModes.remove(mode)
+      } else {
+        activeModes.push(mode)
+      }
+    },
+
+    peerShareTree(instance: Instance<IAnyModelType>) {
+      const peer = new Peer(instance.id)
+      console.log('BOOP', getSnapshot(instance))
     },
   }))
   .views(self => ({
@@ -78,12 +141,16 @@ export const Graph = graphFactory({ Node, Config })
       return self.Node.get(config?.get('rootNodeId'))
     },
 
-    get editMode() {
+    get activeModes() {
       const config = self.Config.get('system')
-      return config?.get('editMode')
+      return config?.get('activeModes')
     },
 
     get selectedNodes() {
       return self.Config.get('system')?.get('selectedNodes')
+    },
+
+    get listCheckboxSetting() {
+      return self.Config.get('user')?.get('lists')?.get('checkbox')
     },
   }))

@@ -18,12 +18,7 @@
  */
 
 import React from 'react'
-import { Link } from '@reach/router'
 import {
-  Chip,
-  Checkbox,
-  InputBase,
-  Button,
   List,
   ListItem,
   ListItemIcon,
@@ -31,52 +26,95 @@ import {
   ListItemText,
   ListSubheader,
   Switch,
-  lighten,
 } from '@material-ui/core'
-import WifiIcon from '@material-ui/icons/Wifi'
-import BluetoothIcon from '@material-ui/icons/Bluetooth'
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck'
+import BorderAllIcon from '@material-ui/icons/BorderAll'
+import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
+import { useGraph } from 'graph'
 import Layout from './Layout'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      width: '100%',
-      maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-    },
+    root: {},
   }),
 )
 
 const Settings: React.FunctionComponent = () => {
   const classes = useStyles()
 
-  return (
+  return useGraph(graph => (
     <Layout title="Settings">
       <List
-        subheader={<ListSubheader>Settings</ListSubheader>}
+        subheader={<ListSubheader>Global</ListSubheader>}
         className={classes.root}
       >
         <ListItem>
           <ListItemIcon>
-            <WifiIcon />
+            <BorderAllIcon />
           </ListItemIcon>
-          <ListItemText id="switch-list-label-wifi" primary="Wi-Fi" />
+          <ListItemText id="switch-list-label-dividers" primary="Dividers" />
           <ListItemSecondaryAction>
             <Switch
+              disabled
               edge="end"
-              inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
+              inputProps={{
+                'aria-labelledby': 'switch-list-label-list-dividers',
+              }}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
+      <List
+        subheader={<ListSubheader>Lists</ListSubheader>}
+        className={classes.root}
+      >
+        <ListItem>
+          <ListItemIcon>
+            <PlaylistAddCheckIcon />
+          </ListItemIcon>
+          <ListItemText
+            id="switch-list-label-checkboxes"
+            primary="Checkboxes"
+          />
+          <ListItemSecondaryAction>
+            <Switch
+              checked={graph.listCheckboxSetting ?? false}
+              onChange={() => graph.toggleListCheckboxSetting()}
+              edge="end"
+              inputProps={{
+                'aria-labelledby': 'switch-list-label-list-checkboxes',
+              }}
             />
           </ListItemSecondaryAction>
         </ListItem>
         <ListItem>
           <ListItemIcon>
-            <BluetoothIcon />
+            <BorderAllIcon />
           </ListItemIcon>
-          <ListItemText id="switch-list-label-bluetooth" primary="Bluetooth" />
+          <ListItemText id="switch-list-label-dividers" primary="Dividers" />
           <ListItemSecondaryAction>
             <Switch
+              disabled
+              edge="end"
+              inputProps={{
+                'aria-labelledby': 'switch-list-label-list-dividers',
+              }}
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+          <ListItemIcon>
+            <AccountTreeIcon />
+          </ListItemIcon>
+          <ListItemText
+            id="switch-list-label-bluetooth"
+            primary="Show Extra Edge Types"
+          />
+          <ListItemSecondaryAction>
+            <Switch
+              disabled
               edge="end"
               inputProps={{ 'aria-labelledby': 'switch-list-label-bluetooth' }}
             />
@@ -84,7 +122,7 @@ const Settings: React.FunctionComponent = () => {
         </ListItem>
       </List>
     </Layout>
-  )
+  ))
 }
 
 export default Settings

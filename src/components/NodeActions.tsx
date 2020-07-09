@@ -18,58 +18,105 @@
  */
 
 import React from 'react'
-import { Button, Typography } from '@material-ui/core'
-import Delete from '@material-ui/icons/Delete'
-import Edit from '@material-ui/icons/Edit'
-import Folder from '@material-ui/icons/Folder'
-import FileCopy from '@material-ui/icons/FileCopy'
+import { Box, Button } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add'
+import EditIcon from '@material-ui/icons/Edit'
+import GroupWorkIcon from '@material-ui/icons/GroupWork'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 
 import { Node, useGraph } from 'graph'
+import SelectionActions from './SelectionActions'
+import LabelEditor from './LabelEditor'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      textAlign: 'center',
-    },
+    root: {},
     button: {
-      margin: theme.spacing(0, 1, 0, 1),
+      color: theme.palette.action.active,
     },
-    deleteButton: {
-      '&:hover, &:focus': {
-        backgroundColor: 'inherit',
-        color: theme.palette.error.main,
-      },
+    toggledButton: {
+      color: theme.palette.primary.main,
     },
   }),
 )
 
-const NodeActions: React.FunctionComponent = () => {
+interface NodeActionsProps {
+  node: Instance<typeof Node>
+  className?: string
+}
+
+type ActionMode = 'normal' | 'add' | 'share'
+
+const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
+  node,
+  className,
+}) => {
   const classes = useStyles()
-  return useGraph(graph => (
-    <div className={classes.root}>
-      <Typography variant="body2">
-        {graph.selectedNodes.length} Selected
-      </Typography>
-      <Button startIcon={<Edit />} disabled className={classes.button}>
-        Modify
-      </Button>
-      <Button startIcon={<FileCopy />} disabled className={classes.button}>
-        Copy
-      </Button>
-      <Button startIcon={<Folder />} disabled className={classes.button}>
-        Move
-      </Button>
-      <Button
-        startIcon={<Delete />}
-        className={[classes.button, classes.deleteButton].join(' ')}
-        onClick={() => graph.deleteSelectedNodes()}
-      >
-        Delete
-      </Button>
-    </div>
-  ))
+  const [mode, setMode] = React.useState<ActionMode>('normal')
+
+  return useGraph(graph => {
+    const hasChildren = node?.childCount > 0
+    return (
+      <Box className={[classes.root, className].join(' ')}>
+        {mode === 'normal' && !graph.activeModes.includes('select') && (
+          <>
+            <Button
+              startIcon={<AddIcon />}
+              onClick={() => setMode('add')}
+              className={classes.button}
+            >
+              new
+            </Button>
+
+            {hasChildren && (
+              <Button
+                startIcon={<EditIcon />}
+                onClick={() => graph.toggleActiveMode('edit')}
+                className={[
+                  classes.button,
+                  graph.activeModes.includes('edit')
+                    ? classes.toggledButton
+                    : '',
+                ].join(' ')}
+              >
+                edit
+              </Button>
+            )}
+
+            <Button
+              startIcon={<GroupWorkIcon />}
+              onClick={() => graph.toggleActiveMode('share')}
+              className={[
+                classes.button,
+                graph.activeModes.includes('share')
+                  ? classes.toggledButton
+                  : '',
+              ].join(' ')}
+            >
+              share
+            </Button>
+          </>
+        )}
+
+        {mode === 'normal' && graph.activeModes.includes('select') && (
+          <SelectionActions />
+        )}
+
+        {mode === 'add' && (
+          <LabelEditor
+            placeholder="Label"
+            node={node}
+            onBlur={() => setMode('normal')}
+          />
+        )}
+
+        {false && graph.activeModes.includes('select') && <div>edit</div>}
+
+        {false && graph.activeModes.includes('share') && <div>share</div>}
+      </Box>
+    )
+  })
 }
 
 export default NodeActions

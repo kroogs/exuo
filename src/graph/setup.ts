@@ -35,7 +35,7 @@ async function initialize(graph: Instance<typeof Graph>): Promise<void> {
     id: 'system',
     items: {
       rootNodeId: root.id,
-      editMode: false,
+      activeModes: [],
       selectedNodes: [],
     },
   })

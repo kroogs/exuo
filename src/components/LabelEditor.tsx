@@ -31,14 +31,12 @@ import { useGraph, Node } from 'graph'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      ...theme.typography.body1,
       padding: 0,
     },
 
     inputBase: {
-      ...theme.typography.body1,
       '& input': {
-        padding: theme.spacing(1, 2, 1, 2),
+        padding: 0,
         height: 'auto',
       },
     },
@@ -57,18 +55,25 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface LabelEditorProps {
   node: Instance<typeof Node>
-  placeholder: string
+  createMode?: boolean
+  placeholder?: string
+  onBlur?: React.EventHandler<React.SyntheticEvent>
 }
 
 export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
   node,
+  createMode,
   placeholder,
+  onBlur,
 }) => {
   const classes = useStyles()
-  const [createInputText, setCreateInputText] = React.useState('')
+  const [createInputText, setCreateInputText] = React.useState(
+    createMode ? '' : node.label,
+  )
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void =>
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setCreateInputText(event.target.value)
+  }
 
   return useGraph(graph => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
@@ -81,20 +86,21 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
 
     return (
       <div className={classes.root}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onBlur={onBlur}>
           <InputBase
+            autoFocus
             placeholder={placeholder}
-            inputProps={{ 'aria-label': 'item name' }}
+            inputProps={{ 'aria-label': 'label' }}
             onChange={handleChange}
             value={createInputText}
             className={classes.inputBase}
-            margin={'none'}
             fullWidth
           />
+
           {createInputText && (
             <IconButton
               type="submit"
-              aria-label="add item"
+              aria-label="add"
               className={classes.iconButton}
             >
               <AddIcon fontSize="small" />
@@ -104,6 +110,11 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
       </div>
     )
   })
+}
+
+LabelEditor.defaultProps = {
+  createMode: true,
+  placeholder: 'Label',
 }
 
 export default LabelEditor

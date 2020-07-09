@@ -19,9 +19,7 @@
 
 import React from 'react'
 import { RouteComponentProps, Router as ReachRouter } from '@reach/router'
-import { useNavigate } from '@reach/router'
 
-import { useGraph } from 'graph'
 import InstanceViewer from './InstanceViewer'
 import Settings from './Settings'
 
@@ -36,8 +34,10 @@ const Route: React.FunctionComponent<Props> = ({
 
 export const Router: React.FunctionComponent = () => (
   <ReachRouter>
-    <Route default path="/:type/:id/:action/" component={InstanceViewer} />
-    <Route path="/settings" component={Settings} />
+    <Route path="/" component={InstanceViewer} />
+    <Route path=":type/:id" component={InstanceViewer} />
+    <Route path=":type/:id/:action" component={InstanceViewer} />
+    <Route path="settings" component={Settings} />
   </ReachRouter>
 )
 

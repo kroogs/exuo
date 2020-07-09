@@ -17,49 +17,51 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { mount } from 'enzyme'
-import { types } from 'mobx-state-tree'
+export default {}
 
-import { nodeFactory, edgeMapFactory, graphFactory } from 'graph/factories'
-import { GraphProvider } from 'graph'
-import * as models from 'graph/models'
-import PaneManager from '../PaneManager'
+/* import React from 'react' */
+/* import { mount } from 'enzyme' */
+/* import { types } from 'mobx-state-tree' */
 
-export const Config = nodeFactory(models.Config)
-export const Node = nodeFactory([
-  models.Label,
-  edgeMapFactory(() => types.union(Node, Config)),
-])
-export const Graph = graphFactory({ Node, Config })
+/* import { nodeFactory, edgeMapFactory, graphFactory } from 'graph/factories' */
+/* import { GraphProvider } from 'graph' */
+/* import * as models from 'graph/models' */
+/* import PaneManager from '../PaneManager' */
 
-test('Renders a edge list panes from a graph', () => {
-  const graph = Graph.create()
-  const first = graph.createNode('Node', { id: '1' })
-  const last = graph.createNode('Node', { id: '2' })
+/* export const Config = nodeFactory(models.Config) */
+/* export const Node = nodeFactory([ */
+/*   models.Label, */
+/*   edgeMapFactory(() => types.union(Node, Config)), */
+/* ]) */
+/* export const Graph = graphFactory({ Node, Config }) */
 
-  let prev = null
+/* test('Renders a edge list panes from a graph', () => { */
+/*   const graph = Graph.create() */
+/*   const first = graph.createNode('Node', { id: '1' }) */
+/*   const last = graph.createNode('Node', { id: '2' }) */
 
-  for (let i = 3; i < 9; i++) {
-    const node = graph.createNode('Node', { id: String(i) })
+/*   let prev = null */
 
-    node.addEdge('last', last)
-    node.addEdge('first', first)
-    first.addEdge('child', node)
+/*   for (let i = 3; i < 9; i++) { */
+/*     const node = graph.createNode('Node', { id: String(i) }) */
 
-    if (prev) {
-      prev.addEdge('next', node)
-      node.addEdge('prev', prev)
-    }
+/*     node.addEdge('last', last) */
+/*     node.addEdge('first', first) */
+/*     first.addEdge('child', node) */
 
-    prev = node
-  }
+/*     if (prev) { */
+/*       prev.addEdge('next', node) */
+/*       node.addEdge('prev', prev) */
+/*     } */
 
-  expect(
-    mount(
-      <GraphProvider value={graph}>
-        <PaneManager />
-      </GraphProvider>,
-    ),
-  ).toMatchSnapshot()
-})
+/*     prev = node */
+/*   } */
+
+/*   expect( */
+/*     mount( */
+/*       <GraphProvider value={graph}> */
+/*         <PaneManager /> */
+/*       </GraphProvider>, */
+/*     ), */
+/*   ).toMatchSnapshot() */
+/* }) */

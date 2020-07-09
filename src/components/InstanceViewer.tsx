@@ -38,19 +38,28 @@ const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
     let instance = graph.rootNode
 
     if (type && id) {
-      instance = graph[type]?.get(id)
+      // TODO lol
+      instance = graph['Node' || type]?.get(id)
     }
 
     if (!instance) {
       return <></> // Loading
     }
 
+    if (action === 'share') {
+      graph.peerShareTree(instance)
+    }
+
     return (
-      <Layout title={instance.label}>
+      <Layout title={instance.label} node={instance}>
         <EdgeList node={instance} edgeTag="child" />
       </Layout>
     )
   })
+}
+
+InstanceViewer.defaultProps = {
+  type: 'Node',
 }
 
 export default InstanceViewer

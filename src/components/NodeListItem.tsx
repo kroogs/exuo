@@ -22,27 +22,26 @@ import { useNavigate, Link } from '@reach/router'
 import {
   Chip,
   Checkbox,
-  InputBase,
   Button,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  lighten,
 } from '@material-ui/core'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
-import NoteIcon from '@material-ui/icons/Note'
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import { Editor, EditorState } from 'draft-js'
 import 'draft-js/dist/Draft.css'
 import { Instance } from 'mobx-state-tree'
 
+import LabelEditor from './LabelEditor'
 import { useGraph, Node } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {},
-    listItem: {},
+    listItem: {
+      borderRadius: theme.shape.borderRadius,
+    },
     itemText: {
       display: 'inline-block',
       margin: 0,
@@ -50,9 +49,6 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
       ...theme.typography.body1,
-      '&:hover': {
-        color: theme.palette.primary.main,
-      },
     },
     listItemSelectCheckbox: {
       padding: theme.spacing(0, 1, 0, 1),
@@ -114,10 +110,11 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   ...props
 }) => {
   const classes = useStyles()
+  const [isFocused, setIsFocused] = React.useState(false)
   const navigate = useNavigate()
-  const [editorState, setEditorState] = React.useState(() =>
-    EditorState.createEmpty(),
-  )
+  /* const [editorState, setEditorState] = React.useState(() => */
+  /*   EditorState.createEmpty(), */
+  /* ) */
   const isMouseDown = React.useRef(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>()
 
@@ -137,8 +134,10 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
           clearTimeout(timer.current)
         }
 
-        graph.toggleEditMode()
-        if (graph.editMode) {
+        /* setIsFocused(true) */
+
+        graph.toggleActiveMode('select')
+        if (graph.activeModes.includes('select')) {
           graph.toggleSelectNode(node)
         }
       }, 390)
@@ -151,10 +150,11 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         return
       }
 
-      if (graph.editMode) {
+      if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node)
+        /* setIsFocused(true) */
       } else {
-        navigate(`/${node.id}/`)
+        navigate(`/node/${node.id}/`)
       }
 
       isMouseDown.current = false
@@ -168,15 +168,14 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     return (
       <ListItem
         button
-        selected={isSelected}
-        component={'li'}
         onMouseDown={downHandler}
         onTouchStart={downHandler}
         onMouseUp={upHandler}
         onTouchEnd={upHandler}
+        component={'li'}
         className={classes.listItem}
       >
-        {graph.editMode && (
+        {graph.activeModes.includes('select') && (
           <Checkbox
             checked={isSelected}
             tabIndex={-1}
@@ -185,11 +184,15 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             className={classes.listItemSelectCheckbox}
           />
         )}
-        <ListItemText
-          primary={node.label}
-          primaryTypographyProps={{ display: 'inline' }}
-          className={classes.itemText}
-        />
+        {isFocused ? (
+          <LabelEditor createMode node={node} />
+        ) : (
+          <ListItemText
+            primary={node.label}
+            primaryTypographyProps={{ display: 'inline' }}
+            className={classes.itemText}
+          />
+        )}
         <ListItemSecondaryAction className={classes.secondaryActions}>
           {showEdgeChips && (
             <>
@@ -207,7 +210,7 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
           {showChildCount && !showEdgeChips && node.childCount > 0 && (
             <Button
               endIcon={<ChevronRight />}
-              to={`/${node.id}/`}
+              to={`/node/${node.id}/`}
               component={Link}
               className={classes.childButton}
             >
