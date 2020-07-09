@@ -21,54 +21,7 @@ import React from 'react'
 import { Instance } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 
-import persist from './persist'
-import { Graph as GraphModel } from './models'
-
-async function initialize(graph: Instance<typeof Graph>): Promise<void> {
-  if (graph.Config.has('system')) {
-    return
-  }
-
-  const root = graph.createNode('Node', { label: 'Exuo' })
-
-  graph.createNode('Config', {
-    id: 'system',
-    items: {
-      rootNodeId: root.id,
-      activeModes: [],
-      selectedNodes: [],
-    },
-  })
-
-  graph.createNode('Config', {
-    id: 'user',
-    items: {
-      global: {
-        dividers: false,
-      },
-      lists: {
-        checkbox: false,
-        dividers: false,
-        showChildCount: true,
-        showEdgeChips: false,
-      },
-    },
-  })
-}
-
-const Graph = GraphModel.actions(self => ({
-  afterCreate() {
-    const adapters = [persist, initialize]
-    adapters
-      .reduce(async (prev, next) => {
-        await prev
-        return next(self)
-      }, Promise.resolve())
-      .catch(error => {
-        throw Error(`Adapter error: ${error}`)
-      })
-  },
-}))
+import { Graph } from './models'
 
 export const graphContext = React.createContext<Instance<typeof Graph>>(null)
 export const GraphProvider: React.FunctionComponent<{

@@ -25,11 +25,46 @@ import {
 } from 'mobx-state-tree'
 import Peer from 'peerjs'
 
+import persist from '../persist'
 import { graphFactory } from 'graph/factories'
 import { Node, Config } from './Node'
 
 export const Graph = graphFactory({ Node, Config })
   .actions(self => ({
+    afterCreate() {
+      persist(self).then(() => {
+        if (self.Config.has('system')) {
+          return
+        }
+
+        const root = self.createNode('Node', { label: 'Exuo' })
+
+        self.createNode('Config', {
+          id: 'system',
+          items: {
+            rootNodeId: root.id,
+            activeModes: [],
+            selectedNodes: [],
+          },
+        })
+
+        self.createNode('Config', {
+          id: 'user',
+          items: {
+            global: {
+              dividers: false,
+            },
+            lists: {
+              checkbox: false,
+              dividers: false,
+              showChildCount: true,
+              showEdgeChips: false,
+            },
+          },
+        })
+      })
+    },
+
     createChild<T extends IAnyModelType>(
       node: Instance<typeof Node>,
       edgeProps: SnapshotIn<T>,
@@ -123,6 +158,11 @@ export const Graph = graphFactory({ Node, Config })
         self.clearSelectedNodes()
       }
 
+      if (self.activeModes.includes('share')) {
+        self.offerPeerSync(self.focusedNode)
+        self.clearSelectedNodes()
+      }
+
       if (activeModes?.includes(mode)) {
         activeModes.remove(mode)
       } else {
@@ -130,15 +170,31 @@ export const Graph = graphFactory({ Node, Config })
       }
     },
 
-    peerShareTree(instance: Instance<IAnyModelType>) {
+    syncWithPeer(instance: Instance<IAnyModelType>, peerId: string) {
       const peer = new Peer(instance.id)
       console.log('BOOP', getSnapshot(instance))
+    },
+
+    offerPeerSync(instance: Instance<IAnyModelType>) {
+      const peer = new Peer(instance.id)
+      console.log('BOOP', getSnapshot(instance))
+    },
+
+    // stopPeerSync() {},
+
+    setFocusedNode(instance: Instance<IAnyModelType>) {
+      self.Config.get('system').set('focusedNodeId', instance.id)
     },
   }))
   .views(self => ({
     get rootNode() {
       const config = self.Config.get('system')
       return self.Node.get(config?.get('rootNodeId'))
+    },
+
+    get focusedNode() {
+      const config = self.Config.get('system')
+      return self.Node.get(config?.get('focusedNodeId'))
     },
 
     get activeModes() {
