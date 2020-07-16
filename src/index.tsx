@@ -24,7 +24,7 @@ import * as serviceWorker from './serviceWorker'
 
 import { GraphProvider } from './graph'
 import { ThemeProvider } from './theme'
-import Router from './components/Router'
+import { Router } from './router'
 
 ReactDOM.render(
   <React.StrictMode>

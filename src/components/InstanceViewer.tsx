@@ -20,46 +20,31 @@
 import React from 'react'
 
 import { useGraph } from 'graph'
-import Layout from './Layout'
+import NodeLayout from './NodeLayout'
 import EdgeList from './EdgeList'
 
 interface InstanceViewerProps {
-  type?: string
   id?: string
-  action?: string
+  type?: string
 }
 
 const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
-  type,
   id,
-  action,
-}) => {
-  return useGraph(graph => {
+  type,
+}) =>
+  useGraph(graph => {
     let instance = graph.rootNode
+    const node = graph.Node.get(id)
 
-    if (type && id) {
-      // TODO lol
-      instance = graph['Node' || type]?.get(id)
+    if (node) {
+      instance = node
     }
 
-    if (!instance) {
-      return <></> // Loading
-    }
-
-    if (action === 'share') {
-      graph.peerShareTree(instance)
-    }
-
-    return (
-      <Layout title={instance.label} node={instance}>
+    return instance ? (
+      <NodeLayout node={instance}>
         <EdgeList node={instance} edgeTag="child" />
-      </Layout>
-    )
+      </NodeLayout>
+    ) : null
   })
-}
-
-InstanceViewer.defaultProps = {
-  type: 'Node',
-}
 
 export default InstanceViewer

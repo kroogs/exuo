@@ -40,7 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {},
     listItem: {
-      borderRadius: theme.shape.borderRadius,
+      [theme.breakpoints.up('sm')]: {
+        borderRadius: theme.shape.borderRadius,
+      },
     },
     itemText: {
       display: 'inline-block',
@@ -152,9 +154,10 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
 
       if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node)
+      } else if (graph.activeModes.includes('edit')) {
         /* setIsFocused(true) */
       } else {
-        navigate(`/node/${node.id}/`)
+        navigate(`${process.env.PUBLIC_URL}/node/${node.id}/`)
       }
 
       isMouseDown.current = false

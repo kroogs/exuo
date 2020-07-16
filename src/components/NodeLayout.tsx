@@ -22,7 +22,12 @@ import { Typography, AppBar, Toolbar, IconButton, Box } from '@material-ui/core'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import { Instance } from 'mobx-state-tree'
 import { Link } from '@reach/router'
+import { getSnapshot } from 'mobx-state-tree'
+
+import NodeActions from './NodeActions'
+import { Node, useGraph } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,16 +45,14 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.default,
       padding: theme.spacing(0, 2, 0, 2),
     },
-    children: {},
+    children: {
+      marginTop: -theme.spacing(1),
+    },
     backButton: {
       '&[disabled]': {
         visibility: 'hidden',
         pointerEvents: 'none',
       },
-    },
-    hide: {
-      visibility: 'hidden',
-      mouseEvents: 'none',
     },
     settingsButton: {},
     title: {
@@ -64,23 +67,17 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface LayoutProps {
-  title?: string
-  actions?: React.ReactElement
-  showBackButton?: boolean
-  showSettingsButton?: boolean
+  node?: Instance<typeof Node>
   className?: string
 }
 
 const Layout: React.FunctionComponent<LayoutProps> = ({
-  title,
-  actions,
-  showBackButton,
-  showSettingsButton,
+  node,
   className,
   children,
 }) => {
   const classes = useStyles()
-  return (
+  return useGraph(graph => (
     <Box className={[classes.root, className].join(' ')}>
       <AppBar elevation={0} position="sticky" className={classes.appBar}>
         <Toolbar variant="dense" className={classes.header}>
@@ -93,17 +90,14 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
             edge="start"
             aria-label="back"
             onClick={() => window.history.back()}
-            className={[
-              classes.backButton,
-              showSettingsButton ? '' : classes.hide,
-            ].join(' ')}
+            className={classes.backButton}
           >
             <ChevronLeftIcon />
           </IconButton>
 
-          {title && (
+          {node.label && (
             <Typography variant="h6" className={classes.title}>
-              {title}
+              {node.label}
             </Typography>
           )}
 
@@ -113,27 +107,18 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
             component={Link}
             to={`/settings`}
             aria-label="settings"
-            className={[
-              classes.settingsButton,
-              showBackButton ? '' : classes.hide,
-            ].join(' ')}
+            className={classes.settingsButton}
           >
             {<SettingsIcon fontSize="small" />}
           </IconButton>
         </Toolbar>
 
-        {actions}
+        {node && <NodeActions node={node} className={classes.actions} />}
       </AppBar>
 
       <Box className={classes.children}>{children}</Box>
     </Box>
-  )
-}
-
-Layout.defaultProps = {
-  title: 'Exuo',
-  showBackButton: false,
-  showSettingsButton: false,
+  ))
 }
 
 export default Layout

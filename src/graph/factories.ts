@@ -116,7 +116,7 @@ export const graphFactory = (
     .actions(self => ({
       createNode(
         modelName = 'Node',
-        props: Omit<SnapshotIn<IAnyModelType>, 'id'> = {},
+        props: SnapshotIn<IAnyModelType> = {},
       ): Instance<IAnyModelType> {
         if (!nodeModels[modelName]) {
           throw Error(`No model named '${modelName}'`)

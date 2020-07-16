@@ -20,6 +20,7 @@
 import { types as t, SnapshotIn, IAnyType, Instance } from 'mobx-state-tree'
 
 const Basic = t.union(
+  t.null,
   t.boolean,
   t.string,
   t.number,

@@ -45,7 +45,7 @@ const Settings: React.FunctionComponent = () => {
   const classes = useStyles()
 
   return useGraph(graph => (
-    <Layout title="Settings">
+    <Layout>
       <List
         subheader={<ListSubheader>Global</ListSubheader>}
         className={classes.root}

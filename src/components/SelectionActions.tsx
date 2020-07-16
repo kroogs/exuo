@@ -44,12 +44,7 @@ const SelectionActions: React.FunctionComponent = () => {
   const classes = useStyles()
   return useGraph(graph => (
     <div className={classes.root}>
-      {false && (
-        <Typography variant="body2">
-          {graph.selectedNodes.length} Selected
-        </Typography>
-      )}
-
+      {/*
       <Button startIcon={<Edit />} disabled className={classes.button}>
         Modify
       </Button>
@@ -61,6 +56,7 @@ const SelectionActions: React.FunctionComponent = () => {
       <Button startIcon={<Folder />} disabled className={classes.button}>
         Move
       </Button>
+      */}
 
       <Button
         startIcon={<Delete />}

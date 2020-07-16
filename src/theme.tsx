@@ -25,20 +25,28 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
         },
 
         palette: {
-          primary: { main: '#f94d94' },
           type: prefersDarkMode ? 'dark' : 'light',
           background: {
             default: prefersDarkMode ? '#000000' : '#ffffff',
           },
+          primary: { main: '#f94d94' },
+          text: {
+            primary: prefersDarkMode
+              ? 'rgba(255, 255, 255, .75)'
+              : 'rgba(0, 0, 0, .75)',
+          },
         },
 
         shape: {
-          borderRadius: 3,
+          borderRadius: 6,
         },
 
         props: {
           MuiButtonBase: {
-            disableRipple: true,
+            /* disableRipple: true, */
+          },
+          MuiButton: {
+            disableElevation: true,
           },
         },
 
@@ -48,9 +56,18 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
               html: {
                 userSelect: 'none',
                 overscrollBehavior: 'none',
+                '-webkit-touch-callout': 'none',
                 maxWidth: '600px',
                 margin: 'auto',
+                '&, & body': {
+                  height: '100%',
+                },
               },
+              /* '#root': { */
+              /*   height: '100%', */
+              /*   backgroundImage: 'url(/background.jpg)', */
+              /*   backgroundSize: 'cover', */
+              /* }, */
             },
           },
         },

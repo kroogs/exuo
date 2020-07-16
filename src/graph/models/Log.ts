@@ -20,6 +20,7 @@
 import { types, IAnyType } from 'mobx-state-tree'
 
 const Basic = types.union(
+  types.null,
   types.boolean,
   types.string,
   types.number,

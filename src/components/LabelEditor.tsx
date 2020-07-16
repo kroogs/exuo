@@ -36,18 +36,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
     inputBase: {
       '& input': {
-        padding: 0,
+        padding: theme.spacing(1, 0, 1, 0),
         height: 'auto',
-      },
-    },
-
-    iconButton: {
-      padding: 0,
-      marginLeft: -theme.spacing(4),
-      color: theme.palette.common.white,
-      backgroundColor: theme.palette.success.main,
-      '&:hover': {
-        backgroundColor: theme.palette.success.light,
       },
     },
   }),
@@ -57,6 +47,7 @@ interface LabelEditorProps {
   node: Instance<typeof Node>
   createMode?: boolean
   placeholder?: string
+  className?: string
   onBlur?: React.EventHandler<React.SyntheticEvent>
 }
 
@@ -64,48 +55,39 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
   node,
   createMode,
   placeholder,
+  className,
   onBlur,
 }) => {
   const classes = useStyles()
-  const [createInputText, setCreateInputText] = React.useState(
+  const [inputValue, setInputValue] = React.useState(
     createMode ? '' : node.label,
   )
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setCreateInputText(event.target.value)
+    setInputValue(event.target.value)
   }
 
   return useGraph(graph => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
       event.preventDefault()
-      if (createInputText) {
-        graph.createChild(node, { label: createInputText })
-        setCreateInputText('')
+      if (inputValue) {
+        graph.createChild(node, { label: inputValue })
+        setInputValue('')
       }
     }
 
     return (
-      <div className={classes.root}>
+      <div className={[classes.root, className].join(' ')}>
         <form onSubmit={handleSubmit} onBlur={onBlur}>
           <InputBase
             autoFocus
             placeholder={placeholder}
             inputProps={{ 'aria-label': 'label' }}
             onChange={handleChange}
-            value={createInputText}
+            value={inputValue}
             className={classes.inputBase}
             fullWidth
           />
-
-          {createInputText && (
-            <IconButton
-              type="submit"
-              aria-label="add"
-              className={classes.iconButton}
-            >
-              <AddIcon fontSize="small" />
-            </IconButton>
-          )}
         </form>
       </div>
     )

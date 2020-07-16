@@ -18,7 +18,7 @@
  */
 
 import React from 'react'
-import { Box, Button } from '@material-ui/core'
+import { Box, Toolbar, Button } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
 import GroupWorkIcon from '@material-ui/icons/GroupWork'
@@ -31,12 +31,13 @@ import LabelEditor from './LabelEditor'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
-    button: {
-      color: theme.palette.action.active,
+    root: {
+      justifyContent: 'center',
     },
-    toggledButton: {
-      color: theme.palette.primary.main,
+    button: {},
+    toggledButton: {},
+    labelEditor: {
+      width: '100%',
     },
   }),
 )
@@ -58,7 +59,7 @@ const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   return useGraph(graph => {
     const hasChildren = node?.childCount > 0
     return (
-      <Box className={[classes.root, className].join(' ')}>
+      <Toolbar variant="dense" className={[classes.root, className].join(' ')}>
         {mode === 'normal' && !graph.activeModes.includes('select') && (
           <>
             <Button
@@ -71,6 +72,7 @@ const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
 
             {hasChildren && (
               <Button
+                disabled
                 startIcon={<EditIcon />}
                 onClick={() => graph.toggleActiveMode('edit')}
                 className={[
@@ -84,18 +86,24 @@ const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
               </Button>
             )}
 
-            <Button
-              startIcon={<GroupWorkIcon />}
-              onClick={() => graph.toggleActiveMode('share')}
-              className={[
-                classes.button,
-                graph.activeModes.includes('share')
-                  ? classes.toggledButton
-                  : '',
-              ].join(' ')}
-            >
-              share
-            </Button>
+            {window.location.pathname === process.env.PUBLIC_URL || (
+              <Button
+                startIcon={<GroupWorkIcon />}
+                onClick={() => {
+                  if (graph.activeModes.includes('share')) {
+                    graph.closePeerConnection()
+                  } else {
+                    graph.offerPeerConnection(node)
+                  }
+                }}
+                color={
+                  graph.activeModes.includes('share') ? 'primary' : 'default'
+                }
+                className={classes.button}
+              >
+                share
+              </Button>
+            )}
           </>
         )}
 
@@ -108,13 +116,14 @@ const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
             placeholder="Label"
             node={node}
             onBlur={() => setMode('normal')}
+            className={classes.labelEditor}
           />
         )}
 
         {false && graph.activeModes.includes('select') && <div>edit</div>}
 
         {false && graph.activeModes.includes('share') && <div>share</div>}
-      </Box>
+      </Toolbar>
     )
   })
 }
