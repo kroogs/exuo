@@ -24,6 +24,7 @@ import { useObserver } from 'mobx-react-lite'
 import { Graph } from './models'
 
 export const graphContext = React.createContext<Instance<typeof Graph>>(null)
+
 export const GraphProvider: React.FunctionComponent<{
   value?: Instance<typeof Graph>
 }> = ({ children, value }) =>
@@ -35,10 +36,9 @@ export const GraphProvider: React.FunctionComponent<{
 
 export function useGraph<S>(selector: (s: Instance<typeof Graph>) => S): S {
   const graph = React.useContext(graphContext)
-
   if (graph) {
     return useObserver(() => selector(graph))
+  } else {
+    throw Error('Cannot use graph before setup')
   }
-
-  throw Error('Cannot use graph before setup')
 }
