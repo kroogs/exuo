@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -17,31 +17,13 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import * as reach from '@reach/router'
+export * from './route'
 
-import { useGraph } from 'graph'
-import InstanceViewer from './components/InstanceViewer'
-import PeerConnector from './components/PeerConnector'
-import Settings from './components/Settings'
+export * from './models/History'
+export * from './models/Location'
 
-export type RouteProps<T = unknown> = {
-  component: React.FunctionComponent<T>
-} & reach.RouteComponentProps
-
-export const Route: React.FunctionComponent<RouteProps> = ({
-  component: Component,
-  ...props
-}) => <Component {...props} />
-
-export const Router: React.FunctionComponent = () =>
-  useGraph(graph =>
-    graph.rootNode ? (
-      <reach.Router basepath={process.env.PUBLIC_URL}>
-        <Route path="/" component={InstanceViewer} />
-        <Route path=":type/:id" component={InstanceViewer} />
-        <Route path="peer/:id" component={PeerConnector} />
-        <Route path="settings" component={Settings} />
-      </reach.Router>
-    ) : null,
-  )
+export * from './views/Link'
+export * from './views/Route'
+export * from './views/Router'
+export * from './views/Routes'
+export * from './views/NotFound'
