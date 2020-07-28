@@ -90,7 +90,7 @@ export function route(
     },
 
     travel: path => {
-      input = path
+      inputParts = getPathParts(path)
       didSelect = false
       call(methods)
     },

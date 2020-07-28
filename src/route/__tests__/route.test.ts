@@ -64,32 +64,32 @@ describe('route', () => {
     })
   })
 
-  describe.skip('travel', () => {
+  describe('travel', () => {
     it.skip('supports relative paths', () => {
       //
     })
 
     it('supports absolute paths', () => {
-      const result: Array<string> = []
+      const result: Array<number> = []
 
       route('/1/2', ({ select, travel }) => {
         select('/9', () => {
-          result.push()
+          result.push(9)
           select('/8', () => {
-            result.push()
+            result.push(8)
           })
         })
 
         select('/1', () => {
-          result.push()
+          result.push(1)
           select('/2', () => {
-            result.push()
+            result.push(2)
             travel('/9/8')
           })
         })
       })
 
-      expect(result).toStrictEqual(['/1', '/2', '/9', '/8'])
+      expect(result).toStrictEqual([1, 2, 9, 8])
     })
   })
 })
