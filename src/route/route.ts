@@ -17,32 +17,75 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-type MatchHandler = (matches: Record<string, string>) => void
+type MatchHandler = (match: Record<string, string>) => void
 
 export interface RouteMethods {
-  select: (segment: string, call: MatchHandler) => void
-  match: (segment: string, call?: MatchHandler) => void
+  select: (segment: string, call: MatchHandler) => unknown
+  match: (segment: string, call?: MatchHandler) => unknown
   travel: (path: string, call?: () => void) => void
+}
+
+const getPathParts = (path: string): Array<string> =>
+  path.split('/').filter(part => part)
+
+const matchPathParts = (
+  left: Array<string>,
+  right: Array<string>,
+): { matchCount: number; variables: Record<string, string> } => {
+  let variables: Record<string, string> = {}
+  let matchCount = 0
+
+  for (const i in left) {
+    const part = left[i]
+
+    if (right[i] === part) {
+      matchCount++
+    } else if (part.indexOf(':') >= 0) {
+      variables[part.slice(1)] = right[i]
+      matchCount++
+    } else {
+      variables = {}
+      matchCount = 0
+      break
+    }
+  }
+
+  return { variables, matchCount }
 }
 
 export function route(
   input: string,
   call: (methods: RouteMethods) => void,
 ): void {
+  let inputParts = getPathParts(input)
   let didSelect = false
+
   const methods: RouteMethods = {
-    select: (segment, nextCall) => {
+    select: (segment, handler) => {
       if (didSelect) return
-      if (input.indexOf(segment) === 0) {
-        input = input.replace(segment, '')
-        nextCall({ segment })
+
+      const { matchCount, variables } = matchPathParts(
+        getPathParts(segment),
+        inputParts,
+      )
+
+      if (matchCount) {
+        inputParts = inputParts.slice(matchCount)
+        const value = handler(variables)
         didSelect = true
+
+        return value
       }
     },
 
-    match: (segment, nextCall) => {
-      if (input.indexOf(segment) === 0) {
-        nextCall?.({ segment })
+    match: (segment, handler) => {
+      const { matchCount, variables } = matchPathParts(
+        getPathParts(segment),
+        inputParts,
+      )
+
+      if (matchCount) {
+        return handler?.(variables)
       }
     },
 
