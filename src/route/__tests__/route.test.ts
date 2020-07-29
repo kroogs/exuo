@@ -17,79 +17,145 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { route } from '../'
+import { route, matchPathParts, getPathParts } from '../'
+
+describe('getPathParts', () => {
+  it('splits a string on / and filters empty elements', () => {
+    expect(getPathParts('//3/4/2//4')).toStrictEqual(['3', '4', '2', '4'])
+  })
+})
+
+describe('matchPathParts', () => {
+  it('counts path matches', () => {
+    expect(
+      matchPathParts(getPathParts('1/2/3'), getPathParts('1/2/3/4')).matchCount,
+    ).toStrictEqual(3)
+  })
+
+  it('does only complete path matches', () => {
+    expect(
+      matchPathParts(getPathParts('1/2/3/5'), getPathParts('1/2/3/4'))
+        .matchCount,
+    ).toStrictEqual(0)
+  })
+
+  it('does variable extraction', () => {
+    expect(
+      matchPathParts(getPathParts('/1/:type/:id'), getPathParts('/1/funky/3/'))
+        .variables,
+    ).toStrictEqual({ type: 'funky', id: '3' })
+  })
+})
 
 describe('route', () => {
-  describe('select', () => {
-    it('calls first matching select handler', () => {
-      const result: Array<string> = []
+  describe('methods', () => {
+    describe('select', () => {
+      it('calls first matching handler', () => {
+        const result: Array<string> = []
 
-      route('/1//2/3//', ({ select }) => {
-        select('/1', () => {
-          result.push('1')
-          select('2', () => {
-            select('/share', () => {
-              result.push('share')
-            })
-            result.push('2')
-            select('//3/', () => {
-              result.push('3')
+        route('/1//2/3//', ({ select }) => {
+          select('/1', () => {
+            result.push('1')
+            select('2', () => {
+              select('/share', () => {
+                result.push('share')
+              })
+              result.push('2')
+              select('//3/', () => {
+                result.push('3')
+              })
             })
           })
         })
+
+        expect(result).toStrictEqual(['1', '2', '3'])
       })
 
-      expect(result).toStrictEqual(['1', '2', '3'])
-    })
-
-    it('does variable extraction', () => {
-      const result: Array<string> = []
-
-      route('/1/funky/3/', ({ select }) => {
-        select('/1', () => {
-          result.push('1')
-          select('/:type/:id', ({ type, id }) => {
-            result.push(type, id)
-          })
+      it('returns selected handler result', () => {
+        route('99', ({ select }) => {
+          expect(select(':id', ({ id }) => id + id)).toStrictEqual('9999')
         })
       })
-
-      expect(result).toStrictEqual(['1', 'funky', '3'])
     })
 
-    it('returns result of select handler', () => {
-      route('99', ({ select }) => {
-        expect(select(':id', ({ id }) => id + id)).toStrictEqual('9999')
+    describe('match', () => {
+      it.skip('calls all matching handlers', () => {
+        //
+      })
+
+      it.skip('returns path variables if handler undefined', () => {
+        //
+      })
+    })
+
+    describe('travel', () => {
+      it.skip('supports relative paths', () => {
+        //
+      })
+
+      it('supports absolute paths', () => {
+        const result: Array<number> = []
+
+        route('/1/2', ({ select, travel }) => {
+          select('/9', () => {
+            result.push(9)
+            select('/8', () => {
+              result.push(8)
+            })
+          })
+
+          select('/1', () => {
+            result.push(1)
+            select('/2', () => {
+              result.push(2)
+              travel('/9/8')
+            })
+          })
+        })
+
+        expect(result).toStrictEqual([1, 2, 9, 8])
       })
     })
   })
 
-  describe('travel', () => {
-    it.skip('supports relative paths', () => {
-      //
+  describe('events', () => {
+    describe.skip('onSelect', () => {
+      it('calls given event handler', () => {
+        //
+      })
     })
 
-    it('supports absolute paths', () => {
-      const result: Array<number> = []
+    describe.skip('onMatch', () => {
+      it('calls given event handler', () => {
+        //
+      })
+    })
 
-      route('/1/2', ({ select, travel }) => {
-        select('/9', () => {
-          result.push(9)
-          select('/8', () => {
-            result.push(8)
+    describe('onTravel', () => {
+      it('calls given event handler', () => {
+        const result: Array<string> = []
+
+        route('/1/2/3', ({ select, travel, onTravel }) => {
+          const dispose = onTravel(path => {
+            result.push('travel')
+            result.push(path)
+          })
+
+          select('9', () => {
+            dispose()
+          })
+
+          select('1', () => {
+            travel('9')
           })
         })
 
-        select('/1', () => {
-          result.push(1)
-          select('/2', () => {
-            result.push(2)
-            travel('/9/8')
-          })
-        })
+        expect(result).toStrictEqual(['travel', '9'])
       })
 
-      expect(result).toStrictEqual([1, 2, 9, 8])
+      it.skip('allows handler wrapping', () => {
+        //
+      })
     })
   })
 })

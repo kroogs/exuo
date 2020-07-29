@@ -17,82 +17,122 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-type MatchHandler = (match: Record<string, string>) => void
-
-export interface RouteMethods {
-  select: (segment: string, call: MatchHandler) => unknown
-  match: (segment: string, call?: MatchHandler) => unknown
-  travel: (path: string, call?: () => void) => void
-}
-
-const getPathParts = (path: string): Array<string> =>
+export const getPathParts = (path: string): Array<string> =>
   path.split('/').filter(part => part)
 
-const matchPathParts = (
+export const matchPathParts = (
   left: Array<string>,
   right: Array<string>,
 ): { matchCount: number; variables: Record<string, string> } => {
-  let variables: Record<string, string> = {}
-  let matchCount = 0
+  const variables: Record<string, string> = {}
+  let i = 0
 
-  for (const i in left) {
-    const part = left[i]
+  if (left.length === 0 && right.length === 0) {
+    return { variables: {}, matchCount: 1 }
+  }
 
-    if (right[i] === part) {
-      matchCount++
-    } else if (part.indexOf(':') >= 0) {
-      variables[part.slice(1)] = right[i]
-      matchCount++
-    } else {
-      variables = {}
-      matchCount = 0
-      break
+  for (; i < left.length; i++) {
+    if (left[i].indexOf(':') >= 0 && right[i]) {
+      variables[left[i].slice(1)] = right[i]
+    } else if (right[i] !== left[i]) {
+      return { variables: {}, matchCount: 0 }
     }
   }
 
-  return { variables, matchCount }
+  return { variables, matchCount: i }
+}
+
+export type RouteHandler = (match: Record<string, string>) => void
+export type RouteEventHandler = (path: string) => void
+
+export interface RouteMethods {
+  select: (path: string, handler: RouteHandler) => void
+  onSelect: (handler: RouteEventHandler) => () => void
+
+  match: (path: string, handler?: RouteHandler) => void
+  onMatch: (handler: RouteEventHandler) => () => void
+
+  travel: (path: string, handler?: RouteHandler) => void
+  onTravel: (handler: RouteEventHandler) => () => void
 }
 
 export function route(
-  input: string,
+  rootPath: string,
   call: (methods: RouteMethods) => void,
 ): void {
-  let inputParts = getPathParts(input)
+  const eventHandlers: Record<string, Array<RouteEventHandler>> = {
+    onSelect: [],
+    onMatch: [],
+    onTravel: [],
+  }
+
+  let rootParts = getPathParts(rootPath)
   let didSelect = false
 
   const methods: RouteMethods = {
-    select: (segment, handler) => {
-      if (didSelect) return
+    select: (path, handler) => {
+      if (didSelect) {
+        return
+      }
 
       const { matchCount, variables } = matchPathParts(
-        getPathParts(segment),
-        inputParts,
+        getPathParts(path),
+        rootParts,
       )
 
       if (matchCount) {
-        inputParts = inputParts.slice(matchCount)
-        const value = handler(variables)
+        rootParts = rootParts.slice(matchCount)
+        const result = handler(variables)
         didSelect = true
 
-        return value
+        return result
       }
     },
 
-    match: (segment, handler) => {
+    onSelect: handler => {
+      eventHandlers.onSelect.push(handler)
+      return () => {
+        eventHandlers.onSelect = eventHandlers.onSelect.filter(
+          i => i !== handler,
+        )
+      }
+    },
+
+    match: (path, handler) => {
       const { matchCount, variables } = matchPathParts(
-        getPathParts(segment),
-        inputParts,
+        getPathParts(path),
+        rootParts,
       )
 
       if (matchCount) {
-        return handler?.(variables)
+        return handler?.(variables) || variables
+      }
+    },
+
+    onMatch: handler => {
+      eventHandlers.onMatch.push(handler)
+      return () => {
+        eventHandlers.onMatch = eventHandlers.onMatch.filter(i => i !== handler)
       }
     },
 
     travel: path => {
-      inputParts = getPathParts(path)
+      rootParts = getPathParts(path)
       didSelect = false
       call(methods)
+
+      eventHandlers.onTravel.forEach(handler => {
+        handler(path)
+      })
+    },
+
+    onTravel: handler => {
+      eventHandlers.onTravel.push(handler)
+      return () => {
+        eventHandlers.onTravel = eventHandlers.onTravel.filter(
+          i => i !== handler,
+        )
+      }
     },
   }
 
