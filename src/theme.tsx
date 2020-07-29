@@ -26,10 +26,10 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
 
         palette: {
           type: prefersDarkMode ? 'dark' : 'light',
+          primary: { main: '#f94d94' },
           background: {
             default: prefersDarkMode ? '#000000' : '#ffffff',
           },
-          primary: { main: '#f94d94' },
           text: {
             primary: prefersDarkMode
               ? 'rgba(255, 255, 255, .75)'
@@ -42,9 +42,9 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
         },
 
         props: {
-          MuiButtonBase: {
-            /* disableRipple: true, */
-          },
+          /* MuiButtonBase: { */
+          /*   disableRipple: true, */
+          /* }, */
           MuiButton: {
             disableElevation: true,
           },

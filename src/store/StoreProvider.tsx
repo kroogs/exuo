@@ -17,34 +17,30 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types, IAnyType } from 'mobx-state-tree'
+import React from 'react'
+import { Instance } from 'mobx-state-tree'
 
-const Basic = types.union(
-  types.null,
-  types.boolean,
-  types.string,
-  types.number,
-  types.late((): IAnyType => types.array(Basic)),
+import { Graph } from 'graph'
+import { History } from 'route'
+
+import { Store } from './Store'
+
+export const storeContext = React.createContext<Instance<typeof Store> | null>(
+  null,
 )
 
-export const Event = types.model('Event', {
-  type: types.string,
-  date: types.Date,
-  payload: types.maybe(Basic),
-})
-
-export const Log = types
-  .model('Log', {
-    events: types.array(Event),
-  })
-  .actions(self => ({
-    logEvent(type: string, payload?: typeof Basic) {
-      self.events.push(
-        Event.create({
-          date: Date.now(),
-          payload,
-          type,
+export const StoreProvider: React.FunctionComponent<{
+  value?: Instance<typeof Store>
+}> = ({ children, value }) =>
+  React.createElement(
+    storeContext.Provider,
+    {
+      value:
+        value ??
+        Store.create({
+          graph: Graph.create(),
+          history: History.create(),
         }),
-      )
     },
-  }))
+    children,
+  )

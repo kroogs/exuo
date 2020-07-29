@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -18,13 +18,13 @@
  */
 
 import React from 'react'
+import { Instance } from 'mobx-state-tree'
 import { Button, Typography } from '@material-ui/core'
 import Delete from '@material-ui/icons/Delete'
 import Edit from '@material-ui/icons/Edit'
 import Folder from '@material-ui/icons/Folder'
 import FileCopy from '@material-ui/icons/FileCopy'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import { Instance } from 'mobx-state-tree'
 
 import { Node, useGraph } from 'graph'
 
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-const SelectionActions: React.FunctionComponent = () => {
+export const SelectionActions: React.FunctionComponent = () => {
   const classes = useStyles()
   return useGraph(graph => (
     <div className={classes.root}>
@@ -69,5 +69,3 @@ const SelectionActions: React.FunctionComponent = () => {
     </div>
   ))
 }
-
-export default SelectionActions

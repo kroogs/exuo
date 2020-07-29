@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -87,14 +87,14 @@ export const nodeFactory = (
     )
     .named('Node')
 
-export const Node = nodeFactory(edgeMapFactory(() => Node))
+export const NodeBase = nodeFactory(edgeMapFactory(() => NodeBase))
 
 interface GraphFactoryOptions {
   getId?: () => string
 }
 
 export const graphFactory = (
-  nodeModels: ModelTable = { Node },
+  nodeModels: ModelTable = { Node: NodeBase },
   options: GraphFactoryOptions = {},
 ): IAnyModelType =>
   types
@@ -133,4 +133,4 @@ export const graphFactory = (
       },
     }))
 
-export const Graph = graphFactory()
+export const GraphBase = graphFactory()

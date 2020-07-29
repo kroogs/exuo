@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -18,16 +18,15 @@
  */
 
 import React from 'react'
-import { Box, Toolbar, Button } from '@material-ui/core'
+import { Toolbar, Button } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
 import GroupWorkIcon from '@material-ui/icons/GroupWork'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 
-import { Node, useGraph } from 'graph'
-import SelectionActions from './SelectionActions'
-import LabelEditor from './LabelEditor'
+import { SelectionActions } from 'select'
+import { Node, useGraph, LabelEditor } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

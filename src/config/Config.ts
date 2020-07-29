@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -17,29 +17,22 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types as t, SnapshotIn, IAnyType, Instance } from 'mobx-state-tree'
+import { types as t, SnapshotIn, Instance } from 'mobx-state-tree'
 
-const Basic = t.union(
-  t.null,
-  t.boolean,
-  t.string,
-  t.number,
-  t.array(t.late((): IAnyType => Basic)),
-  t.map(t.late((): IAnyType => Basic)),
-)
+import { Unknown } from 'common'
 
 export const Config = t
   .model('Config', {
     name: t.maybe(t.string),
-    items: t.map(Basic),
+    items: t.map(Unknown),
   })
   .actions(self => ({
-    set(key: string, value: SnapshotIn<typeof Basic>) {
+    set(key: string, value: SnapshotIn<typeof Unknown>) {
       self.items.set(key, value)
     },
   }))
   .views(self => ({
-    get(key: string): Instance<typeof Basic> {
+    get(key: string): Instance<typeof Unknown> {
       return self.items.get(key)
     },
   }))

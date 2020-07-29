@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -23,4 +23,4 @@ import { mount } from 'enzyme'
 import EdgeList from '../EdgeList'
 import { graphFactory, Node } from 'graph'
 
-test.skip('Settings renders', () => {})
+test('Settings renders', () => {})

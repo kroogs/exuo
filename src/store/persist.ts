@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -27,9 +27,11 @@ import {
 } from 'mobx-state-tree'
 import Dexie from 'dexie'
 
-export async function persist(graph: Instance<IAnyModelType>): Promise<void> {
+export async function persist(
+  instance: Instance<IAnyModelType>,
+): Promise<void> {
   const db = new Dexie('default')
-  const tableNames = Object.keys(getMembers(graph).properties)
+  const tableNames = Object.keys(getMembers(instance).properties)
   const tableConfig = Object.fromEntries(tableNames.map(name => [name, 'id']))
 
   db.version(1).stores(tableConfig)
@@ -42,15 +44,15 @@ export async function persist(graph: Instance<IAnyModelType>): Promise<void> {
         .then(rows => [name, Object.fromEntries(rows.map(r => [r.id, r]))]),
     ),
   ).then(resolved => {
-    applySnapshot(graph, Object.fromEntries(resolved))
-    onPatch(graph, patch => {
+    applySnapshot(instance, Object.fromEntries(resolved))
+    onPatch(instance, patch => {
       const [typeName, id, propName] = patch.path.split('/').slice(1)
       if (patch.op === 'add') {
-        db.table(typeName).put(getSnapshot(graph[typeName].get(id)))
+        db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
       } else if (patch.op === 'replace' || patch.op === 'remove') {
         if (propName) {
           db.table(typeName).update(id, {
-            [propName]: getSnapshot(graph[typeName].get(id)[propName]),
+            [propName]: getSnapshot(instance[typeName].get(id)[propName]),
           })
         } else {
           db.table(typeName).delete(id)

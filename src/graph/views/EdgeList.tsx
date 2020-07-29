@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ interface EdgeListProps {
   className?: string
 }
 
-const EdgeList: React.FunctionComponent<EdgeListProps> = ({
+export const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   node,
   edgeTag,
   className,
@@ -55,5 +55,3 @@ const EdgeList: React.FunctionComponent<EdgeListProps> = ({
     </List>
   ))
 }
-
-export default EdgeList

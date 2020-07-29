@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  */
 
 import React from 'react'
-import { useNavigate, Link } from '@reach/router'
 import {
   Chip,
   Checkbox,
@@ -33,8 +32,11 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import 'draft-js/dist/Draft.css'
 import { Instance } from 'mobx-state-tree'
 
-import LabelEditor from './LabelEditor'
+import { Link } from 'route'
 import { useGraph, Node } from 'graph'
+import LabelEditor from './LabelEditor'
+
+const useNavigate = () => (path: string) => undefined
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -113,12 +115,12 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
 }) => {
   const classes = useStyles()
   const [isFocused, setIsFocused] = React.useState(false)
-  const navigate = useNavigate()
   /* const [editorState, setEditorState] = React.useState(() => */
   /*   EditorState.createEmpty(), */
   /* ) */
   const isMouseDown = React.useRef(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>()
+  const navigate = useNavigate()
 
   return useGraph(graph => {
     const listConfig = graph.Config.get('user')?.get('lists')
@@ -157,7 +159,7 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       } else if (graph.activeModes.includes('edit')) {
         /* setIsFocused(true) */
       } else {
-        navigate(`${process.env.PUBLIC_URL}/node/${node.id}/`)
+        navigate(`/node/${node.id}/`)
       }
 
       isMouseDown.current = false
@@ -203,7 +205,7 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
                 label={node.childCount}
                 icon={<AccountTreeIcon />}
                 size="small"
-                to={`/${node.id}/`}
+                to={`/node/${node.id}/`}
                 component={Link}
                 className={classes.chip}
               />

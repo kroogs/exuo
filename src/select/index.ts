@@ -17,34 +17,4 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types, IAnyType } from 'mobx-state-tree'
-
-const Basic = types.union(
-  types.null,
-  types.boolean,
-  types.string,
-  types.number,
-  types.late((): IAnyType => types.array(Basic)),
-)
-
-export const Event = types.model('Event', {
-  type: types.string,
-  date: types.Date,
-  payload: types.maybe(Basic),
-})
-
-export const Log = types
-  .model('Log', {
-    events: types.array(Event),
-  })
-  .actions(self => ({
-    logEvent(type: string, payload?: typeof Basic) {
-      self.events.push(
-        Event.create({
-          date: Date.now(),
-          payload,
-          type,
-        }),
-      )
-    },
-  }))
+export * from './SelectionActions'

@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -17,5 +17,9 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from './setup'
-export * from './models'
+export * from './views/InstanceViewer'
+export * from './views/PropertyEditor'
+export * from './Store'
+export * from './StoreProvider'
+export * from './useStore'
+export * from './persist'

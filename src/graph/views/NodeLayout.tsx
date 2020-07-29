@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -23,11 +23,11 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
-import { Link } from '@reach/router'
 import { getSnapshot } from 'mobx-state-tree'
 
-import NodeActions from './NodeActions'
 import { Node, useGraph } from 'graph'
+import { Link } from 'route'
+import NodeActions from './NodeActions'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,7 +71,7 @@ interface LayoutProps {
   className?: string
 }
 
-const Layout: React.FunctionComponent<LayoutProps> = ({
+export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
   node,
   className,
   children,
@@ -120,5 +120,3 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
     </Box>
   ))
 }
-
-export default Layout

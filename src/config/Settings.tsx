@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -32,8 +32,8 @@ import BorderAllIcon from '@material-ui/icons/BorderAll'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
+import Layout from 'common/Layout'
 import { useGraph } from 'graph'
-import Layout from './Layout'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-const Settings: React.FunctionComponent = () => {
+export const Settings: React.FunctionComponent = () => {
   const classes = useStyles()
 
   return useGraph(graph => (
@@ -124,5 +124,3 @@ const Settings: React.FunctionComponent = () => {
     </Layout>
   ))
 }
-
-export default Settings

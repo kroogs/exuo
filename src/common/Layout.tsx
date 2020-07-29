@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -22,7 +22,8 @@ import { Typography, AppBar, Toolbar, IconButton, Box } from '@material-ui/core'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import { Link } from '@reach/router'
+
+import { Link } from 'route'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

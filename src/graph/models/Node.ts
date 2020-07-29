@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -19,12 +19,14 @@
 
 import { types, IAnyType } from 'mobx-state-tree'
 
-import { nodeFactory, edgeMapFactory } from 'graph/factories'
-import * as models from 'graph/models'
+import { Config as BaseConfig } from 'config'
+import { Log as BaseLog } from 'log'
 
-export const Config = nodeFactory(models.Config)
+import { nodeFactory, edgeMapFactory } from 'graph'
+
+export const Config = nodeFactory(BaseConfig)
 export const Node = nodeFactory([
-  models.Log,
+  BaseLog,
   edgeMapFactory(() =>
     types.union(
       types.late((): IAnyType => Node),

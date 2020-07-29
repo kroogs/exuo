@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -19,57 +19,54 @@
 
 import React from 'react'
 import { Box, Button, Typography, CircularProgress } from '@material-ui/core'
-import { useNavigate } from '@reach/router'
 import { IAnyStateTreeNode } from 'mobx-state-tree'
 
-import { useGraph } from 'graph'
-import Layout from './Layout'
+/* import { useGraph, useNavigate } from 'graph' */
+/* import Layout from './Layout' */
 
 interface PeerConnectorProps {
   id?: string
 }
 
-const PeerConnector: React.FunctionComponent<PeerConnectorProps> = ({ id }) => {
-  const [peerError, setPeerError] = React.useState<null | Error>(null)
-  const [hasAccepted, setHasAccepted] = React.useState(false)
-  const navigate = useNavigate()
+/* const PeerConnector: React.FunctionComponent<PeerConnectorProps> = ({ id }) => { */
+/*   const [peerError, setPeerError] = React.useState<null | Error>(null) */
+/*   const [hasAccepted, setHasAccepted] = React.useState(false) */
+/*   const navigate = useNavigate() */
 
-  return useGraph(graph => {
-    const handleAccept: React.EventHandler<React.SyntheticEvent> = () => {
-      setHasAccepted(true)
-      graph
-        .seekPeerConnection(id)
-        .then((instance: IAnyStateTreeNode) => {
-          navigate(`${process.env.PUBLIC_URL}/node/${instance.id}`)
-        })
-        .catch((error: Error) => {
-          setPeerError(error)
-        })
-    }
+/*   return useGraph(graph => { */
+/*     const handleAccept: React.EventHandler<React.SyntheticEvent> = () => { */
+/*       setHasAccepted(true) */
+/*       graph */
+/*         .seekPeerConnection(id) */
+/*         .then((instance: IAnyStateTreeNode) => { */
+/*           navigate(`/node/${instance.id}`) */
+/*         }) */
+/*         .catch((error: Error) => { */
+/*           setPeerError(error) */
+/*         }) */
+/*     } */
 
-    return (
-      <Layout>
-        <Typography align="center">
-          Someone wants to share content with you.
-          <br />
-          Do not accept if you do not trust them.
-        </Typography>
-        <Box mt={1} textAlign="center">
-          {peerError ? (
-            <Typography color="error">{peerError}</Typography>
-          ) : (
-            <Button
-              disabled={hasAccepted}
-              onClick={handleAccept}
-              color="primary"
-            >
-              {hasAccepted ? <CircularProgress size={24} /> : 'Accept'}
-            </Button>
-          )}
-        </Box>
-      </Layout>
-    )
-  })
-}
-
-export default PeerConnector
+/*     return ( */
+/*       <Layout> */
+/*         <Typography align="center"> */
+/*           Someone wants to share content with you. */
+/*           <br /> */
+/*           Do not accept if you do not trust them. */
+/*         </Typography> */
+/*         <Box mt={1} textAlign="center"> */
+/*           {peerError ? ( */
+/*             <Typography color="error">{peerError}</Typography> */
+/*           ) : ( */
+/*             <Button */
+/*               disabled={hasAccepted} */
+/*               onClick={handleAccept} */
+/*               color="primary" */
+/*             > */
+/*               {hasAccepted ? <CircularProgress size={24} /> : 'Accept'} */
+/*             </Button> */
+/*           )} */
+/*         </Box> */
+/*       </Layout> */
+/*     ) */
+/*   }) */
+/* } */

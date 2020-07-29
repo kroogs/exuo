@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -19,26 +19,28 @@
 
 import React from 'react'
 
-import { useGraph } from 'graph'
-import NodeLayout from './NodeLayout'
-import EdgeList from './EdgeList'
+import { NodeLayout, EdgeList } from 'graph'
+
+import { useStore } from 'store'
 
 interface InstanceViewerProps {
   id?: string
   type?: string
 }
 
-const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
+export const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
   id,
   type,
 }) =>
-  useGraph(graph => {
-    let instance = graph.rootNode
-    const node = graph.Node.get(id)
+  useStore(store => {
+    let instance = store.graph.rootNode
+    const node = store.graph.Node.get(id)
 
     if (node) {
       instance = node
     }
+
+    console.log(store.graph.rootNode)
 
     return instance ? (
       <NodeLayout node={instance}>
@@ -46,5 +48,3 @@ const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
       </NodeLayout>
     ) : null
   })
-
-export default InstanceViewer

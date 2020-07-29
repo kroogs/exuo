@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -20,19 +20,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import 'mobx-react-lite/batchingForReactDom'
-import * as serviceWorker from './serviceWorker'
 
-import { GraphProvider } from './graph'
+import { Routes } from './route'
+import { StoreProvider } from './store'
 import { ThemeProvider } from './theme'
-import { Router } from './router'
+import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
   <React.StrictMode>
-    <GraphProvider>
+    <StoreProvider>
       <ThemeProvider>
-        <Router />
+        <Routes />
       </ThemeProvider>
-    </GraphProvider>
+    </StoreProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 )

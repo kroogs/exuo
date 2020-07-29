@@ -21,24 +21,13 @@ import React from 'react'
 import { Instance } from 'mobx-state-tree'
 import { useObserver } from 'mobx-react-lite'
 
-import { Graph } from './models'
+import { Store, storeContext } from 'store'
 
-export const graphContext = React.createContext<Instance<typeof Graph>>(null)
-
-export const GraphProvider: React.FunctionComponent<{
-  value?: Instance<typeof Graph>
-}> = ({ children, value }) =>
-  React.createElement(
-    graphContext.Provider,
-    { value: value ?? Graph.create() },
-    children,
-  )
-
-export function useGraph<S>(selector: (s: Instance<typeof Graph>) => S): S {
-  const graph = React.useContext(graphContext)
-  if (graph) {
-    return useObserver(() => selector(graph))
+export function useStore<S>(selector: (s: Instance<typeof Store>) => S): S {
+  const store = React.useContext(storeContext)
+  if (store) {
+    return useObserver(() => selector(store))
   } else {
-    throw Error('Cannot use graph before setup')
+    throw Error('Cannot use store before setup')
   }
 }

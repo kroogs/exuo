@@ -1,6 +1,6 @@
 /*
  * Copyright © 2020 Ty Dira <ty@dira.dev>
- *
+
  * This file is part of Exuo.
 
  * Exuo is free software: you can redistribute it and/or modify
@@ -25,7 +25,9 @@ import {
   isType,
 } from 'mobx-state-tree'
 
-import { nodeFactory, edgeMapFactory, graphFactory } from '../factories'
+import { factories } from '../'
+
+const { nodeFactory, edgeMapFactory, graphFactory } = factories
 
 describe('graph', () => {
   describe('#nodeFactory', () => {
