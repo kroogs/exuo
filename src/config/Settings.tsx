@@ -30,26 +30,14 @@ import {
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck'
 import BorderAllIcon from '@material-ui/icons/BorderAll'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import Layout from 'common/Layout'
+import { Layout } from 'common'
 import { useGraph } from 'graph'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {},
-  }),
-)
-
 export const Settings: React.FunctionComponent = () => {
-  const classes = useStyles()
-
   return useGraph(graph => (
     <Layout>
-      <List
-        subheader={<ListSubheader>Global</ListSubheader>}
-        className={classes.root}
-      >
+      <List subheader={<ListSubheader>Global</ListSubheader>}>
         <ListItem>
           <ListItemIcon>
             <BorderAllIcon />
@@ -66,10 +54,7 @@ export const Settings: React.FunctionComponent = () => {
           </ListItemSecondaryAction>
         </ListItem>
       </List>
-      <List
-        subheader={<ListSubheader>Lists</ListSubheader>}
-        className={classes.root}
-      >
+      <List subheader={<ListSubheader>Lists</ListSubheader>}>
         <ListItem>
           <ListItemIcon>
             <PlaylistAddCheckIcon />

@@ -18,22 +18,15 @@
  */
 
 import React from 'react'
-import { Typography, AppBar, Toolbar, IconButton, Box } from '@material-ui/core'
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import SettingsIcon from '@material-ui/icons/Settings'
+import { AppBar, Box } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { Link } from 'route'
+import { TitleBar } from 'common'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {},
     appBar: {},
-    header: {
-      color: theme.palette.text.secondary,
-      backgroundColor: theme.palette.background.default,
-      padding: theme.spacing(0, 2, 0, 2),
-    },
     actions: {
       width: '100%',
       textAlign: 'center',
@@ -42,41 +35,18 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(0, 2, 0, 2),
     },
     children: {},
-    backButton: {
-      '&[disabled]': {
-        visibility: 'hidden',
-        pointerEvents: 'none',
-      },
-    },
-    hide: {
-      visibility: 'hidden',
-      mouseEvents: 'none',
-    },
-    settingsButton: {},
-    title: {
-      flexGrow: 1,
-      textAlign: 'center',
-      overflowX: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      color: theme.palette.text.primary,
-    },
   }),
 )
 
 interface LayoutProps {
   title?: string
   actions?: React.ReactElement
-  showBackButton?: boolean
-  showSettingsButton?: boolean
   className?: string
 }
 
-const Layout: React.FunctionComponent<LayoutProps> = ({
+export const Layout: React.FunctionComponent<LayoutProps> = ({
   title,
   actions,
-  showBackButton,
-  showSettingsButton,
   className,
   children,
 }) => {
@@ -84,57 +54,10 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
   return (
     <Box className={[classes.root, className].join(' ')}>
       <AppBar elevation={0} position="sticky" className={classes.appBar}>
-        <Toolbar variant="dense" className={classes.header}>
-          <IconButton
-            disabled={
-              window.location.pathname === process.env.PUBLIC_URL
-                ? true
-                : undefined
-            }
-            edge="start"
-            aria-label="back"
-            onClick={() => window.history.back()}
-            className={[
-              classes.backButton,
-              showSettingsButton ? '' : classes.hide,
-            ].join(' ')}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
-
-          {title && (
-            <Typography variant="h6" className={classes.title}>
-              {title}
-            </Typography>
-          )}
-
-          <IconButton
-            disabled
-            edge="end"
-            component={Link}
-            to={`/settings`}
-            aria-label="settings"
-            className={[
-              classes.settingsButton,
-              showBackButton ? '' : classes.hide,
-            ].join(' ')}
-          >
-            {<SettingsIcon fontSize="small" />}
-          </IconButton>
-        </Toolbar>
-
+        <TitleBar title={title} />
         {actions}
       </AppBar>
-
       <Box className={classes.children}>{children}</Box>
     </Box>
   )
 }
-
-Layout.defaultProps = {
-  title: 'Exuo',
-  showBackButton: false,
-  showSettingsButton: false,
-}
-
-export default Layout
