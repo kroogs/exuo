@@ -32,14 +32,14 @@ describe('matchPathParts', () => {
     ).toStrictEqual(3)
   })
 
-  it('does only complete path matches', () => {
+  it('matches complete paths only', () => {
     expect(
       matchPathParts(getPathParts('1/2/3/5'), getPathParts('1/2/3/4'))
         .matchCount,
     ).toStrictEqual(0)
   })
 
-  it('does variable extraction', () => {
+  it('extracts variables', () => {
     expect(
       matchPathParts(getPathParts('/1/:type/:id'), getPathParts('/1/funky/3/'))
         .variables,
@@ -114,47 +114,6 @@ describe('route', () => {
         })
 
         expect(result).toStrictEqual([1, 2, 9, 8])
-      })
-    })
-  })
-
-  describe('events', () => {
-    describe.skip('onSelect', () => {
-      it('calls given event handler', () => {
-        //
-      })
-    })
-
-    describe.skip('onMatch', () => {
-      it('calls given event handler', () => {
-        //
-      })
-    })
-
-    describe('onTravel', () => {
-      it('calls given event handler', () => {
-        const result: Array<string> = []
-
-        route('/1/2/3', ({ select, travel, onTravel }) => {
-          const dispose = onTravel(path => {
-            result.push('travel')
-            result.push(path)
-          })
-
-          select('9', () => {
-            dispose()
-          })
-
-          select('1', () => {
-            travel('9')
-          })
-        })
-
-        expect(result).toStrictEqual(['travel', '9'])
-      })
-
-      it.skip('allows handler wrapping', () => {
-        //
       })
     })
   })

@@ -42,34 +42,25 @@ export const matchPathParts = (
   return { variables, matchCount: i }
 }
 
-export type RouteHandler = (match: Record<string, string>) => void
-export type RouteEventHandler = (path: string) => void
+export type RouteHandler<T> = (match: Record<string, string>) => T
 
-export interface RouteMethods {
-  select: (path: string, handler: RouteHandler) => void
-  onSelect: (handler: RouteEventHandler) => () => void
-
-  match: (path: string, handler?: RouteHandler) => void
-  onMatch: (handler: RouteEventHandler) => () => void
-
-  travel: (path: string, handler?: RouteHandler) => void
-  onTravel: (handler: RouteEventHandler) => () => void
+export interface RouteMethods<T = unknown> {
+  select: <S>(path: string, handler: RouteHandler<S>) => void | S
+  match: <M>(
+    path: string,
+    handler?: RouteHandler<M>,
+  ) => void | Record<string, string> | M
+  travel: (path: string, handler?: RouteHandler<T>) => T
 }
 
-export function route(
+export function route<T>(
   rootPath: string,
-  call: (methods: RouteMethods) => void,
-): void {
-  const eventHandlers: Record<string, Array<RouteEventHandler>> = {
-    onSelect: [],
-    onMatch: [],
-    onTravel: [],
-  }
-
+  call: (methods: RouteMethods<T>) => T,
+): T {
   let rootParts = getPathParts(rootPath)
   let didSelect = false
 
-  const methods: RouteMethods = {
+  const methods: RouteMethods<T> = {
     select: (path, handler) => {
       if (didSelect) {
         return
@@ -89,15 +80,6 @@ export function route(
       }
     },
 
-    onSelect: handler => {
-      eventHandlers.onSelect.push(handler)
-      return () => {
-        eventHandlers.onSelect = eventHandlers.onSelect.filter(
-          i => i !== handler,
-        )
-      }
-    },
-
     match: (path, handler) => {
       const { matchCount, variables } = matchPathParts(
         getPathParts(path),
@@ -105,36 +87,17 @@ export function route(
       )
 
       if (matchCount) {
-        return handler?.(variables) || variables
-      }
-    },
-
-    onMatch: handler => {
-      eventHandlers.onMatch.push(handler)
-      return () => {
-        eventHandlers.onMatch = eventHandlers.onMatch.filter(i => i !== handler)
+        return handler?.(variables) ?? variables
       }
     },
 
     travel: path => {
       rootParts = getPathParts(path)
       didSelect = false
-      call(methods)
 
-      eventHandlers.onTravel.forEach(handler => {
-        handler(path)
-      })
-    },
-
-    onTravel: handler => {
-      eventHandlers.onTravel.push(handler)
-      return () => {
-        eventHandlers.onTravel = eventHandlers.onTravel.filter(
-          i => i !== handler,
-        )
-      }
+      return call(methods)
     },
   }
 
-  call(methods)
+  return call(methods)
 }
