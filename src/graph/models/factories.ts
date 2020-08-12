@@ -87,14 +87,12 @@ export const nodeFactory = (
     )
     .named('Node')
 
-export const NodeBase = nodeFactory(edgeMapFactory(() => NodeBase))
-
 interface GraphFactoryOptions {
   getId?: () => string
 }
 
 export const graphFactory = (
-  nodeModels: ModelTable = { Node: NodeBase },
+  nodeModels: ModelTable,
   options: GraphFactoryOptions = {},
 ): IAnyModelType =>
   types
@@ -133,4 +131,5 @@ export const graphFactory = (
       },
     }))
 
-export const GraphBase = graphFactory()
+export const NodeBase = nodeFactory(edgeMapFactory(() => NodeBase))
+export const GraphBase = graphFactory({ Node: NodeBase })
