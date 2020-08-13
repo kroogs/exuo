@@ -19,30 +19,52 @@
 
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
-import { Button, Theme, makeStyles, createStyles } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  IconButton,
+  Toolbar,
+  Theme,
+  makeStyles,
+  createStyles,
+} from '@material-ui/core'
+import Code from '@material-ui/icons/Code'
+import FormatQuote from '@material-ui/icons/FormatQuote'
+import FormatBold from '@material-ui/icons/FormatBold'
+import FormatItalic from '@material-ui/icons/FormatItalic'
+import FormatUnderlined from '@material-ui/icons/FormatUnderlined'
+import SpaceBar from '@material-ui/icons/SpaceBar'
+import FormatListNumbered from '@material-ui/icons/FormatListNumbered'
+import FormatListBulleted from '@material-ui/icons/FormatListBulleted'
 import * as Draft from 'draft-js'
 import 'draft-js/dist/Draft.css'
 
 import { Note } from './Note'
 
-const BLOCK_TYPES = [
-  { label: 'H1', style: 'header-one' },
-  { label: 'H2', style: 'header-two' },
-  { label: 'H3', style: 'header-three' },
-  { label: 'H4', style: 'header-four' },
-  { label: 'H5', style: 'header-five' },
-  { label: 'H6', style: 'header-six' },
-  { label: 'UL', style: 'unordered-list-item' },
-  { label: 'OL', style: 'ordered-list-item' },
-  { label: 'Blockquote', style: 'blockquote' },
-  { label: 'Code Block', style: 'code-block' },
+interface ButtonConfig {
+  label: string
+  style: string
+  icon?: React.ReactElement
+}
+
+const BLOCK_TYPES: Array<ButtonConfig> = [
+  /* { label: 'H1', style: 'header-one' }, */
+  /* { label: 'H2', style: 'header-two' }, */
+  /* { label: 'H3', style: 'header-three' }, */
+  /* { label: 'H4', style: 'header-four' }, */
+  /* { label: 'H5', style: 'header-five' }, */
+  /* { label: 'H6', style: 'header-six' }, */
+  { label: 'UL', style: 'unordered-list-item', icon: <FormatListNumbered /> },
+  { label: 'OL', style: 'ordered-list-item', icon: <FormatListBulleted /> },
+  { label: 'Blockquote', style: 'blockquote', icon: <FormatQuote /> },
+  { label: 'Code Block', style: 'code-block', icon: <Code /> },
 ]
 
-const INLINE_STYLES = [
-  { label: 'Bold', style: 'BOLD' },
-  { label: 'Italic', style: 'ITALIC' },
-  { label: 'Underline', style: 'UNDERLINE' },
-  { label: 'Monospace', style: 'CODE' },
+const INLINE_STYLES: Array<ButtonConfig> = [
+  { label: 'Bold', style: 'BOLD', icon: <FormatBold /> },
+  { label: 'Italic', style: 'ITALIC', icon: <FormatItalic /> },
+  { label: 'Underline', style: 'UNDERLINE', icon: <FormatUnderlined /> },
+  { label: 'Monospace', style: 'CODE', icon: <SpaceBar /> },
 ]
 
 const styleMap = {
@@ -68,6 +90,7 @@ interface StyleButtonProps {
   style: string
   active: boolean
   label: string
+  icon?: React.ReactElement
 }
 
 const StyleButton: React.FunctionComponent<StyleButtonProps> = ({
@@ -75,6 +98,7 @@ const StyleButton: React.FunctionComponent<StyleButtonProps> = ({
   style,
   active,
   label,
+  icon,
 }) => {
   const onToggleWrap: React.EventHandler<React.SyntheticEvent> = e => {
     e.preventDefault()
@@ -86,9 +110,18 @@ const StyleButton: React.FunctionComponent<StyleButtonProps> = ({
     className += ' RichEditor-activeButton'
   }
 
-  return (
-    <Button size="small" className={className} onMouseDown={onToggleWrap}>
-      {label}
+  return icon ? (
+    <IconButton size="small" onMouseDown={onToggleWrap} className={className}>
+      {icon}
+    </IconButton>
+  ) : (
+    <Button
+      size="small"
+      startIcon={icon ? icon : undefined}
+      onMouseDown={onToggleWrap}
+      className={className}
+    >
+      {icon ? '' : label}
     </Button>
   )
 }
@@ -115,6 +148,7 @@ const BlockStyleControls: React.FunctionComponent<BlockStyleControlsProps> = ({
           key={type.label}
           active={type.style === blockType}
           label={type.label}
+          icon={type.icon}
           onToggle={onToggle}
           style={type.style}
         />
@@ -140,6 +174,7 @@ const InlineStyleControls: React.FunctionComponent<InlineStyleControlsProps> = (
           key={type.label}
           active={currentStyle.has(type.style)}
           label={type.label}
+          icon={type.icon}
           onToggle={onToggle}
           style={type.style}
         />
@@ -152,8 +187,11 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {},
     input: {
-      height: '100px',
-      border: 'solid 1px red',
+      height: '300px',
+      padding: theme.spacing(0, 2, 0, 2),
+    },
+    toolbar: {
+      padding: theme.spacing(0, 2, 0, 2),
     },
   }),
 )
@@ -214,14 +252,18 @@ export const NoteEditor: React.FunctionComponent<NoteEditorProps> = ({
 
   return (
     <div className={classes.root}>
-      <BlockStyleControls
-        editorState={editorState}
-        onToggle={toggleBlockType}
-      />
-      <InlineStyleControls
-        editorState={editorState}
-        onToggle={toggleInlineStyle}
-      />
+      <Toolbar variant="dense" className={classes.toolbar}>
+        <Box flexGrow={1}>
+          <InlineStyleControls
+            editorState={editorState}
+            onToggle={toggleInlineStyle}
+          />
+        </Box>
+        <BlockStyleControls
+          editorState={editorState}
+          onToggle={toggleBlockType}
+        />
+      </Toolbar>
       <div className={classes.input}>
         <Draft.Editor
           ref={editorRef}
@@ -231,7 +273,7 @@ export const NoteEditor: React.FunctionComponent<NoteEditorProps> = ({
           handleKeyCommand={handleKeyCommand}
           keyBindingFn={mapKeyToEditorCommand}
           onChange={setEditorState}
-          placeholder="Placeholder Required"
+          placeholder="Write here"
           spellCheck={true}
         />
       </div>
