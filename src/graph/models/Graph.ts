@@ -17,19 +17,12 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  Instance,
-  SnapshotIn,
-  SnapshotOut,
-  IAnyModelType,
-  applyPatch,
-  onPatch,
-  getSnapshot,
-} from 'mobx-state-tree'
+import { Instance, SnapshotIn, IAnyModelType } from 'mobx-state-tree'
 
-import { persist } from 'store'
+import { persist } from 'store/persist'
+import { Note } from 'note'
 
-import { graphFactory } from 'graph'
+import { graphFactory } from './factories'
 import { Node, Config } from './Node'
 
 export const Graph = graphFactory({ Node, Config })

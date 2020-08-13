@@ -17,41 +17,15 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types, IAnyType } from 'mobx-state-tree'
+import { types } from 'mobx-state-tree'
 
-import { Config as BaseConfig } from 'config'
-import { Note as BaseNote } from 'note'
-
-import { nodeFactory, edgeMapFactory } from 'graph'
-
-export const Config = nodeFactory(BaseConfig)
-export const Note = nodeFactory(BaseNote)
-
-export const Node = nodeFactory([
-  edgeMapFactory(() =>
-    types.union(
-      types.late((): IAnyType => Node),
-      Config,
-      Note,
-    ),
-  ),
-])
+export const Note = types
+  .model('Note')
   .props({
-    label: types.maybe(types.string),
+    body: types.string,
   })
-
   .actions(self => ({
-    afterCreate() {
-      //
-    },
-  }))
-
-  .views(self => ({
-    get childCount(): number {
-      return self.edgeMap.get('child')?.length ?? 0
-    },
-
-    get createDate(): Date {
-      return self.events[0]?.date
+    setBody(content: string) {
+      self.body = content
     },
   }))
