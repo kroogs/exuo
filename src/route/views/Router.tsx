@@ -18,32 +18,37 @@
  */
 
 import React from 'react'
+import { Instance } from 'mobx-state-tree'
 
-import { InstanceViewer } from 'store'
+import { NoteEditor, Note } from 'note'
+import { InstanceViewer, useStore } from 'store'
+import { NodeViewer } from 'graph'
 import { Settings } from 'config'
-import { useStore } from 'store'
 
-import { route } from 'route'
+import { useRoute, route, Route, browserAdapter } from 'route'
 
-export const Router: React.FunctionComponent = ({ children }) =>
-  useStore(store => {
-    let result = <></>
+export const Router: React.FunctionComponent = () => {
+  return <NoteEditor />
+  /* return useRoute('/', ({ select, onSelect, onTravel }) => { */
+  /*   let result = <>boop</> */
 
-    if (store.location) {
-      route(store.location, ({ select }) => {
-        select('settings', () => {
-          result = <Settings />
-        })
+  /*   onSelect((path, value) => { */
+  /*     result = <>oshit</> */
+  /*     /1* result = value *1/ */
+  /*   }) */
 
-        select(':type/:id', ({ type, id }) => {
-          result = <InstanceViewer type={type} id={id} />
-        })
+  /*   select('settings', () => <Settings />) */
 
-        select('/', () => {
-          result = <InstanceViewer />
-        })
-      })
-    }
+  /*   select(':type/:id', ({ type, id }) => { */
+  /*     if (type === 'node') { */
+  /*       return <NodeViewer id={id} /> */
+  /*     } else { */
+  /*       return <InstanceViewer type={type} id={id} /> */
+  /*     } */
+  /*   }) */
 
-    return result
-  })
+  /*   select('/', () => <NodeViewer />) */
+
+  /*   return result */
+  /* }) */
+}

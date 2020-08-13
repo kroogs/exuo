@@ -21,26 +21,15 @@ import React from 'react'
 import { Instance } from 'mobx-state-tree'
 
 import { Graph } from 'graph'
-import { History } from 'route'
+import { Route } from 'route'
 
 import { Store } from './Store'
 
-export const storeContext = React.createContext<Instance<typeof Store> | null>(
-  null,
-)
+const store = Store.create({
+  graph: Graph.create(),
+})
 
-export const StoreProvider: React.FunctionComponent<{
-  value?: Instance<typeof Store>
-}> = ({ children, value }) =>
-  React.createElement(
-    storeContext.Provider,
-    {
-      value:
-        value ??
-        Store.create({
-          graph: Graph.create(),
-          history: History.create(),
-        }),
-    },
-    children,
-  )
+export const storeContext = React.createContext<Instance<typeof Store>>(store)
+
+export const StoreProvider: React.FunctionComponent = ({ children }) =>
+  React.createElement(storeContext.Provider, { value: store }, children)

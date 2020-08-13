@@ -17,15 +17,20 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from './route'
-export * from './event'
-export * from './browser'
-export * from './useRoute'
+import { eventAdapter, RouteMethods, EventMethods } from 'route'
 
-export * from './models/Route'
-export * from './models/History'
-export * from './models/Location'
+export const browserAdapter = (methods: RouteMethods): EventMethods => {
+  const envUrl = process.env.PUBLIC_URL || ''
+  const rootPath = new URL(envUrl, window.location.href).pathname
+  const eventMethods = eventAdapter(methods)
 
-export * from './views/Link'
-export * from './views/NotFound'
-export * from './views/Router'
+  eventMethods.onTravel(path => {
+    window.history.pushState({}, path, rootPath + '/' + path)
+  })
+
+  window.onpopstate = (e: PopStateEvent) => {
+    console.log(e)
+  }
+
+  return eventMethods
+}

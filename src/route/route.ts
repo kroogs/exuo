@@ -23,13 +23,16 @@ export const getPathParts = (path: string): Array<string> =>
 export const matchPathParts = (
   left: Array<string>,
   right: Array<string>,
-): { matchCount: number; variables: Record<string, string> } => {
-  const variables: Record<string, string> = {}
-  let i = 0
-
+): {
+  matchCount: number
+  variables: Record<string, string>
+} => {
   if (left.length === 0 && right.length === 0) {
     return { variables: {}, matchCount: 1 }
   }
+
+  const variables: Record<string, string> = {}
+  let i = 0
 
   for (; i < left.length; i++) {
     if (left[i].indexOf(':') >= 0 && right[i]) {
@@ -44,23 +47,23 @@ export const matchPathParts = (
 
 export type RouteHandler<T> = (match: Record<string, string>) => T
 
-export interface RouteMethods<T = unknown> {
+export interface RouteMethods {
   select: <S>(path: string, handler: RouteHandler<S>) => void | S
   match: <M>(
     path: string,
     handler?: RouteHandler<M>,
   ) => void | Record<string, string> | M
-  travel: (path: string, handler?: RouteHandler<T>) => T
+  travel: (path: string) => void
 }
 
-export function route<T>(
+export function route<T, S, M>(
   rootPath: string,
-  call: (methods: RouteMethods<T>) => T,
+  call: (methods: RouteMethods) => T,
 ): T {
   let rootParts = getPathParts(rootPath)
   let didSelect = false
 
-  const methods: RouteMethods<T> = {
+  const methods: RouteMethods = {
     select: (path, handler) => {
       if (didSelect) {
         return

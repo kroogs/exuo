@@ -19,7 +19,7 @@
 
 import React from 'react'
 
-import { storeContext } from 'store'
+import { useRoute } from 'route'
 
 interface LinkProps {
   to: string
@@ -28,7 +28,7 @@ interface LinkProps {
 
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (props, ref) => {
-    const store = React.useContext(storeContext)
+    const { travel } = useRoute()
     return (
       <a
         ref={ref}
@@ -36,7 +36,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         className={props.className}
         onClick={e => {
           e.preventDefault()
-          store?.history.push(props.to)
+          travel(props.to)
         }}
       >
         {props.children}

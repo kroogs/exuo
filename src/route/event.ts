@@ -27,18 +27,24 @@ export interface EventMethods {
   onTravel: (handler: EventHandler) => () => void
 }
 
-export type RouteEventMethods<T = unknown> = RouteMethods<T> & EventMethods
+export type RouteEventMethods = RouteMethods & EventMethods
 
-// TODO Turn this baby into a spiffy generic event api factory
+interface EventHandlerStack {
+  onSelect: Array<EventHandler>
+  onMatch: Array<EventHandler>
+  onTravel: Array<EventHandler>
+}
+
+// TODO Create a spiffy generic event/middleware api factory to replace this
 
 export const eventAdapter = (methods: RouteMethods): RouteEventMethods => {
-  const eventHandlers: Record<string, Array<EventHandler>> = {
+  const eventHandlers: EventHandlerStack = {
     onSelect: [],
     onMatch: [],
     onTravel: [],
   }
 
-  const eventMethods: EventMethods = {
+  const eventMethods: RouteEventMethods = {
     onSelect: handler => {
       eventHandlers.onSelect.push(handler)
       return () => {
@@ -63,10 +69,6 @@ export const eventAdapter = (methods: RouteMethods): RouteEventMethods => {
         )
       }
     },
-  }
-
-  return {
-    ...eventMethods,
 
     select(path, handler) {
       eventHandlers.onSelect.forEach(eventHandler => {
@@ -84,12 +86,14 @@ export const eventAdapter = (methods: RouteMethods): RouteEventMethods => {
       return methods.match(path, handler)
     },
 
-    travel(path, handler) {
+    travel(path) {
       eventHandlers.onTravel.forEach(eventHandler => {
         eventHandler(path)
       })
 
-      return methods.travel(path, handler)
+      return methods.travel(path)
     },
   }
+
+  return eventMethods
 }
