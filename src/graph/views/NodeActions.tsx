@@ -18,11 +18,16 @@
  */
 
 import React from 'react'
-import { Toolbar, Button } from '@material-ui/core'
+import {
+  Toolbar,
+  Button,
+  createStyles,
+  makeStyles,
+  Theme,
+} from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
 import GroupWorkIcon from '@material-ui/icons/GroupWork'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 
 import { SelectionActions } from 'select'
@@ -48,7 +53,7 @@ interface NodeActionsProps {
 
 type ActionMode = 'normal' | 'add' | 'share'
 
-const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
+export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   node,
   className,
 }) => {
@@ -87,6 +92,7 @@ const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
 
             {window.location.pathname === process.env.PUBLIC_URL || (
               <Button
+                disabled
                 startIcon={<GroupWorkIcon />}
                 onClick={() => {
                   if (graph.activeModes.includes('share')) {
@@ -126,5 +132,3 @@ const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
     )
   })
 }
-
-export default NodeActions

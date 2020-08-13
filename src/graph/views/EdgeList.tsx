@@ -22,8 +22,7 @@ import { List } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { IAnyModelType, Instance } from 'mobx-state-tree'
 
-import { Node, useGraph } from 'graph'
-import NodeListItem from './NodeListItem'
+import { Node, useGraph, NodeListItem } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

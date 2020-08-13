@@ -98,5 +98,3 @@ LabelEditor.defaultProps = {
   createMode: true,
   placeholder: 'Label',
 }
-
-export default LabelEditor

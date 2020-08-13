@@ -32,13 +32,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface NodeEditorProps {
+interface PropertyEditorProps {
   node?: Instance<typeof Node> | string
   propName?: string
   minimal?: boolean
 }
 
-const NodeEditor: React.FunctionComponent<NodeEditorProps> = props => {
+export const PropertyEditor: React.FunctionComponent<PropertyEditorProps> = props => {
   const classes = useStyles()
 
   return useGraph(graph => {
@@ -75,5 +75,3 @@ const NodeEditor: React.FunctionComponent<NodeEditorProps> = props => {
     )
   })
 }
-
-export default NodeEditor

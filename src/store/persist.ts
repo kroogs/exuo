@@ -63,5 +63,3 @@ export async function persist(
     })
   })
 }
-
-export default persist

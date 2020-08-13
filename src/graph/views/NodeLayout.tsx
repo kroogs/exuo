@@ -24,8 +24,7 @@ import { Instance } from 'mobx-state-tree'
 
 import { TitleBar } from 'common'
 
-import { Node, useGraph } from 'graph'
-import NodeActions from './NodeActions'
+import { Node, useGraph, NodeActions } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

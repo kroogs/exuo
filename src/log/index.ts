@@ -17,32 +17,4 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-
-import { NodeLayout, EdgeList } from 'graph'
-
-import { useStore } from 'store'
-
-interface InstanceViewerProps {
-  id?: string
-  type?: string
-}
-
-export const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
-  id,
-  type,
-}) =>
-  useStore(store => {
-    let instance = store.graph.rootNode
-    const node = store.graph.Node.get(id)
-
-    if (node) {
-      instance = node
-    }
-
-    return instance ? (
-      <NodeLayout node={instance}>
-        <EdgeList node={instance} edgeTag="child" />
-      </NodeLayout>
-    ) : null
-  })
+export * from './Log'

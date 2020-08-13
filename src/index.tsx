@@ -21,16 +21,16 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import 'mobx-react-lite/batchingForReactDom'
 
-import { Routes } from './route'
 import { StoreProvider } from './store'
 import { ThemeProvider } from './theme'
+import { Router } from './route'
 import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
   <React.StrictMode>
     <StoreProvider>
       <ThemeProvider>
-        <Routes />
+        <Router />
       </ThemeProvider>
     </StoreProvider>
   </React.StrictMode>,

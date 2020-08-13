@@ -19,19 +19,15 @@
 
 import React from 'react'
 
-import { NodeLayout, EdgeList } from 'graph'
-
 import { useStore } from 'store'
 
-interface InstanceViewerProps {
+import { NodeLayout, EdgeList } from 'graph'
+
+interface NodeViewerProps {
   id?: string
-  type?: string
 }
 
-export const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
-  id,
-  type,
-}) =>
+export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
   useStore(store => {
     let instance = store.graph.rootNode
     const node = store.graph.Node.get(id)

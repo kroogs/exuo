@@ -32,16 +32,17 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import 'draft-js/dist/Draft.css'
 import { Instance } from 'mobx-state-tree'
 
-import { Link } from 'route'
-import { useGraph, Node } from 'graph'
-import LabelEditor from './LabelEditor'
-
-const useNavigate = () => (path: string) => undefined
+import { Link, useRoute } from 'route'
+import { useGraph, Node, LabelEditor } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {},
     listItem: {
+      '&:hover': { color: theme.palette.primary.main },
+      '&.MuiListItem-button': {
+        backgroundColor: 'unset',
+      },
       [theme.breakpoints.up('sm')]: {
         borderRadius: theme.shape.borderRadius,
       },
@@ -109,7 +110,7 @@ interface NodeListItemProps {
   node: Instance<typeof Node>
 }
 
-const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
+export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   node,
   ...props
 }) => {
@@ -120,7 +121,7 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   /* ) */
   const isMouseDown = React.useRef(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>()
-  const navigate = useNavigate()
+  const { travel } = useRoute()
 
   return useGraph(graph => {
     const listConfig = graph.Config.get('user')?.get('lists')
@@ -159,7 +160,7 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       } else if (graph.activeModes.includes('edit')) {
         /* setIsFocused(true) */
       } else {
-        navigate(`/node/${node.id}/`)
+        travel(`node/${node.id}`)
       }
 
       isMouseDown.current = false
@@ -173,6 +174,7 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     return (
       <ListItem
         button
+        disableRipple
         onMouseDown={downHandler}
         onTouchStart={downHandler}
         onMouseUp={upHandler}
@@ -227,5 +229,3 @@ const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     )
   })
 }
-
-export default NodeListItem
