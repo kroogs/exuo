@@ -22,8 +22,9 @@ import { Typography, Toolbar, IconButton, Box } from '@material-ui/core'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import { Link } from '@reach/router'
 
-import { Link } from 'route'
+import { makeUrl } from 'route'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -96,7 +97,7 @@ export const TitleBar: React.FunctionComponent<TitleBarProps> = ({
         disabled
         edge="end"
         component={Link}
-        to={`/settings`}
+        to={makeUrl(`/settings`)}
         aria-label="settings"
         className={[
           classes.settingsButton,

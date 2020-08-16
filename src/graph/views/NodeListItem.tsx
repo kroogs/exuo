@@ -31,8 +31,9 @@ import ChevronRight from '@material-ui/icons/ChevronRight'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import 'draft-js/dist/Draft.css'
 import { Instance } from 'mobx-state-tree'
+import { Link, useNavigate } from '@reach/router'
 
-import { Link, useRoute } from 'route'
+import { makeUrl } from 'route'
 import { useGraph, Node, LabelEditor } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -121,7 +122,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   /* ) */
   const isMouseDown = React.useRef(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>()
-  const { travel } = useRoute()
+  const navigate = useNavigate()
 
   return useGraph(graph => {
     const listConfig = graph.Config.get('user')?.get('lists')
@@ -160,7 +161,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       } else if (graph.activeModes.includes('edit')) {
         /* setIsFocused(true) */
       } else {
-        travel(`node/${node.id}`)
+        navigate(makeUrl(`/node/${node.id}`))
       }
 
       isMouseDown.current = false
@@ -207,7 +208,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
                 label={node.childCount}
                 icon={<AccountTreeIcon />}
                 size="small"
-                to={`/node/${node.id}/`}
+                to={makeUrl(`/node/${node.id}/`)}
                 component={Link}
                 className={classes.chip}
               />
@@ -217,7 +218,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
           {showChildCount && !showEdgeChips && node.childCount > 0 && (
             <Button
               endIcon={<ChevronRight />}
-              to={`/node/${node.id}/`}
+              to={makeUrl(`/node/${node.id}/`)}
               component={Link}
               className={classes.childButton}
             >

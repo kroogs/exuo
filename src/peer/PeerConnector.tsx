@@ -20,53 +20,57 @@
 import React from 'react'
 import { Box, Button, Typography, CircularProgress } from '@material-ui/core'
 import { IAnyStateTreeNode } from 'mobx-state-tree'
+import { useNavigate } from '@reach/router'
 
-/* import { useGraph, useNavigate } from 'graph' */
-/* import Layout from './Layout' */
+import { Layout } from 'common'
+import { makeUrl } from 'route'
+import { useGraph } from 'graph'
 
 interface PeerConnectorProps {
   id?: string
 }
 
-/* const PeerConnector: React.FunctionComponent<PeerConnectorProps> = ({ id }) => { */
-/*   const [peerError, setPeerError] = React.useState<null | Error>(null) */
-/*   const [hasAccepted, setHasAccepted] = React.useState(false) */
-/*   const navigate = useNavigate() */
+export const PeerConnector: React.FunctionComponent<PeerConnectorProps> = ({
+  id,
+}) => {
+  const [peerError, setPeerError] = React.useState<null | Error>(null)
+  const [hasAccepted, setHasAccepted] = React.useState(false)
+  const navigate = useNavigate()
 
-/*   return useGraph(graph => { */
-/*     const handleAccept: React.EventHandler<React.SyntheticEvent> = () => { */
-/*       setHasAccepted(true) */
-/*       graph */
-/*         .seekPeerConnection(id) */
-/*         .then((instance: IAnyStateTreeNode) => { */
-/*           navigate(`/node/${instance.id}`) */
-/*         }) */
-/*         .catch((error: Error) => { */
-/*           setPeerError(error) */
-/*         }) */
-/*     } */
+  return useGraph(graph => {
+    const handleAccept: React.EventHandler<React.SyntheticEvent> = () => {
+      setHasAccepted(true)
+      graph
+        .seekPeerConnection(id)
+        .then((instance: IAnyStateTreeNode) => {
+          navigate(makeUrl(`/node/${instance.id}`))
+        })
+        .catch((error: Error) => {
+          setPeerError(error)
+        })
+    }
 
-/*     return ( */
-/*       <Layout> */
-/*         <Typography align="center"> */
-/*           Someone wants to share content with you. */
-/*           <br /> */
-/*           Do not accept if you do not trust them. */
-/*         </Typography> */
-/*         <Box mt={1} textAlign="center"> */
-/*           {peerError ? ( */
-/*             <Typography color="error">{peerError}</Typography> */
-/*           ) : ( */
-/*             <Button */
-/*               disabled={hasAccepted} */
-/*               onClick={handleAccept} */
-/*               color="primary" */
-/*             > */
-/*               {hasAccepted ? <CircularProgress size={24} /> : 'Accept'} */
-/*             </Button> */
-/*           )} */
-/*         </Box> */
-/*       </Layout> */
-/*     ) */
-/*   }) */
-/* } */
+    return (
+      <Layout>
+        <Typography align="center">
+          Someone wants to share content with you.
+          <br />
+          Do not accept if you do not trust them.
+        </Typography>
+        <Box mt={1} textAlign="center">
+          {peerError ? (
+            <Typography color="error">{peerError}</Typography>
+          ) : (
+            <Button
+              disabled={hasAccepted}
+              onClick={handleAccept}
+              color="primary"
+            >
+              {hasAccepted ? <CircularProgress size={24} /> : 'Accept'}
+            </Button>
+          )}
+        </Box>
+      </Layout>
+    )
+  })
+}

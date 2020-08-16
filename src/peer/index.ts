@@ -17,15 +17,5 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from './route'
-export * from './event'
-export * from './browser'
-export * from './useRoute'
-
-export * from './models/Route'
-export * from './models/History'
-export * from './models/Location'
-
-export * from './views/Link'
-export * from './views/NotFound'
-export * from './views/Router'
+export * from './PeerConnector'
+export * from './PeerManager'
