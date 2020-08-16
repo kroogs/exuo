@@ -56,7 +56,7 @@ export interface RouteMethods {
   travel: (path: string) => void
 }
 
-export function route<T, S, M>(
+export function route<T>(
   rootPath: string,
   call: (methods: RouteMethods) => T,
 ): T {
@@ -65,16 +65,14 @@ export function route<T, S, M>(
 
   const methods: RouteMethods = {
     select: (path, handler) => {
-      if (didSelect) {
-        return
-      }
-
       const { matchCount, variables } = matchPathParts(
         getPathParts(path),
         rootParts,
       )
 
-      if (matchCount) {
+      if (didSelect || matchCount === 0) {
+        return
+      } else {
         rootParts = rootParts.slice(matchCount)
         const result = handler(variables)
         didSelect = true

@@ -18,44 +18,65 @@
  */
 
 import React from 'react'
-import { Instance } from 'mobx-state-tree'
 
-import { InstanceViewer, useStore } from 'store'
-import { NodeViewer } from 'graph'
-import { Settings } from 'config'
+import { route, browserAdapter, RouteEventMethods, RouteHandler } from 'route'
 
-import { route, Route, browserAdapter, RouteEventMethods } from 'route'
+type SelectHandler<T> =
+  | ((unknown: T) => T)
+  | ((path: string, handler: RouteHandler<T>) => void | T)
 
-// the idea is to make useRoute a bridge between mst, react, and route
+type RouteHookMethods<T> = RouteEventMethods & {
+  select: SelectHandler<T>
+}
 
-export function useRoute<T>(): RouteEventMethods
+export function useRoute<T>(): RouteHookMethods<T>
 export function useRoute<T>(
   path: string,
-  handler: (m: RouteEventMethods) => T,
+  handler: (m: RouteHookMethods<T>) => T,
 ): T
 export function useRoute<T>(
   path?: string,
-  handler?: (m: RouteEventMethods) => T,
-): void | RouteEventMethods {
-  let methods
-  route('', m => {
-    methods = m
-  })
-  return methods
+  handler?: (m: RouteHookMethods<T>) => T,
+): void | RouteHookMethods<T> {
   // const [location, setLocation] = React.useState('/')
-  // const [methods, setMethods] = React.useState<null | RouteEventMethods>(null)
-  // if (path && handler) {
-  //   return route(path, m => {
-  //     const browserMethods = handler(browserAdapter(m))
-  //     let result
-  //     browserMethods.onSelect((path, value) => {
-  //       result = value
-  //     })
-  //     return browserMethods
-  //   })
-  // } else if (methods) {
-  //   return methods
-  // } else {
-  //   throw Error('Cannot use route before setup')
-  // }
+  const [methods, setMethods] = React.useState<RouteHookMethods<T>>()
+
+  if (path && handler) {
+    let result: T
+
+    route(path, routeMethods => {
+      const methods = browserAdapter(routeMethods)
+
+      const wrappedMethods: RouteHookMethods<T> = {
+        ...methods,
+        select: (pathOrPassthrough, handler) => {
+          if (handler) {
+            return methods.select(pathOrPassthrough, handler)
+          } else {
+            return pathOrPassthrough
+          }
+        },
+      }
+
+      setMethods(wrappedMethods)
+
+      // onSelect's second arg is not value, it's -next-
+      // uhhh what to do now hmm.
+      methods?.onSelect((path, value) => {
+        result = value
+      })
+
+      const handlerResult = handler(methods)
+
+      if (!result) {
+        result = handlerResult
+      }
+    })
+
+    return result
+  } else if (methods) {
+    return methods
+  } else {
+    throw Error('Cannot use route before setup')
+  }
 }

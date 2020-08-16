@@ -17,9 +17,9 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { eventAdapter, RouteMethods, EventMethods } from 'route'
+import { eventAdapter, RouteMethods, RouteEventMethods } from 'route'
 
-export const browserAdapter = (methods: RouteMethods): EventMethods => {
+export const browserAdapter = (methods: RouteMethods): RouteEventMethods => {
   const envUrl = process.env.PUBLIC_URL || ''
   const rootPath = new URL(envUrl, window.location.href).pathname
   const eventMethods = eventAdapter(methods)

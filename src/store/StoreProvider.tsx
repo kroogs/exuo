@@ -18,10 +18,8 @@
  */
 
 import React from 'react'
-import { Instance } from 'mobx-state-tree'
 
 import { Graph } from 'graph'
-import { Route } from 'route'
 
 import { Store } from './Store'
 
@@ -29,7 +27,7 @@ const store = Store.create({
   graph: Graph.create(),
 })
 
-export const storeContext = React.createContext<Instance<typeof Store>>(store)
+export const storeContext = React.createContext(store)
 
 export const StoreProvider: React.FunctionComponent = ({ children }) =>
   React.createElement(storeContext.Provider, { value: store }, children)

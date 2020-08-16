@@ -17,7 +17,7 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { RouteMethods, RouteHandler } from 'route'
+import { RouteMethods } from 'route'
 
 export type EventHandler = (path: string, next?: EventHandler) => void
 
