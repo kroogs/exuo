@@ -71,6 +71,8 @@ export const TitleBar: React.FunctionComponent<TitleBarProps> = ({
   children,
 }) => {
   const classes = useStyles()
+  const newlinePosition = title?.indexOf('\n') ?? -1
+
   return (
     <Toolbar variant="dense" className={[classes.root, className].join(' ')}>
       <IconButton
@@ -88,7 +90,7 @@ export const TitleBar: React.FunctionComponent<TitleBarProps> = ({
 
       {title && (
         <Typography variant="h6" className={classes.title}>
-          {title}
+          {newlinePosition > 0 ? title.slice(0, title.indexOf('\n')) : title}
         </Typography>
       )}
 
