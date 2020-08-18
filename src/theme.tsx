@@ -25,8 +25,11 @@ import {
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
+export const useDarkMode = (): ReturnType<typeof useMediaQuery> =>
+  useMediaQuery('(prefers-color-scheme: dark)')
+
 export const ThemeProvider: React.FunctionComponent = ({ children }) => {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  const prefersDarkMode = useDarkMode()
   const theme = React.useMemo(
     () =>
       createMuiTheme({
@@ -51,8 +54,11 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
           },
           text: {
             primary: prefersDarkMode
-              ? 'rgba(255, 255, 255, .75)'
-              : 'rgba(0, 0, 0, .75)',
+              ? 'rgba(255, 255, 255, .8)'
+              : 'rgba(0, 0, 0, .8)',
+            secondary: prefersDarkMode
+              ? 'rgba(255, 255, 255, .42)'
+              : 'rgba(0, 0, 0, .42)',
           },
         },
 
