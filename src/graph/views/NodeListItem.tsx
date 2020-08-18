@@ -26,6 +26,7 @@ import {
   ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core'
+import Check from '@material-ui/icons/Check'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
@@ -39,6 +40,7 @@ import { useGraph, Node, LabelEditor } from 'graph'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {},
+
     listItem: {
       '&:hover': { color: theme.palette.primary.main },
       '&.MuiListItem-button': {
@@ -48,12 +50,12 @@ const useStyles = makeStyles((theme: Theme) =>
         borderRadius: theme.shape.borderRadius,
       },
     },
+
     itemText: {
       margin: 0,
       overflowX: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
-
       '& .MuiListItemText-primary': {
         display: 'inline',
       },
@@ -61,16 +63,25 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'inline',
         paddingLeft: theme.spacing(1),
       },
+      '&.expand': {
+        '& .MuiListItemText-secondary': {
+          display: 'block',
+          paddingLeft: 0,
+        },
+      },
     },
+
     listItemSelectCheckbox: {
       padding: theme.spacing(0, 1, 0, 1),
       '&:hover, &.Mui-checked:hover': {
         backgroundColor: 'unset',
       },
     },
+
     listItemIcon: {
       minWidth: 'auto',
     },
+
     editItemText: {
       display: 'inline-block',
       margin: 0,
@@ -79,6 +90,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textOverflow: 'ellipsis',
       ...theme.typography.body1,
     },
+
     chip: {
       pointerEvents: 'auto',
       color: theme.palette.text.hint,
@@ -95,10 +107,12 @@ const useStyles = makeStyles((theme: Theme) =>
         paddingRight: 0,
       },
     },
+
     secondaryActions: {
       color: theme.palette.text.primary,
       right: 0,
     },
+
     childButton: {
       color: theme.palette.text.primary,
       '&:hover, &:focus': {
@@ -111,12 +125,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface NodeListItemProps {
   node: Instance<typeof Node>
-  expand?: boolean
+  expandSecondaryTypography?: boolean
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   node,
-  expand,
+  expandSecondaryTypography,
   ...props
 }) => {
   const classes = useStyles()
@@ -136,12 +150,11 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
 
       timer.current = setTimeout(() => {
         e.preventDefault()
+        isMouseDown.current = false
 
         if (graph.activeModes.includes('edit')) {
           return
         }
-
-        isMouseDown.current = false
 
         if (timer.current) {
           clearTimeout(timer.current)
@@ -159,6 +172,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         return
       }
 
+      isMouseDown.current = false
+
       if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node)
       } else if (graph.activeModes.includes('edit')) {
@@ -167,7 +182,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         navigate(makeUrl(`/node/${node.id}`))
       }
 
-      isMouseDown.current = false
       if (timer.current) {
         clearTimeout(timer.current)
       }
@@ -180,11 +194,11 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       <ListItem
         button
         disableRipple
+        component={'li'}
         onMouseDown={downHandler}
         onTouchStart={downHandler}
         onMouseUp={upHandler}
         onTouchEnd={upHandler}
-        component={'li'}
         className={classes.listItem}
       >
         {graph.activeModes.includes('select') && (
@@ -193,6 +207,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             tabIndex={-1}
             color="primary"
             edge="start"
+            checkedIcon={<Check />}
+            icon={<Check opacity={0} />}
             className={classes.listItemSelectCheckbox}
           />
         )}
@@ -218,7 +234,10 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
                 ? node.label.slice(newlinePosition + 2)
                 : undefined
             }
-            className={classes.itemText}
+            className={[
+              classes.itemText,
+              expandSecondaryTypography ? 'expand' : '',
+            ].join(' ')}
           />
         )}
         <ListItemSecondaryAction className={classes.secondaryActions}>
@@ -252,5 +271,5 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
 }
 
 NodeListItem.defaultProps = {
-  expand: false,
+  expandSecondaryTypography: false,
 }
