@@ -49,12 +49,18 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     itemText: {
-      display: 'inline-block',
       margin: 0,
       overflowX: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
-      ...theme.typography.body1,
+
+      '& .MuiListItemText-primary': {
+        display: 'inline',
+      },
+      '& .MuiListItemText-secondary': {
+        display: 'inline',
+        paddingLeft: theme.spacing(1),
+      },
     },
     listItemSelectCheckbox: {
       padding: theme.spacing(0, 1, 0, 1),
@@ -90,11 +96,11 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     secondaryActions: {
+      color: theme.palette.text.primary,
       right: 0,
-      color: theme.palette.text.secondary,
     },
     childButton: {
-      color: theme.palette.text.secondary,
+      color: theme.palette.text.primary,
       '&:hover, &:focus': {
         color: theme.palette.primary.main,
         background: 'inherit',
@@ -105,10 +111,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface NodeListItemProps {
   node: Instance<typeof Node>
+  expand?: boolean
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   node,
+  expand,
   ...props
 }) => {
   const classes = useStyles()
@@ -161,6 +169,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     }
 
     const isSelected = graph.selectedNodes.includes(node.id)
+    const newlinePosition = node.label.indexOf('\n')
 
     return (
       <ListItem
@@ -186,14 +195,24 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
           <LabelEditor
             label={node.label}
             onValue={value => {
-              node.setLabel(value)
               setIsEditing(false)
+              if (value) {
+                node.setLabel(value)
+              }
             }}
           />
         ) : (
           <ListItemText
-            primary={node.label}
-            primaryTypographyProps={{ display: 'inline' }}
+            primary={
+              newlinePosition > 0
+                ? node.label.slice(0, newlinePosition)
+                : node.label
+            }
+            secondary={
+              newlinePosition > 0
+                ? node.label.slice(newlinePosition + 2)
+                : undefined
+            }
             className={classes.itemText}
           />
         )}
@@ -225,4 +244,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       </ListItem>
     )
   })
+}
+
+NodeListItem.defaultProps = {
+  expand: false,
 }

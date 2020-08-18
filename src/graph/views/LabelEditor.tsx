@@ -50,7 +50,7 @@ interface LabelEditorProps {
   createMode?: boolean
   placeholder?: string
   className?: string
-  onValue?: (value: string) => void | string
+  onValue?: (value: string) => void | null | string
 }
 
 export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
@@ -64,22 +64,42 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
   const [inputValue, setInputValue] = React.useState(label ?? '')
 
   return useGraph(graph => {
+    /* const handleEvent = (event: React.FormEvent<HTMLFormElement>): void => { */
+    /*   event.preventDefault() */
+    /*   const value = onValue?.(inputValue) */
+    /*   if (value !== undefined) { */
+    /*     setInputValue(value) */
+    /*   } */
+    /* } */
+
+    const handleValue = (): void => {
+      if (onValue) {
+        setInputValue(onValue?.(inputValue) || '')
+      }
+    }
+
+    const handleFormEvent = (event: React.FormEvent<HTMLFormElement>): void => {
+      event.preventDefault()
+      handleValue()
+    }
+
+    const handleKeyDown = (
+      event: React.KeyboardEvent<HTMLInputElement>,
+    ): void => {
+      if (event.keyCode === 13 && !event.shiftKey) {
+        event.preventDefault()
+        handleValue()
+      }
+    }
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
       setInputValue(event.target.value)
     }
 
-    const handleValue = (event: React.FormEvent<HTMLFormElement>): void => {
-      event.preventDefault()
-      const value = onValue?.(inputValue)
-      if (value !== undefined) {
-        setInputValue(value)
-      }
-    }
-
     return (
       <form
-        onSubmit={handleValue}
-        onBlur={handleValue}
+        onSubmit={handleFormEvent}
+        onBlur={handleFormEvent}
         className={[classes.root, className].join(' ')}
       >
         <InputBase
@@ -88,6 +108,7 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
           fullWidth
           placeholder={placeholder}
           value={inputValue}
+          onKeyDown={handleKeyDown}
           onChange={handleChange}
           inputProps={{ 'aria-label': 'label' }}
           className={classes.inputBase}
