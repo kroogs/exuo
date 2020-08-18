@@ -144,46 +144,58 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     const showChildCount = listConfig?.get('showChildCount')
     const showEdgeChips = listConfig?.get('showEdgeChips')
 
-    const downHandler: React.EventHandler<React.SyntheticEvent> = e => {
-      e.persist()
-      isMouseDown.current = true
+    /* const downHandler: React.EventHandler<React.SyntheticEvent> = e => { */
+    /*   e.preventDefault() */
+    /*   e.persist() */
 
-      timer.current = setTimeout(() => {
-        e.preventDefault()
-        isMouseDown.current = false
+    /*   isMouseDown.current = true */
 
-        if (graph.activeModes.includes('edit')) {
-          return
-        }
+    /*   timer.current = setTimeout(() => { */
+    /*     isMouseDown.current = false */
 
-        if (timer.current) {
-          clearTimeout(timer.current)
-        }
+    /*     if (graph.activeModes.includes('edit')) { */
+    /*       return */
+    /*     } */
 
-        graph.toggleActiveMode('select')
-        if (graph.activeModes.includes('select')) {
-          graph.toggleSelectNode(node)
-        }
-      }, 390)
-    }
+    /*     if (timer.current) { */
+    /*       clearTimeout(timer.current) */
+    /*     } */
 
-    const upHandler: React.EventHandler<React.SyntheticEvent> = e => {
-      if (!isMouseDown.current) {
-        return
-      }
+    /*     graph.toggleActiveMode('select') */
+    /*     if (graph.activeModes.includes('select')) { */
+    /*       graph.toggleSelectNode(node) */
+    /*     } */
+    /*   }, 190) */
+    /* } */
 
-      isMouseDown.current = false
+    /* const upHandler: React.EventHandler<React.SyntheticEvent> = e => { */
+    /*   if (!isMouseDown.current) { */
+    /*     return */
+    /*   } */
 
+    /*   isMouseDown.current = false */
+    /*   e.preventDefault() */
+
+    /*   if (graph.activeModes.includes('select')) { */
+    /*     graph.toggleSelectNode(node) */
+    /*   } else if (graph.activeModes.includes('edit')) { */
+    /*     setIsEditing(true) */
+    /*   } else { */
+    /*     navigate(makeUrl(`/node/${node.id}`)) */
+    /*   } */
+
+    /*   if (timer.current) { */
+    /*     clearTimeout(timer.current) */
+    /*   } */
+    /* } */
+
+    const clickHandler: React.EventHandler<React.SyntheticEvent> = e => {
       if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node)
       } else if (graph.activeModes.includes('edit')) {
         setIsEditing(true)
       } else {
         navigate(makeUrl(`/node/${node.id}`))
-      }
-
-      if (timer.current) {
-        clearTimeout(timer.current)
       }
     }
 
@@ -195,10 +207,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         button
         disableRipple
         component={'li'}
-        onMouseDown={downHandler}
-        onTouchStart={downHandler}
-        onMouseUp={upHandler}
-        onTouchEnd={upHandler}
+        onClick={clickHandler}
         className={classes.listItem}
       >
         {graph.activeModes.includes('select') && (

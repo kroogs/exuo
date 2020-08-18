@@ -27,7 +27,8 @@ import {
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
-import GroupWorkIcon from '@material-ui/icons/GroupWork'
+import CropFreeIcon from '@material-ui/icons/CropFree'
+import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
 
 import { isRootPath } from 'common'
@@ -88,10 +89,23 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
               </Button>
             )}
 
+            {hasChildren && (
+              <Button
+                startIcon={<CropFreeIcon />}
+                onClick={() => graph.toggleActiveMode('select')}
+                color={
+                  graph.activeModes.includes('select') ? 'primary' : 'default'
+                }
+                className={classes.button}
+              >
+                select
+              </Button>
+            )}
+
             {isRootPath() || (
               <Button
                 disabled
-                startIcon={<GroupWorkIcon />}
+                startIcon={<GroupIcon />}
                 onClick={() => {
                   if (graph.activeModes.includes('share')) {
                     graph.closePeerConnection()
