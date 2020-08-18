@@ -131,13 +131,18 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     const showEdgeChips = listConfig?.get('showEdgeChips')
 
     const downHandler: React.EventHandler<React.SyntheticEvent> = e => {
-      isMouseDown.current = true
       e.persist()
+      isMouseDown.current = true
 
       timer.current = setTimeout(() => {
         e.preventDefault()
 
+        if (graph.activeModes.includes('edit')) {
+          return
+        }
+
         isMouseDown.current = false
+
         if (timer.current) {
           clearTimeout(timer.current)
         }
