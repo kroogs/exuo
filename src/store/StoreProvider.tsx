@@ -21,7 +21,6 @@ import React from 'react'
 import { Instance } from 'mobx-state-tree'
 
 import { Graph } from 'graph'
-import { Route } from 'route'
 
 import { Store } from './Store'
 

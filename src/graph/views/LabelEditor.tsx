@@ -18,12 +18,11 @@
  */
 
 import React from 'react'
-import { Instance } from 'mobx-state-tree'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import { InputBase } from '@material-ui/core'
 import 'draft-js/dist/Draft.css'
 
-import { useGraph, Node } from 'graph'
+import { useGraph } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

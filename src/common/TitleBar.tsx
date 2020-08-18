@@ -18,7 +18,7 @@
  */
 
 import React from 'react'
-import { Typography, Toolbar, IconButton, Box } from '@material-ui/core'
+import { Typography, Toolbar, IconButton } from '@material-ui/core'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
