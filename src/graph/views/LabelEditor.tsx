@@ -33,7 +33,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     inputBase: {
-      '& input': {
+      padding: 0,
+      '& input, & textarea': {
         lineHeight: 'unset',
 
         // Extra pixel to account for body1 being 18px tall and
@@ -83,12 +84,13 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
       >
         <InputBase
           autoFocus
-          placeholder={placeholder}
-          inputProps={{ 'aria-label': 'label' }}
-          onChange={handleChange}
-          value={inputValue}
-          className={classes.inputBase}
+          multiline
           fullWidth
+          placeholder={placeholder}
+          value={inputValue}
+          onChange={handleChange}
+          inputProps={{ 'aria-label': 'label' }}
+          className={classes.inputBase}
         />
       </form>
     )
