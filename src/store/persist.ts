@@ -24,6 +24,7 @@ import {
   getMembers,
   applySnapshot,
   IAnyModelType,
+  isStateTreeNode,
 } from 'mobx-state-tree'
 import Dexie from 'dexie'
 
@@ -47,12 +48,19 @@ export async function persist(
     applySnapshot(instance, Object.fromEntries(resolved))
     onPatch(instance, patch => {
       const [typeName, id, propName] = patch.path.split('/').slice(1)
+
       if (patch.op === 'add') {
         db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
       } else if (patch.op === 'replace' || patch.op === 'remove') {
         if (propName) {
+          let propValue = instance[typeName].get(id)[propName]
+
+          if (isStateTreeNode(propValue)) {
+            propValue = getSnapshot(propValue)
+          }
+
           db.table(typeName).update(id, {
-            [propName]: getSnapshot(instance[typeName].get(id)[propName]),
+            [propName]: propValue,
           })
         } else {
           db.table(typeName).delete(id)
