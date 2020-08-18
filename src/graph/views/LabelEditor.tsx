@@ -20,10 +20,7 @@
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-import InputBase from '@material-ui/core/InputBase'
-import IconButton from '@material-ui/core/IconButton'
-import AddIcon from '@material-ui/icons/Add'
-import { Editor, EditorState } from 'draft-js'
+import { InputBase } from '@material-ui/core'
 import 'draft-js/dist/Draft.css'
 
 import { useGraph, Node } from 'graph'
@@ -31,70 +28,75 @@ import { useGraph, Node } from 'graph'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      width: '100%',
+      fontSize: 0,
       padding: 0,
     },
 
     inputBase: {
       '& input': {
-        padding: theme.spacing(1, 0, 1, 0),
-        height: 'auto',
+        lineHeight: 'unset',
+
+        // Extra pixel to account for body1 being 18px tall and
+        // this typography being 19px tall for some reason.
+        padding: '3px 0 2px 0',
       },
     },
   }),
 )
 
 interface LabelEditorProps {
-  node: Instance<typeof Node>
+  label?: string
   createMode?: boolean
   placeholder?: string
   className?: string
-  onBlur?: React.EventHandler<React.SyntheticEvent>
+  onValue?: (value: string) => void | string
 }
 
 export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
-  node,
+  label,
   createMode,
   placeholder,
   className,
-  onBlur,
+  onValue,
 }) => {
   const classes = useStyles()
-  const [inputValue, setInputValue] = React.useState(
-    createMode ? '' : node.label,
-  )
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setInputValue(event.target.value)
-  }
+  const [inputValue, setInputValue] = React.useState(label ?? '')
 
   return useGraph(graph => {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setInputValue(event.target.value)
+    }
+
+    const handleValue = (event: React.FormEvent<HTMLFormElement>): void => {
       event.preventDefault()
-      if (inputValue) {
-        graph.createChild(node, { label: inputValue })
-        setInputValue('')
+      const value = onValue?.(inputValue)
+      if (value !== undefined) {
+        setInputValue(value)
       }
     }
 
     return (
-      <div className={[classes.root, className].join(' ')}>
-        <form onSubmit={handleSubmit} onBlur={onBlur}>
-          <InputBase
-            autoFocus
-            placeholder={placeholder}
-            inputProps={{ 'aria-label': 'label' }}
-            onChange={handleChange}
-            value={inputValue}
-            className={classes.inputBase}
-            fullWidth
-          />
-        </form>
-      </div>
+      <form
+        onSubmit={handleValue}
+        onBlur={handleValue}
+        className={[classes.root, className].join(' ')}
+      >
+        <InputBase
+          autoFocus
+          placeholder={placeholder}
+          inputProps={{ 'aria-label': 'label' }}
+          onChange={handleChange}
+          value={inputValue}
+          className={classes.inputBase}
+          fullWidth
+        />
+      </form>
     )
   })
 }
 
 LabelEditor.defaultProps = {
-  createMode: true,
+  createMode: false,
   placeholder: 'Label',
 }

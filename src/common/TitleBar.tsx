@@ -25,6 +25,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Link } from '@reach/router'
 
 import { makeUrl } from 'route'
+import { isRootPath } from 'common'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,15 +74,13 @@ export const TitleBar: React.FunctionComponent<TitleBarProps> = ({
   return (
     <Toolbar variant="dense" className={[classes.root, className].join(' ')}>
       <IconButton
-        disabled={
-          window.location.pathname === process.env.PUBLIC_URL ? true : undefined
-        }
+        disabled={isRootPath()}
         edge="start"
         aria-label="back"
         onClick={() => window.history.back()}
         className={[
           classes.backButton,
-          showSettingsButton ? '' : classes.hide,
+          showBackButton ? '' : classes.hide,
         ].join(' ')}
       >
         <ChevronLeftIcon />

@@ -37,12 +37,12 @@ export const Node = nodeFactory([
   ),
 ])
   .props({
-    label: types.maybe(types.string),
+    label: types.optional(types.string, ''),
   })
 
   .actions(self => ({
-    afterCreate() {
-      //
+    setLabel(label: string) {
+      self.label = label
     },
   }))
 

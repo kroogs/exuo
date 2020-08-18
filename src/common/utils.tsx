@@ -17,14 +17,8 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types } from 'mobx-state-tree'
+import { makeUrl } from 'route'
 
-export const Note = types
-  .model('Note', {
-    body: types.string,
-  })
-  .actions(self => ({
-    setBody(content: string) {
-      self.body = content
-    },
-  }))
+export const isRootPath = (): boolean =>
+  window.location.pathname === makeUrl('/') ||
+  window.location.pathname === makeUrl()

@@ -20,12 +20,11 @@
 import { Instance, SnapshotIn, IAnyModelType } from 'mobx-state-tree'
 
 import { persist } from 'store/persist'
-import { Note } from 'note'
 
 import { graphFactory } from './factories'
-import { Node, Config } from './Node'
+import { Node, Config, Note } from './Node'
 
-export const Graph = graphFactory({ Node, Config })
+export const Graph = graphFactory({ Node, Config, Note })
   // Modes
   .actions(self => ({
     setActiveMode(mode: string) {

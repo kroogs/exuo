@@ -72,10 +72,6 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
       ...theme.typography.body1,
-      '& input': {
-        height: 'auto',
-        padding: 0,
-      },
     },
     chip: {
       pointerEvents: 'auto',
@@ -116,31 +112,27 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   ...props
 }) => {
   const classes = useStyles()
-  const [isFocused, setIsFocused] = React.useState(false)
-  /* const [editorState, setEditorState] = React.useState(() => */
-  /*   EditorState.createEmpty(), */
-  /* ) */
+  const navigate = useNavigate()
+  const [isEditing, setIsEditing] = React.useState(false)
   const isMouseDown = React.useRef(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>()
-  const navigate = useNavigate()
 
   return useGraph(graph => {
     const listConfig = graph.Config.get('user')?.get('lists')
-
     const showChildCount = listConfig?.get('showChildCount')
     const showEdgeChips = listConfig?.get('showEdgeChips')
 
     const downHandler: React.EventHandler<React.SyntheticEvent> = e => {
-      e.preventDefault()
-
       isMouseDown.current = true
+      e.persist()
+
       timer.current = setTimeout(() => {
+        e.preventDefault()
+
         isMouseDown.current = false
         if (timer.current) {
           clearTimeout(timer.current)
         }
-
-        /* setIsFocused(true) */
 
         graph.toggleActiveMode('select')
         if (graph.activeModes.includes('select')) {
@@ -150,8 +142,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     }
 
     const upHandler: React.EventHandler<React.SyntheticEvent> = e => {
-      e.preventDefault()
-
       if (!isMouseDown.current) {
         return
       }
@@ -159,7 +149,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node)
       } else if (graph.activeModes.includes('edit')) {
-        /* setIsFocused(true) */
+        setIsEditing(true)
       } else {
         navigate(makeUrl(`/node/${node.id}`))
       }
@@ -192,8 +182,14 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             className={classes.listItemSelectCheckbox}
           />
         )}
-        {isFocused ? (
-          <LabelEditor createMode node={node} />
+        {isEditing ? (
+          <LabelEditor
+            label={node.label}
+            onValue={value => {
+              node.setLabel(value)
+              setIsEditing(false)
+            }}
+          />
         ) : (
           <ListItemText
             primary={node.label}

@@ -30,7 +30,9 @@ import EditIcon from '@material-ui/icons/Edit'
 import GroupWorkIcon from '@material-ui/icons/GroupWork'
 import { Instance } from 'mobx-state-tree'
 
+import { isRootPath } from 'common'
 import { SelectionActions } from 'select'
+
 import { Node, useGraph, LabelEditor } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -39,7 +41,6 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
     },
     button: {},
-    toggledButton: {},
     labelEditor: {
       width: '100%',
     },
@@ -51,7 +52,7 @@ interface NodeActionsProps {
   className?: string
 }
 
-type ActionMode = 'normal' | 'add' | 'share'
+type ActionMode = 'normal' | 'add' | 'edit' | 'share'
 
 export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   node,
@@ -76,21 +77,18 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
 
             {hasChildren && (
               <Button
-                disabled
                 startIcon={<EditIcon />}
                 onClick={() => graph.toggleActiveMode('edit')}
-                className={[
-                  classes.button,
-                  graph.activeModes.includes('edit')
-                    ? classes.toggledButton
-                    : '',
-                ].join(' ')}
+                color={
+                  graph.activeModes.includes('edit') ? 'primary' : 'default'
+                }
+                className={classes.button}
               >
                 edit
               </Button>
             )}
 
-            {window.location.pathname === process.env.PUBLIC_URL || (
+            {isRootPath() || (
               <Button
                 disabled
                 startIcon={<GroupWorkIcon />}
@@ -119,15 +117,17 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
         {mode === 'add' && (
           <LabelEditor
             placeholder="Label"
-            node={node}
-            onBlur={() => setMode('normal')}
+            onValue={value => {
+              if (value) {
+                graph.createChild(node, { label: value })
+                return ''
+              } else {
+                setMode('normal')
+              }
+            }}
             className={classes.labelEditor}
           />
         )}
-
-        {false && graph.activeModes.includes('select') && <div>edit</div>}
-
-        {false && graph.activeModes.includes('share') && <div>share</div>}
       </Toolbar>
     )
   })

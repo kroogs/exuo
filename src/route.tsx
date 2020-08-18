@@ -26,7 +26,7 @@ import { PeerConnector } from 'peer'
 import { Settings } from 'config'
 
 // Necessary for now because this routing library is bad.
-export function makeUrl(path: string): string {
+export function makeUrl(path: string = ''): string {
   return process.env.PUBLIC_URL + path
 }
 
