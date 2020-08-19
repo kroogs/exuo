@@ -28,7 +28,7 @@ import {
 } from '@material-ui/core'
 import Check from '@material-ui/icons/Check'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
 
@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {},
 
     listItem: {
+      marginBottom: '1px',
       '&:hover': { color: theme.palette.primary.main },
       '&.editMode:hover': {
         cursor: 'text',
@@ -47,6 +48,12 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       '&.MuiListItem-button': {
         backgroundColor: 'unset',
+      },
+      '&.isSelected': {
+        backgroundColor: fade(theme.palette.primary.main, 0.3),
+        '&:hover': {
+          color: 'unset',
+        },
       },
       [theme.breakpoints.up('sm')]: {
         borderRadius: theme.shape.borderRadius,
@@ -203,19 +210,9 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         className={[
           classes.listItem,
           graph.activeModes.includes('edit') ? 'editMode' : '',
+          isSelected ? 'isSelected' : '',
         ].join(' ')}
       >
-        {graph.activeModes.includes('select') && (
-          <Checkbox
-            checked={isSelected}
-            tabIndex={-1}
-            color="primary"
-            edge="start"
-            checkedIcon={<Check />}
-            icon={<Check opacity={0} />}
-            className={classes.listItemSelectCheckbox}
-          />
-        )}
         {isEditing ? (
           <LabelEditor
             label={node.label}
