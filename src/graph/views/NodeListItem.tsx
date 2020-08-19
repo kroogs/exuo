@@ -238,9 +238,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
           />
         )}
         <ListItemSecondaryAction className={classes.secondaryActions}>
-          {(node.childCount > 0 ||
-            graph.activeModes.includes('select') ||
-            graph.activeModes.includes('edit')) && (
+          {(node.childCount > 0 || graph.activeModes.includes('select')) && (
             <Button
               to={makeUrl(`/node/${node.id}/`)}
               component={Link}
