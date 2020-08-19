@@ -241,7 +241,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             }
             secondary={
               newlinePosition > 0
-                ? node.label.slice(newlinePosition + 2)
+                ? node.label.slice(newlinePosition + 1)
                 : undefined
             }
             className={[
@@ -281,5 +281,5 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
 }
 
 NodeListItem.defaultProps = {
-  expandSecondaryTypography: false,
+  expandSecondaryTypography: true,
 }
