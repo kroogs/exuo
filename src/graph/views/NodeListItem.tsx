@@ -28,9 +28,8 @@ import {
 } from '@material-ui/core'
 import Check from '@material-ui/icons/Check'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
-import ChevronRight from '@material-ui/icons/ChevronRight'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import 'draft-js/dist/Draft.css'
 import { Instance } from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
 
@@ -136,8 +135,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   const classes = useStyles()
   const navigate = useNavigate()
   const [isEditing, setIsEditing] = React.useState(false)
-  const isMouseDown = React.useRef(false)
-  const timer = React.useRef<ReturnType<typeof setTimeout>>()
+  /* const isMouseDown = React.useRef(false) */
+  /* const timer = React.useRef<ReturnType<typeof setTimeout>>() */
 
   return useGraph(graph => {
     const listConfig = graph.Config.get('user')?.get('lists')
@@ -190,12 +189,14 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     /* } */
 
     const clickHandler: React.EventHandler<React.SyntheticEvent> = e => {
+      e.preventDefault()
+
       if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node)
       } else if (graph.activeModes.includes('edit')) {
         setIsEditing(true)
       } else {
-        navigate(makeUrl(`/node/${node.id}`))
+        navigate(makeUrl(`/node/${node.id}/`))
       }
     }
 
@@ -265,7 +266,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
 
           {showChildCount && !showEdgeChips && node.childCount > 0 && (
             <Button
-              endIcon={<ChevronRight />}
+              endIcon={<ChevronRightIcon />}
               to={makeUrl(`/node/${node.id}/`)}
               component={Link}
               className={classes.childButton}

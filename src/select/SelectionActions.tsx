@@ -19,18 +19,26 @@
 
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
-import { Button, Typography } from '@material-ui/core'
-import Delete from '@material-ui/icons/Delete'
-import Edit from '@material-ui/icons/Edit'
-import Folder from '@material-ui/icons/Folder'
-import FileCopy from '@material-ui/icons/FileCopy'
+import {
+  Box,
+  IconButton,
+  Button,
+  ButtonGroup,
+  Typography,
+} from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
+import FolderIcon from '@material-ui/icons/Folder'
+import FileCopyIcon from '@material-ui/icons/FileCopy'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
 import { Node, useGraph } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
+    root: {
+      width: '100%',
+    },
     button: {
       color: theme.palette.action.active,
     },
@@ -42,30 +50,43 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const SelectionActions: React.FunctionComponent = () => {
   const classes = useStyles()
-  return useGraph(graph => (
-    <div className={classes.root}>
-      {/*
-      <Button startIcon={<Edit />} disabled className={classes.button}>
-        Modify
-      </Button>
+  return useGraph(graph => {
+    const selectedCount = graph.selectedNodes.length ?? 0
+    return (
+      <>
+        <Button
+          startIcon={<EditIcon />}
+          disabled={true || selectedCount === 0}
+          className={classes.button}
+        >
+          Edit
+        </Button>
 
-      <Button startIcon={<FileCopy />} disabled className={classes.button}>
-        Copy
-      </Button>
+        <Button
+          startIcon={<FileCopyIcon />}
+          disabled={true || selectedCount === 0}
+          className={classes.button}
+        >
+          Copy
+        </Button>
 
-      <Button startIcon={<Folder />} disabled className={classes.button}>
-        Move
-      </Button>
-      */}
+        <Button
+          startIcon={<FolderIcon />}
+          disabled={true || selectedCount === 0}
+          className={classes.button}
+        >
+          Move
+        </Button>
 
-      <Button
-        startIcon={<Delete />}
-        disabled={graph.selectedNodes.length ? undefined : true}
-        className={[classes.button, classes.deleteButton].join(' ')}
-        onClick={() => graph.deleteSelectedNodes()}
-      >
-        Delete
-      </Button>
-    </div>
-  ))
+        <Button
+          startIcon={<DeleteIcon />}
+          disabled={selectedCount === 0}
+          className={[classes.button, classes.deleteButton].join(' ')}
+          onClick={() => graph.deleteSelectedNodes()}
+        >
+          Delete
+        </Button>
+      </>
+    )
+  })
 }

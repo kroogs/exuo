@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme: Theme) =>
     appBar: {},
     actions: {
       width: '100%',
-      textAlign: 'center',
       color: theme.palette.text.secondary,
       backgroundColor: theme.palette.background.default,
       padding: theme.spacing(0, 2, 0, 2),

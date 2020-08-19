@@ -88,6 +88,7 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
                   height: '100%',
                 },
               },
+
               /* '#root': { */
               /*   height: '100%', */
               /*   backgroundImage: 'url(/background.jpg)', */
@@ -97,6 +98,7 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
           },
         },
       }),
+
     [prefersDarkMode],
   )
 
