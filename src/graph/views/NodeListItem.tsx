@@ -41,6 +41,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
     listItem: {
       '&:hover': { color: theme.palette.primary.main },
+      '&.editMode:hover': {
+        cursor: 'text',
+        color: 'unset',
+      },
       '&.MuiListItem-button': {
         backgroundColor: 'unset',
       },
@@ -196,7 +200,10 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         disableRipple
         component={'li'}
         onClick={clickHandler}
-        className={classes.listItem}
+        className={[
+          classes.listItem,
+          graph.activeModes.includes('edit') ? 'editMode' : '',
+        ].join(' ')}
       >
         {graph.activeModes.includes('select') && (
           <Checkbox
