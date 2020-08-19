@@ -50,7 +50,10 @@ interface LabelEditorProps {
   createMode?: boolean
   placeholder?: string
   className?: string
-  onValue?: (value: string) => void | null | string
+  onValue?: (
+    value: string,
+    event?: React.KeyboardEvent<HTMLInputElement>,
+  ) => void | null | string
 }
 
 export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
@@ -64,17 +67,11 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
   const [inputValue, setInputValue] = React.useState(label ?? '')
 
   return useGraph(graph => {
-    /* const handleEvent = (event: React.FormEvent<HTMLFormElement>): void => { */
-    /*   event.preventDefault() */
-    /*   const value = onValue?.(inputValue) */
-    /*   if (value !== undefined) { */
-    /*     setInputValue(value) */
-    /*   } */
-    /* } */
-
-    const handleValue = (): void => {
+    const handleValue = (
+      event?: React.KeyboardEvent<HTMLInputElement>,
+    ): void => {
       if (onValue) {
-        setInputValue(onValue?.(inputValue) || '')
+        setInputValue(onValue?.(inputValue, event) || '')
       }
     }
 
@@ -88,7 +85,7 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
     ): void => {
       if (event.keyCode === 13 && !event.shiftKey) {
         event.preventDefault()
-        handleValue()
+        handleValue(event)
       }
     }
 

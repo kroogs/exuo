@@ -30,7 +30,9 @@ import EditIcon from '@material-ui/icons/Edit'
 import CropFreeIcon from '@material-ui/icons/CropFree'
 import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
+import { useNavigate } from '@reach/router'
 
+import { makeUrl } from 'route'
 import { isRootPath } from 'common'
 import { SelectionActions } from 'select'
 
@@ -61,6 +63,7 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
 }) => {
   const classes = useStyles()
   const [mode, setMode] = React.useState<ActionMode>('normal')
+  const navigate = useNavigate()
 
   return useGraph(graph => {
     const hasChildren = node?.childCount > 0
@@ -131,9 +134,16 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
         {mode === 'add' && (
           <LabelEditor
             placeholder="Label"
-            onValue={value => {
+            onValue={(value, event) => {
               if (value) {
-                graph.createChild(node, { label: value })
+                const child = graph.createChild(node, { label: value })
+
+                if (event?.ctrlKey) {
+                  navigate(makeUrl(`/node/${child.id}/`)).then(() => {
+                    setMode('add')
+                  })
+                }
+
                 return ''
               } else {
                 setMode('normal')
