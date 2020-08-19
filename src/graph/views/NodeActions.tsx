@@ -75,7 +75,6 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
               startIcon={<AddIcon />}
               onClick={() => {
                 setMode('add')
-                graph.setActiveMode('edit')
               }}
               className={classes.button}
             >
