@@ -48,15 +48,19 @@ export const Graph = graphFactory({ Node, Config, Note })
         return
       }
 
+      // TODO mode logic doesn't belong here
       if (activeModes.includes(mode)) {
         activeModes.remove(mode)
 
-        // TODO mode logic doesn't belong here
         if (mode === 'select') {
           self.clearSelectedNodes()
         }
       } else {
         activeModes.push(mode)
+
+        if (mode === 'select') {
+          activeModes.remove('edit')
+        }
       }
     },
   }))
@@ -124,15 +128,8 @@ export const Graph = graphFactory({ Node, Config, Note })
           self.createNode('Config', {
             id: 'user',
             items: {
-              global: {
-                dividers: false,
-              },
-              lists: {
-                checkbox: false,
-                dividers: false,
-                showChildCount: true,
-                showEdgeChips: false,
-              },
+              global: {},
+              lists: {},
             },
           })
         }
@@ -155,16 +152,6 @@ export const Graph = graphFactory({ Node, Config, Note })
     deleteNode(node: Instance<typeof Node>) {
       self.Node.delete(node.id)
     },
-
-    toggleGlobalDividerSetting() {
-      const value = self.Config.get('user').get('global')?.get('dividers')
-      self.Config.get('user').get('global')?.set('dividers', !value)
-    },
-
-    toggleListCheckboxSetting() {
-      const value = self.Config.get('user').get('lists')?.get('checkbox')
-      self.Config.get('user').get('lists')?.set('checkbox', !value)
-    },
   }))
   .views(self => ({
     get rootNode() {
@@ -179,9 +166,5 @@ export const Graph = graphFactory({ Node, Config, Note })
 
     get selectedNodes() {
       return self.Config.get('system')?.get('selectedNodes')
-    },
-
-    get listCheckboxSetting() {
-      return self.Config.get('user')?.get('lists')?.get('checkbox')
     },
   }))
