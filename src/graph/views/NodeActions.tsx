@@ -73,7 +73,10 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
           <>
             <Button
               startIcon={<AddIcon />}
-              onClick={() => setMode('add')}
+              onClick={() => {
+                setMode('add')
+                graph.toggleActiveMode('edit')
+              }}
               className={classes.button}
             >
               new
