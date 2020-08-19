@@ -19,15 +19,14 @@
 
 import React from 'react'
 import {
-  Chip,
   Checkbox,
   Button,
+  IconButton,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core'
 import Check from '@material-ui/icons/Check'
-import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
@@ -90,23 +89,6 @@ const useStyles = makeStyles((theme: Theme) =>
       ...theme.typography.body1,
     },
 
-    chip: {
-      pointerEvents: 'auto',
-      color: theme.palette.text.hint,
-      backgroundColor: 'transparent',
-      '&:hover': {
-        color: theme.palette.primary.main,
-        cursor: 'auto',
-      },
-      '& svg': {
-        pointerEvents: 'auto',
-        color: 'inherit',
-      },
-      '&:last-child .MuiChip-label': {
-        paddingRight: 0,
-      },
-    },
-
     secondaryActions: {
       color: theme.palette.text.primary,
       right: 0,
@@ -114,6 +96,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
     childButton: {
       color: theme.palette.text.primary,
+
+      // Ensures ChevronRight lines up without label
+      minWidth: 'unset',
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(2),
+
       '&:hover, &:focus': {
         color: theme.palette.primary.main,
         background: 'inherit',
@@ -139,10 +127,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   /* const timer = React.useRef<ReturnType<typeof setTimeout>>() */
 
   return useGraph(graph => {
-    const listConfig = graph.Config.get('user')?.get('lists')
-    const showChildCount = listConfig?.get('showChildCount')
-    const showEdgeChips = listConfig?.get('showEdgeChips')
-
     /* const downHandler: React.EventHandler<React.SyntheticEvent> = e => { */
     /*   e.preventDefault() */
     /*   e.persist() */
@@ -188,13 +172,16 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     /*   } */
     /* } */
 
-    const clickHandler: React.EventHandler<React.SyntheticEvent> = e => {
+    const clickHandler: React.EventHandler<React.MouseEvent> = e => {
       e.preventDefault()
 
       if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node)
       } else if (graph.activeModes.includes('edit')) {
         setIsEditing(true)
+      } else if (e.metaKey || e.ctrlKey) {
+        graph.toggleActiveMode('select')
+        graph.toggleSelectNode(node)
       } else {
         navigate(makeUrl(`/node/${node.id}/`))
       }
@@ -251,27 +238,17 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
           />
         )}
         <ListItemSecondaryAction className={classes.secondaryActions}>
-          {showEdgeChips && (
-            <>
-              <Chip
-                label={node.childCount}
-                icon={<AccountTreeIcon />}
-                size="small"
-                to={makeUrl(`/node/${node.id}/`)}
-                component={Link}
-                className={classes.chip}
-              />
-            </>
-          )}
-
-          {showChildCount && !showEdgeChips && node.childCount > 0 && (
+          {(node.childCount > 0 ||
+            graph.activeModes.includes('select') ||
+            graph.activeModes.includes('edit')) && (
             <Button
-              endIcon={<ChevronRightIcon />}
               to={makeUrl(`/node/${node.id}/`)}
               component={Link}
               className={classes.childButton}
+              endIcon={<ChevronRightIcon />}
+              size="small"
             >
-              {node.childCount}
+              {node.childCount > 0 && node.childCount}
             </Button>
           )}
         </ListItemSecondaryAction>
