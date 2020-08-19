@@ -35,10 +35,11 @@ const useStyles = makeStyles((theme: Theme) =>
     inputBase: {
       padding: 0,
       '& input, & textarea': {
-        lineHeight: 'unset',
-
         // Extra pixel to account for body1 being 18px tall and
         // this typography being 19px tall for some reason.
+        // I assume it has something to do with a calculated lineHeight.
+        // TODO This causes FF to be off by a pixel, so I'll have to figure
+        // out a real solution.
         padding: '3px 0 2px 0',
       },
     },
@@ -63,8 +64,13 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
   className,
   onValue,
 }) => {
+  const inputRef = React.useRef<HTMLInputElement>()
   const classes = useStyles()
   const [inputValue, setInputValue] = React.useState(label ?? '')
+
+  React.useEffect(() => {
+    inputRef.current?.setSelectionRange(inputValue.length, inputValue.length)
+  })
 
   return useGraph(graph => {
     const handleValue = (
@@ -100,6 +106,7 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
         className={[classes.root, className].join(' ')}
       >
         <InputBase
+          inputRef={inputRef}
           autoFocus
           multiline
           fullWidth
