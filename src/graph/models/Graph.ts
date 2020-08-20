@@ -61,6 +61,10 @@ export const Graph = graphFactory({ Node, Config, Note })
         if (mode === 'select') {
           activeModes.remove('edit')
         }
+
+        if (mode === 'edit') {
+          activeModes.remove('select')
+        }
       }
     },
   }))
@@ -112,27 +116,38 @@ export const Graph = graphFactory({ Node, Config, Note })
     // },
   }))
 
+  // Cursor
+  .actions(self => ({
+    setCursorNode(node: Instance<typeof Node>) {
+      //
+    },
+  }))
+
   .actions(self => ({
     afterCreate() {
       persist(self).then(() => {
-        if (!self.Config.has('system')) {
-          const root = self.createNode('Node', { label: 'Exuo' })
-          self.createNode('Config', {
-            id: 'system',
-            items: {
-              rootNodeId: root.id,
-              activeModes: [],
-              selectedNodes: [],
-            },
-          })
-          self.createNode('Config', {
-            id: 'user',
-            items: {
-              global: {},
-              lists: {},
-            },
-          })
+        let root
+        if (self.Config.has('system')) {
+          root = self.rootNode
+        } else {
+          root = self.createNode('Node', { label: 'Exuo' })
         }
+
+        self.createNode('Config', {
+          id: 'system',
+          items: {
+            rootNodeId: root.id,
+            activeModes: [],
+            selectedNodes: [],
+          },
+        })
+        self.createNode('Config', {
+          id: 'user',
+          items: {
+            global: {},
+            lists: {},
+          },
+        })
       })
     },
 
@@ -153,6 +168,7 @@ export const Graph = graphFactory({ Node, Config, Note })
       self.Node.delete(node.id)
     },
   }))
+
   .views(self => ({
     get rootNode() {
       const config = self.Config.get('system')
@@ -166,5 +182,9 @@ export const Graph = graphFactory({ Node, Config, Note })
 
     get selectedNodes() {
       return self.Config.get('system')?.get('selectedNodes')
+    },
+
+    get cursorNode() {
+      return self.Config.get('system')?.get('cursorNode')
     },
   }))
