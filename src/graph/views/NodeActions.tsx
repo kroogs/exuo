@@ -32,7 +32,6 @@ import { Instance } from 'mobx-state-tree'
 import { useNavigate } from '@reach/router'
 
 import { makeUrl } from 'route'
-import { isRootPath } from 'common'
 import { SelectButton } from 'select'
 
 import { Node, useGraph, LabelEditor } from 'graph'
@@ -118,7 +117,7 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
               />
             )}
 
-            {isRootPath() || (
+            {false && (
               <Button
                 disabled
                 startIcon={<GroupIcon />}
