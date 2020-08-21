@@ -45,13 +45,15 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
 
       '&:hover': { color: theme.palette.primary.main },
-      '&.editMode:hover': {
+      '&.editMode': {
         cursor: 'text',
         color: 'unset',
+        backgroundColor: 'unset',
       },
 
-      '&.selectMode:hover': {
+      '&.selectMode': {
         color: 'unset',
+        backgroundColor: 'unset',
       },
 
       '&.MuiListItem-button:not(.isSelected):hover': {
