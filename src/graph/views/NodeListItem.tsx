@@ -202,7 +202,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     }
 
     const isSelected = graph.selectedNodes
-      .get(graph.cursorNode.id)
+      .get(graph.cursorNode?.id)
       ?.includes(node.id)
 
     const newlinePosition = node.label.indexOf('\n')
