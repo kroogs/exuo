@@ -95,7 +95,6 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
                   graph.activeModes.includes('select') ? 'primary' : undefined
                 }
                 onClick={() => {
-                  graph.setCursorNode(node)
                   graph.toggleActiveMode('select')
                 }}
               />
