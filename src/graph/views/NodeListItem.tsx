@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
         color: 'unset',
       },
 
-      '&.MuiListItem-button:hover': {
+      '&.MuiListItem-button:not(.isSelected):hover': {
         backgroundColor: 'unset',
       },
 
