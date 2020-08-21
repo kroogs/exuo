@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders a list of associated nodes 1`] = `
+<EdgeList
+  node={
+    Object {
+      "edgeMap": Object {
+        "child": Array [
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+        ],
+      },
+      "id": "1",
+      "label": "",
+    }
+  }
+>
+  <WithStyles(ForwardRef(List))
+    aria-label="edge list"
+    className="makeStyles-list-1"
+  >
+    <ForwardRef(List)
+      aria-label="edge list"
+      className="makeStyles-list-1"
+      classes={
+        Object {
+          "dense": "MuiList-dense",
+          "padding": "MuiList-padding",
+          "root": "MuiList-root",
+          "subheader": "MuiList-subheader",
+        }
+      }
+    >
+      <ul
+        aria-label="edge list"
+        className="MuiList-root makeStyles-list-1 MuiList-padding"
+      />
+    </ForwardRef(List)>
+  </WithStyles(ForwardRef(List))>
+</EdgeList>
+`;

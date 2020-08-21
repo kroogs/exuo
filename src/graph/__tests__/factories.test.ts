@@ -25,9 +25,7 @@ import {
   isType,
 } from 'mobx-state-tree'
 
-import { factories } from '../'
-
-const { nodeFactory, edgeMapFactory, graphFactory } = factories
+import { nodeFactory, edgeMapFactory, graphFactory } from '../models/factories'
 
 describe('graph', () => {
   describe('#nodeFactory', () => {
@@ -121,18 +119,6 @@ describe('graph', () => {
           one: { id: 'one', edgeMap: { next: [] } },
           two: { id: 'two', edgeMap: { prev: [] } },
         })
-      })
-
-      test("throws an exception when an edge ref isn't found", () => {
-        const box = Container.create({
-          items: {
-            one: { id: 'one' },
-          },
-        })
-
-        const one = box.items.get('one')
-
-        expect(() => one.removeEdge('next', one)).toThrowErrorMatchingSnapshot()
       })
     })
   })

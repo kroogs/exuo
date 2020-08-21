@@ -23,10 +23,10 @@ import * as reach from '@reach/router'
 import { useGraph } from 'graph'
 import { NodeViewer } from 'graph'
 import { PeerConnector } from 'peer'
-import { Settings } from 'config'
+import { Settings } from 'common'
 
 // Necessary for now because this routing library is bad.
-export function makeUrl(path: string = ''): string {
+export function makeUrl(path = ''): string {
   return process.env.PUBLIC_URL + path
 }
 

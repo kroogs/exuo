@@ -20,9 +20,9 @@
 import React from 'react'
 import { mount } from 'enzyme'
 
-import EdgeList from '../EdgeList'
-import { Node } from 'graph'
-import { graphFactory } from 'graph/factories'
+import { EdgeList } from '../views/EdgeList'
+import { Node } from '../models/Node'
+import { graphFactory } from '../models/factories'
 
 let nextId = 0
 const getId = (): string => String(++nextId)

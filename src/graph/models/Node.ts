@@ -19,7 +19,7 @@
 
 import { types, IAnyType } from 'mobx-state-tree'
 
-import { Config as BaseConfig } from 'config'
+import { Config as BaseConfig } from 'store'
 import { Note as BaseNote } from 'note'
 
 import { nodeFactory, edgeMapFactory } from 'graph'

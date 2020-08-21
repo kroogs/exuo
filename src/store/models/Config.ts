@@ -17,27 +17,29 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getSnapshot } from 'mobx-state-tree'
+import { types, SnapshotIn, Instance, IAnyType } from 'mobx-state-tree'
 
-import { Config } from '../Config'
+export const Unknown = types.union(
+  types.null,
+  types.boolean,
+  types.string,
+  types.number,
+  types.array(types.late((): IAnyType => Unknown)),
+  types.map(types.late((): IAnyType => Unknown)),
+)
 
-describe('Config', () => {
-  describe('#set', () => {
-    it('sets #items key to a given value', () => {
-      const config = Config.create()
-
-      config.set('one', true)
-      config.set('two', ['three', 3])
-      config.set('three', [['four', 4], 5])
-
-      expect(getSnapshot(config)).toStrictEqual({
-        name: undefined,
-        items: {
-          one: true,
-          two: ['three', 3],
-          three: [['four', 4], 5],
-        },
-      })
-    })
+export const Config = types
+  .model('Config', {
+    name: types.maybe(types.string),
+    items: types.map(Unknown),
   })
-})
+  .actions(self => ({
+    set(key: string, value: SnapshotIn<typeof Unknown>) {
+      self.items.set(key, value)
+    },
+  }))
+  .views(self => ({
+    get(key: string): Instance<typeof Unknown> {
+      return self.items.get(key)
+    },
+  }))

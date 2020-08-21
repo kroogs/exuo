@@ -19,6 +19,7 @@
 
 export * from './views/InstanceViewer'
 export * from './views/PropertyEditor'
+export * from './models/Config'
 export * from './Store'
 export * from './StoreProvider'
 export * from './useStore'
