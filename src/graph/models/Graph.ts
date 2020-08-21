@@ -124,7 +124,7 @@ export const Graph = graphFactory({ Node, Config, Note })
           const node = self.Node.get(nodeId)
           if (node) {
             node.removeEdge('parent', accessor)
-            accessor.removeEdge('child', nodeId)
+            accessor.removeEdge('child', node)
 
             node.addEdge('parent', self.cursorNode)
             self.cursorNode.addEdge('child', node)
