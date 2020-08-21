@@ -34,6 +34,8 @@ export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
       node = lookup
     }
 
+    graph.setCursorNode(node)
+
     return node ? (
       <NodeLayout node={node}>
         <EdgeList node={node} edgeTag="child" />

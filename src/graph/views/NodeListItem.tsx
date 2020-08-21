@@ -125,11 +125,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface NodeListItemProps {
   node: Instance<typeof Node>
+  parentNode: Instance<typeof Node>
   expandSecondaryTypography?: boolean
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   node,
+  parentNode,
   expandSecondaryTypography,
   ...props
 }) => {
@@ -196,14 +198,11 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         graph.toggleActiveMode('select')
         graph.toggleSelectNode(node)
       } else {
-        graph.setCursorNode(node)
         navigate(makeUrl(`/node/${node.id}/`))
       }
     }
 
-    const isSelected = graph.selectedNodes
-      .get(graph.cursorNode?.id)
-      ?.includes(node.id)
+    const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
 
     const newlinePosition = node.label.indexOf('\n')
 
@@ -252,7 +251,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             <Button
               to={makeUrl(`/node/${node.id}/`)}
               component={Link}
-              onClick={() => graph.setCursorNode(node)}
               className={classes.childButton}
               endIcon={<ChevronRightIcon />}
               size="small"

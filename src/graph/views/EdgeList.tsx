@@ -49,7 +49,11 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = ({
         ?.slice()
         .reverse()
         .map((item: Instance<typeof Node>) => (
-          <NodeListItem node={item} key={`${edgeTag}-${item.id}`} />
+          <NodeListItem
+            node={item}
+            parentNode={node}
+            key={`${edgeTag}-${item.id}`}
+          />
         ))}
     </List>
   ))
