@@ -41,15 +41,6 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       justifyContent: 'center',
     },
-    button: {
-      color: theme.palette.text.primary,
-    },
-    toggledButton: {
-      color: theme.palette.primary.main,
-    },
-    labelEditor: {
-      width: '100%',
-    },
   }),
 )
 
@@ -81,21 +72,17 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
               onClick={() => {
                 setMode('add')
               }}
-              className={classes.button}
             >
               new
             </Button>
 
             {hasChildren && (
               <Button
+                color={
+                  graph.activeModes.includes('edit') ? 'primary' : undefined
+                }
                 startIcon={<EditIcon />}
                 onClick={() => graph.toggleActiveMode('edit')}
-                className={[
-                  classes.button,
-                  graph.activeModes.includes('edit')
-                    ? classes.toggledButton
-                    : '',
-                ].join(' ')}
               >
                 edit
               </Button>
@@ -104,16 +91,13 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
             {(hasChildren || selectedCount > 0) && (
               <SelectButton
                 node={node}
+                color={
+                  graph.activeModes.includes('select') ? 'primary' : undefined
+                }
                 onClick={() => {
                   graph.setCursorNode(node)
                   graph.toggleActiveMode('select')
                 }}
-                className={[
-                  classes.button,
-                  graph.activeModes.includes('select')
-                    ? classes.toggledButton
-                    : '',
-                ].join(' ')}
               />
             )}
 
@@ -129,9 +113,8 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
                   }
                 }}
                 color={
-                  graph.activeModes.includes('share') ? 'primary' : 'default'
+                  graph.activeModes.includes('share') ? 'primary' : undefined
                 }
-                className={classes.button}
               >
                 share
               </Button>
@@ -157,7 +140,6 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
                 setMode('normal')
               }
             }}
-            className={classes.labelEditor}
           />
         )}
       </Toolbar>

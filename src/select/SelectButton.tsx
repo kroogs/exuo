@@ -27,6 +27,7 @@ import {
   Popper,
   MenuItem,
   MenuList,
+  ButtonProps,
 } from '@material-ui/core'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownOutlined'
 import DeleteIcon from '@material-ui/icons/DeleteOutlined'
@@ -44,7 +45,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'inherit',
     },
     buttonGroup: {
-      color: 'inherit',
       '& .MuiButtonGroup-groupedTextHorizontal': {
         borderRight: 'unset',
       },
@@ -53,11 +53,9 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     selectButton: {
-      color: 'inherit',
       paddingRight: theme.spacing(1) / 2,
     },
     dropButton: {
-      color: 'inherit',
       padding: 0,
     },
     deleteButton: {
@@ -71,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface SelectButtonProps {
+interface SelectButtonProps extends ButtonProps {
   node: Instance<typeof Node>
   onClick: React.MouseEventHandler
   className?: string
@@ -81,6 +79,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
   node,
   className,
   onClick,
+  ...extraProps
 }) => {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
@@ -98,6 +97,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
           startIcon={<CropFreeIcon />}
           onClick={onClick}
           className={classes.selectButton}
+          {...extraProps}
         >
           select
         </Button>
@@ -110,6 +110,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
           aria-haspopup="menu"
           onClick={() => setOpen(value => !value)}
           className={classes.dropButton}
+          {...extraProps}
         >
           <ArrowDropDownIcon />
         </Button>

@@ -37,27 +37,28 @@ import { useGraph, Node, LabelEditor } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
-
     listItem: {
       marginBottom: '1px',
+      transition: theme.transitions.create(['color', 'background'], {
+        duration: theme.transitions.duration.shortest,
+      }),
+
       '&:hover': { color: theme.palette.primary.main },
       '&.editMode:hover': {
         cursor: 'text',
         color: 'unset',
       },
+
       '&.MuiListItem-button': {
         backgroundColor: 'unset',
       },
+
       '&.isSelected': {
         backgroundColor: fade(theme.palette.primary.main, 0.3),
-        '&:hover': {
-          color: 'unset',
-        },
-        '& a:hover': {
-          color: 'unset',
-        },
+        '&:hover': { color: 'unset' },
+        '& a:hover': { color: 'unset' },
       },
+
       [theme.breakpoints.up('sm')]: {
         borderRadius: theme.shape.borderRadius,
       },
@@ -68,13 +69,16 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowX: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
+
       '& .MuiListItemText-primary': {
         display: 'inline',
       },
+
       '& .MuiListItemText-secondary': {
         display: 'inline',
         paddingLeft: theme.spacing(1),
       },
+
       '&.expand': {
         '& .MuiListItemText-secondary': {
           display: 'block',
@@ -109,6 +113,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
     childButton: {
       color: theme.palette.text.primary,
+      transition: theme.transitions.create(['color'], {
+        duration: theme.transitions.duration.shortest,
+      }),
 
       // Ensure ChevronRight lines up without a label
       minWidth: 'unset',
@@ -203,7 +210,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     }
 
     const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
-
     const newlinePosition = node.label.indexOf('\n')
 
     return (

@@ -48,7 +48,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface LabelEditorProps {
   label?: string
-  createMode?: boolean
   placeholder?: string
   className?: string
   onValue?: (
@@ -59,7 +58,6 @@ interface LabelEditorProps {
 
 export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
   label,
-  createMode,
   placeholder,
   className,
   onValue,
@@ -123,6 +121,5 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
 }
 
 LabelEditor.defaultProps = {
-  createMode: false,
   placeholder: 'Label',
 }
