@@ -114,7 +114,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
           return (
             <ClickAwayListener onClickAway={() => setOpen(false)}>
               <Paper>
-                <MenuList id="select-button">
+                <MenuList dense id="select-button">
                   <MenuItem
                     divider
                     onClick={() => {
