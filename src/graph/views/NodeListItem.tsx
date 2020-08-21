@@ -54,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) =>
         '&:hover': {
           color: 'unset',
         },
+        '& a:hover': {
+          color: 'unset',
+        },
       },
       [theme.breakpoints.up('sm')]: {
         borderRadius: theme.shape.borderRadius,
@@ -101,14 +104,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     secondaryActions: {
-      color: theme.palette.text.primary,
       right: 0,
     },
 
     childButton: {
       color: theme.palette.text.primary,
 
-      // Ensures ChevronRight lines up without label
+      // Ensure ChevronRight lines up without a label
       minWidth: 'unset',
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(2),
@@ -194,11 +196,15 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         graph.toggleActiveMode('select')
         graph.toggleSelectNode(node)
       } else {
+        graph.setCursorNode(node)
         navigate(makeUrl(`/node/${node.id}/`))
       }
     }
 
-    const isSelected = graph.selectedNodes.includes(node.id)
+    const isSelected = graph.selectedNodes
+      .get(graph.cursorNode.id)
+      ?.includes(node.id)
+
     const newlinePosition = node.label.indexOf('\n')
 
     return (
@@ -246,6 +252,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             <Button
               to={makeUrl(`/node/${node.id}/`)}
               component={Link}
+              onClick={() => graph.setCursorNode(node)}
               className={classes.childButton}
               endIcon={<ChevronRightIcon />}
               size="small"

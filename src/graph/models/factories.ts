@@ -62,9 +62,7 @@ export const edgeMapFactory = (getEdgeType: EdgeResolver): IAnyModelType =>
       },
 
       removeEdge(tag: string, target: Instance<IAnyModelType>): void {
-        if (!self.edgeMap.get(tag)?.remove(target)) {
-          throw Error(`Node '${self}' has no '${tag}' edge for '${target}'`)
-        }
+        self.edgeMap.get(tag)?.remove(target)
       },
     }))
     .views(self => ({

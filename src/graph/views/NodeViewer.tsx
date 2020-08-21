@@ -27,16 +27,16 @@ interface NodeViewerProps {
 
 export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
   useGraph(graph => {
-    let instance = graph.rootNode
-    const node = graph.Node.get(id)
+    let node = graph.rootNode
+    const lookup = graph.Node.get(id)
 
-    if (node) {
-      instance = node
+    if (lookup) {
+      node = lookup
     }
 
-    return instance ? (
-      <NodeLayout node={instance}>
-        <EdgeList node={instance} edgeTag="child" />
+    return node ? (
+      <NodeLayout node={node}>
+        <EdgeList node={node} edgeTag="child" />
       </NodeLayout>
     ) : null
   })

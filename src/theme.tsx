@@ -73,6 +73,9 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
           MuiButton: {
             disableElevation: true,
           },
+          MuiButtonGroup: {
+            disableElevation: true,
+          },
         },
 
         overrides: {

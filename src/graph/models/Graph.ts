@@ -17,7 +17,13 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Instance, SnapshotIn, IAnyModelType } from 'mobx-state-tree'
+import {
+  Instance,
+  applySnapshot,
+  getSnapshot,
+  SnapshotIn,
+  IAnyModelType,
+} from 'mobx-state-tree'
 
 import { persist } from 'store/persist'
 
@@ -25,7 +31,6 @@ import { graphFactory } from './factories'
 import { Node, Config, Note } from './Node'
 
 export const Graph = graphFactory({ Node, Config, Note })
-  // Modes
   .actions(self => ({
     setActiveMode(mode: string) {
       const activeModes = self.Config.get('system').get('activeModes')
@@ -69,83 +74,151 @@ export const Graph = graphFactory({ Node, Config, Note })
     },
   }))
 
-  // Selection
   .actions(self => ({
-    clearSelectedNodes() {
-      self.Config.get('system').get('selectedNodes')?.clear()
-    },
+    toggleSelectNode(node: Instance<typeof Node>) {
+      const selectedNodes = self.Config.get('system').get('selectedNodes')
+      if (!selectedNodes) {
+        return
+      }
 
-    deleteSelectedNodes() {
-      const selectedNodes = self.Config.get('system')?.get('selectedNodes')
-      selectedNodes.forEach((id: string) => self.Node.delete(id))
-      self.clearSelectedNodes()
-      if (self.selectedNodes.length === 0) {
+      const nodeIds = selectedNodes.get(self.cursorNode.id)
+
+      if (nodeIds) {
+        if (nodeIds.includes(node.id)) {
+          nodeIds.remove(node.id)
+          if (nodeIds.length === 0) {
+            selectedNodes.delete(self.cursorNode.id)
+          }
+        } else {
+          nodeIds.push(node.id)
+        }
+      } else {
+        selectedNodes.set(self.cursorNode.id, [node.id])
+      }
+
+      if (selectedNodes.size === 0) {
         self.unsetActiveMode('select')
       }
     },
 
-    toggleSelectNode(node: Instance<typeof Node>) {
-      const selectedNodes = self.Config.get('system').get('selectedNodes')
-      if (selectedNodes?.includes(node.id)) {
-        selectedNodes?.remove(node.id)
-      } else {
-        selectedNodes?.push(node.id)
-      }
-
-      if (selectedNodes.length === 0) {
-        self.toggleActiveMode('select')
+    clearSelectedNodes() {
+      self.Config.get('system').get('selectedNodes')?.clear()
+      if (self.selectedNodes.size === 0) {
+        self.unsetActiveMode('select')
       }
     },
 
-    // selectNode(node: Instance<typeof Node>) {
+    deleteSelectedNodes() {
+      // check if there are other
+      self.selectedNodes.forEach((nodeIds: Array<string>) =>
+        nodeIds.forEach((nodeId: string) => self.Node.delete(nodeId)),
+      )
 
-    // },
-
-    // deselectNode(node: Instance<typeof Node>) {
-
-    // },
-
-    selectAllChildNodes(node: Instance<typeof Node>) {
-      node.edgeMap
-        .get('child')
-        .forEach((child: Instance<typeof Node>) => console.log('child'))
+      self.clearSelectedNodes()
     },
 
-    // deselectAllChildNodes(node: Instance<typeof Node>) {
+    moveSelectedNodes() {
+      for (const [accessorId, nodeIds] of self.selectedNodes) {
+        const accessor = self.Node.get(accessorId)
+        for (const nodeId of nodeIds) {
+          const node = self.Node.get(nodeId)
+          if (node) {
+            node.removeEdge('parent', accessor)
+            accessor.removeEdge('child', nodeId)
 
-    // },
-  }))
+            node.addEdge('parent', self.cursorNode)
+            self.cursorNode.addEdge('child', node)
+          }
+        }
+      }
 
-  // Cursor
-  .actions(self => ({
-    setCursorNode(node: Instance<typeof Node>) {
+      self.clearSelectedNodes()
+    },
+
+    copySelectedNodes() {
       //
+    },
+
+    linkSelectedNodes() {
+      for (const nodeIds of self.selectedNodes.values()) {
+        for (const nodeId of nodeIds) {
+          const node = self.Node.get(nodeId)
+          if (node) {
+            node.addEdge('parent', self.cursorNode)
+            self.cursorNode.addEdge('child', node)
+          }
+        }
+      }
+
+      self.clearSelectedNodes()
+    },
+
+    unlinkSelectedNodes() {
+      for (const [accessorId, nodeIds] of self.selectedNodes) {
+        const accessor = self.Node.get(accessorId)
+        for (const nodeId of nodeIds) {
+          const node = self.Node.get(nodeId)
+          if (node) {
+            node.removeEdge('parent', accessor)
+            accessor.removeEdge('child', node)
+          }
+        }
+      }
+
+      self.clearSelectedNodes()
+    },
+
+    removeSelectedNodes() {
+      for (const [accessorId, nodeIds] of self.selectedNodes) {
+        const accessor = self.Node.get(accessorId)
+        for (const nodeId of nodeIds) {
+          const node = self.Node.get(nodeId)
+          if (node) {
+            node.removeEdge('parent', accessor)
+            accessor.removeEdge('child', node)
+            if (node.edgeMap.get('parent').size === 0) {
+              self.deleteNode(node)
+            }
+          }
+        }
+      }
+
+      self.clearSelectedNodes()
+    },
+
+    setCursorNode(node: Instance<typeof Node>) {
+      self.Config.get('system')?.set('cursorNodeId', node.id)
     },
   }))
 
   .actions(self => ({
     afterCreate() {
       persist(self).then(() => {
-        let root
-        if (self.Config.has('system')) {
-          root = self.rootNode
-        } else {
-          root = self.createNode('Node', { label: 'Exuo' })
+        let rootNode = self.rootNode
+        if (!rootNode) {
+          rootNode = self.createNode('Node', { label: 'Exuo' })
         }
 
-        self.createNode('Config', {
-          id: 'system',
-          items: {
-            rootNodeId: root.id,
-            activeModes: [],
-            selectedNodes: [],
+        const cursorNodeId =
+          self.Config.get('system')?.get('cursorNodeId') ?? ''
+
+        applySnapshot(self.Config, {
+          system: {
+            id: 'system',
+            items: {
+              cursorNodeId,
+              rootNodeId: rootNode.id,
+              activeModes: [],
+              selectedNodes: {},
+            },
           },
-        })
-        self.createNode('Config', {
-          id: 'user',
-          items: {
-            global: {},
-            lists: {},
+
+          user: {
+            id: 'user',
+            items: {
+              global: {},
+              lists: {},
+            },
           },
         })
       })
@@ -175,6 +248,11 @@ export const Graph = graphFactory({ Node, Config, Note })
       return config && self.Node.get(config.get('rootNodeId'))
     },
 
+    get cursorNode() {
+      const config = self.Config.get('system')
+      return config && self.Node.get(config.get('cursorNodeId'))
+    },
+
     get activeModes() {
       const config = self.Config.get('system')
       return config?.get('activeModes')
@@ -182,9 +260,5 @@ export const Graph = graphFactory({ Node, Config, Note })
 
     get selectedNodes() {
       return self.Config.get('system')?.get('selectedNodes')
-    },
-
-    get cursorNode() {
-      return self.Config.get('system')?.get('cursorNode')
     },
   }))

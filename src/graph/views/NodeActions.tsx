@@ -27,14 +27,13 @@ import {
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
-import CropFreeIcon from '@material-ui/icons/CropFree'
 import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
 import { useNavigate } from '@reach/router'
 
 import { makeUrl } from 'route'
 import { isRootPath } from 'common'
-import { SelectionActions } from 'select'
+import { SelectButton } from 'select'
 
 import { Node, useGraph, LabelEditor } from 'graph'
 
@@ -43,7 +42,12 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       justifyContent: 'center',
     },
-    button: {},
+    button: {
+      color: theme.palette.text.primary,
+    },
+    toggledButton: {
+      color: theme.palette.primary.main,
+    },
     labelEditor: {
       width: '100%',
     },
@@ -66,10 +70,12 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   const navigate = useNavigate()
 
   return useGraph(graph => {
-    const hasChildren = node?.childCount > 0
+    const hasChildren = node.childCount > 0
+    const selectedCount = graph.selectedNodes.size ?? 0
+
     return (
       <Toolbar variant="dense" className={[classes.root, className].join(' ')}>
-        {mode === 'normal' && !graph.activeModes.includes('select') && (
+        {mode === 'normal' && (
           <>
             <Button
               startIcon={<AddIcon />}
@@ -85,26 +91,31 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
               <Button
                 startIcon={<EditIcon />}
                 onClick={() => graph.toggleActiveMode('edit')}
-                color={
-                  graph.activeModes.includes('edit') ? 'primary' : 'default'
-                }
-                className={classes.button}
+                className={[
+                  classes.button,
+                  graph.activeModes.includes('edit')
+                    ? classes.toggledButton
+                    : '',
+                ].join(' ')}
               >
                 edit
               </Button>
             )}
 
-            {hasChildren && (
-              <Button
-                startIcon={<CropFreeIcon />}
-                onClick={() => graph.toggleActiveMode('select')}
-                color={
-                  graph.activeModes.includes('select') ? 'primary' : 'default'
-                }
-                className={classes.button}
-              >
-                select
-              </Button>
+            {(hasChildren || selectedCount > 0) && (
+              <SelectButton
+                node={node}
+                onClick={() => {
+                  graph.setCursorNode(node)
+                  graph.toggleActiveMode('select')
+                }}
+                className={[
+                  classes.button,
+                  graph.activeModes.includes('select')
+                    ? classes.toggledButton
+                    : '',
+                ].join(' ')}
+              />
             )}
 
             {isRootPath() || (
@@ -127,10 +138,6 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
               </Button>
             )}
           </>
-        )}
-
-        {mode === 'normal' && graph.activeModes.includes('select') && (
-          <SelectionActions />
         )}
 
         {mode === 'add' && (
