@@ -32,6 +32,7 @@ import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
 
+import { NoteEditor } from 'note'
 import { makeUrl } from 'route'
 import { useGraph, Node, LabelEditor } from 'graph'
 
@@ -46,6 +47,10 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:hover': { color: theme.palette.primary.main },
       '&.editMode:hover': {
         cursor: 'text',
+        color: 'unset',
+      },
+
+      '&.selectMode:hover': {
         color: 'unset',
       },
 
@@ -221,9 +226,11 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         className={[
           classes.listItem,
           graph.activeModes.includes('edit') ? 'editMode' : '',
+          graph.activeModes.includes('select') ? 'selectMode' : '',
           isSelected ? 'isSelected' : '',
         ].join(' ')}
       >
+        {/* <NoteEditor text={node.label} /> */}
         {isEditing ? (
           <LabelEditor
             label={node.label}

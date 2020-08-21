@@ -69,6 +69,7 @@ export const Graph = graphFactory({ Node, Config, Note })
 
         if (mode === 'edit') {
           activeModes.remove('select')
+          self.clearSelectedNodes()
         }
       }
     },

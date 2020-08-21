@@ -187,28 +187,30 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {},
     input: {
-      height: '300px',
-      padding: theme.spacing(0, 2, 0, 2),
+      padding: 0,
     },
     toolbar: {
-      padding: theme.spacing(0, 2, 0, 2),
+      padding: 0,
     },
   }),
 )
 
 interface NoteEditorProps {
-  note?: Instance<typeof Note>
+  /* note?: Instance<typeof Note> */
+  text?: string
   className?: string
 }
 
 export const NoteEditor: React.FunctionComponent<NoteEditorProps> = ({
-  note,
+  text,
   className,
 }) => {
   const classes = useStyles()
   const editorRef = React.useRef(null)
   const [editorState, setEditorState] = React.useState(
-    Draft.EditorState.createWithContent(Draft.ContentState.createFromText('')),
+    Draft.EditorState.createWithContent(
+      Draft.ContentState.createFromText(text ?? ''),
+    ),
   )
 
   function handleKeyCommand(
@@ -251,7 +253,7 @@ export const NoteEditor: React.FunctionComponent<NoteEditorProps> = ({
   }
 
   return (
-    <div className={classes.root}>
+    <div className={[classes.root, className].join(' ')}>
       <Toolbar variant="dense" className={classes.toolbar}>
         <Box flexGrow={1}>
           <InlineStyleControls

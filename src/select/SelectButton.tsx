@@ -29,9 +29,9 @@ import {
   MenuList,
   ButtonProps,
 } from '@material-ui/core'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDownOutlined'
 import DeleteIcon from '@material-ui/icons/DeleteOutlined'
 import FlipToBackIcon from '@material-ui/icons/FlipToBackOutlined'
+import CancelIcon from '@material-ui/icons/CancelOutlined'
 import FolderIcon from '@material-ui/icons/FolderOutlined'
 import FileCopyIcon from '@material-ui/icons/FileCopyOutlined'
 import CropFreeIcon from '@material-ui/icons/CropFreeOutlined'
@@ -54,9 +54,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     selectButton: {
       paddingRight: theme.spacing(1) / 2,
-    },
-    dropButton: {
-      padding: 0,
     },
     deleteButton: {
       color: theme.palette.error.main,
@@ -95,24 +92,13 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
       >
         <Button
           startIcon={<CropFreeIcon />}
-          onClick={onClick}
+          onClick={
+            graph.selectedNodes.size ? () => setOpen(value => !value) : onClick
+          }
           className={classes.selectButton}
           {...extraProps}
         >
           select
-        </Button>
-        <Button
-          size="small"
-          disabled={graph.selectedNodes.size === 0}
-          aria-controls={open ? 'select-button' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-label="select merge strategy"
-          aria-haspopup="menu"
-          onClick={() => setOpen(value => !value)}
-          className={classes.dropButton}
-          {...extraProps}
-        >
-          <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>
 
@@ -129,6 +115,17 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
             <ClickAwayListener onClickAway={() => setOpen(false)}>
               <Paper>
                 <MenuList id="select-button">
+                  <MenuItem
+                    divider
+                    onClick={() => {
+                      graph.clearSelectedNodes()
+                      setOpen(false)
+                    }}
+                  >
+                    <CancelIcon />
+                    Clear selection
+                  </MenuItem>
+
                   <MenuItem
                     onClick={() => {
                       graph.moveSelectedNodes()
