@@ -19,7 +19,9 @@
 
 import React from 'react'
 import {
-  createMuiTheme,
+  // https://github.com/mui-org/material-ui/issues/13394
+  // TODO Remove when Material UI v5 is out.
+  unstable_createMuiStrictModeTheme as createMuiTheme,
   ThemeProvider as MuiThemeProvider,
 } from '@material-ui/core/styles'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
