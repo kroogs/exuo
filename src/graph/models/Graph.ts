@@ -101,10 +101,6 @@ export const Graph = graphFactory({
       } else {
         selectedNodes.set(self.cursorNode.id, [node.id])
       }
-
-      if (selectedNodes.size === 0) {
-        self.unsetActiveMode('select')
-      }
     },
 
     clearSelectedNodes() {
