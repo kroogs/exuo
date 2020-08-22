@@ -195,34 +195,31 @@ export const Graph = graphFactory({
 
   .actions(self => ({
     afterCreate() {
+      applySnapshot(self.Config, {
+        system: {
+          id: 'system',
+          items: {
+            cursorNodeId: '',
+            rootNodeId: '',
+            activeModes: [],
+            selectedNodes: {},
+          },
+        },
+
+        user: {
+          id: 'user',
+          items: {
+            global: {},
+            lists: {},
+          },
+        },
+      })
+
       persist(self).then(() => {
-        let rootNode = self.rootNode
-        if (!rootNode) {
-          rootNode = self.createNode('Node', { label: 'Exuo' })
+        if (!self.rootNode) {
+          const rootNode = self.createNode('Node', { label: 'Exuo' })
+          self.Config.get('system').set('rootNodeId', rootNode.id)
         }
-
-        const cursorNodeId =
-          self.Config.get('system')?.get('cursorNodeId') ?? ''
-
-        applySnapshot(self.Config, {
-          system: {
-            id: 'system',
-            items: {
-              cursorNodeId,
-              rootNodeId: rootNode.id,
-              activeModes: [],
-              selectedNodes: {},
-            },
-          },
-
-          user: {
-            id: 'user',
-            items: {
-              global: {},
-              lists: {},
-            },
-          },
-        })
       })
     },
 
