@@ -22,6 +22,8 @@ export * from './useGraph'
 export * from './models/factories'
 export * from './models/Graph'
 export * from './models/Node'
+export * from './models/Config'
+export * from './models/Unknown'
 
 export * from './views/EdgeList'
 export * from './views/LabelEditor'

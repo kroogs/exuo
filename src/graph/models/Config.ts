@@ -17,16 +17,9 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types, SnapshotIn, Instance, IAnyType } from 'mobx-state-tree'
+import { types, SnapshotIn, Instance } from 'mobx-state-tree'
 
-export const Unknown = types.union(
-  types.null,
-  types.boolean,
-  types.string,
-  types.number,
-  types.array(types.late((): IAnyType => Unknown)),
-  types.map(types.late((): IAnyType => Unknown)),
-)
+import { Unknown } from './Unknown'
 
 export const Config = types
   .model('Config', {

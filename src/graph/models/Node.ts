@@ -19,20 +19,16 @@
 
 import { types, IAnyType } from 'mobx-state-tree'
 
-import { Config as BaseConfig } from 'store'
-import { Note as BaseNote } from 'note'
+import { Note } from 'note'
 
-import { nodeFactory, edgeMapFactory } from 'graph'
-
-export const Config = nodeFactory(BaseConfig)
-export const Note = nodeFactory(BaseNote)
+import { nodeFactory, edgeMapFactory, Config } from 'graph'
 
 export const Node = nodeFactory([
   edgeMapFactory(() =>
     types.union(
       types.late((): IAnyType => Node),
-      Config,
-      Note,
+      nodeFactory(Config),
+      nodeFactory(Note),
     ),
   ),
 ])

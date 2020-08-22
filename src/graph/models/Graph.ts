@@ -20,17 +20,22 @@
 import {
   Instance,
   applySnapshot,
-  getSnapshot,
   SnapshotIn,
   IAnyModelType,
 } from 'mobx-state-tree'
 
 import { persist } from 'store/persist'
+import { Note } from 'note'
 
-import { graphFactory } from './factories'
-import { Node, Config, Note } from './Node'
+import { graphFactory, nodeFactory } from './factories'
+import { Node } from './Node'
+import { Config } from './Config'
 
-export const Graph = graphFactory({ Node, Config, Note })
+export const Graph = graphFactory({
+  Node,
+  Config: nodeFactory(Config),
+  Note: nodeFactory(Note),
+})
   .actions(self => ({
     setActiveMode(mode: string) {
       const activeModes = self.Config.get('system').get('activeModes')

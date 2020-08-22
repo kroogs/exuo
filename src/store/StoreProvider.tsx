@@ -22,7 +22,7 @@ import { Instance } from 'mobx-state-tree'
 
 import { Graph } from 'graph'
 
-import { Store } from './Store'
+import { Store } from './models/Store'
 
 const store = Store.create({
   graph: Graph.create(),
