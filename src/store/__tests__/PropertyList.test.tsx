@@ -18,9 +18,9 @@
  */
 
 import React from 'react'
-import { mount } from 'enzyme'
+/* import { mount } from 'enzyme' */
 
 /* import EdgeList from '../EdgeList' */
 /* import { graphFactory, Node } from 'graph' */
 
-/* test('PropList renders', () => {}) */
+test.skip('PropList renders', () => {})
