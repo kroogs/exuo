@@ -20,12 +20,13 @@
 import {
   Instance,
   applySnapshot,
+  getSnapshot,
   SnapshotIn,
+  SnapshotOut,
   IAnyModelType,
 } from 'mobx-state-tree'
 
 import { persist } from 'store/persist'
-import { Note } from 'note'
 
 import { graphFactory, nodeFactory } from './factories'
 import { Node } from './Node'
@@ -34,25 +35,24 @@ import { Config } from './Config'
 export const Graph = graphFactory({
   Node,
   Config: nodeFactory(Config),
-  Note: nodeFactory(Note),
 })
   .actions(self => ({
     setActiveMode(mode: string) {
-      const activeModes = self.Config.get('system').get('activeModes')
-      if (activeModes && !activeModes?.includes(mode)) {
+      const activeModes = self.activeModes
+      if (!activeModes?.includes(mode)) {
         activeModes.push(mode)
       }
     },
 
     unsetActiveMode(mode: string) {
-      const activeModes = self.Config.get('system').get('activeModes')
+      const activeModes = self.activeModes
       if (activeModes?.includes(mode)) {
         activeModes.remove(mode)
       }
     },
 
     toggleActiveMode(mode: string) {
-      const activeModes = self.Config.get('system').get('activeModes')
+      const activeModes = self.activeModes
 
       if (!activeModes) {
         return
@@ -82,6 +82,12 @@ export const Graph = graphFactory({
 
   .actions(self => ({
     toggleSelectNode(node: Instance<typeof Node>) {
+      console.log('wtf', self.cursorNode)
+
+      if (!self.cursorNode) {
+        throw Error('Cannot select without a cursorNode')
+      }
+
       const selectedNodes = self.Config.get('system').get('selectedNodes')
       if (!selectedNodes) {
         return
@@ -111,7 +117,6 @@ export const Graph = graphFactory({
     },
 
     deleteSelectedNodes() {
-      // check if there are other
       self.selectedNodes.forEach((nodeIds: Array<string>) =>
         nodeIds.forEach((nodeId: string) => self.Node.delete(nodeId)),
       )
@@ -189,36 +194,25 @@ export const Graph = graphFactory({
     },
 
     setCursorNode(node: Instance<typeof Node>) {
-      self.Config.get('system')?.set('cursorNodeId', node.id)
+      self.Config.get('system').set('cursorNodeId', node.id)
     },
   }))
 
   .actions(self => ({
     afterCreate() {
-      applySnapshot(self.Config, {
-        system: {
-          id: 'system',
-          items: {
-            cursorNodeId: '',
-            rootNodeId: '',
-            activeModes: [],
-            selectedNodes: {},
-          },
-        },
-
-        user: {
-          id: 'user',
-          items: {
-            global: {},
-            lists: {},
-          },
-        },
-      })
-
       persist(self).then(() => {
         if (!self.rootNode) {
           const rootNode = self.createNode('Node', { label: 'Exuo' })
-          self.Config.get('system').set('rootNodeId', rootNode.id)
+          applySnapshot(self.Config, {
+            system: {
+              id: 'system',
+              items: {
+                rootNodeId: rootNode.id,
+                selectedNodes: {},
+                activeModes: [],
+              },
+            },
+          })
         }
       })
     },
@@ -244,12 +238,12 @@ export const Graph = graphFactory({
   .views(self => ({
     get rootNode() {
       const config = self.Config.get('system')
-      return config && self.Node.get(config.get('rootNodeId'))
+      return self.Node.get(config?.get('rootNodeId'))
     },
 
     get cursorNode() {
       const config = self.Config.get('system')
-      return config && self.Node.get(config.get('cursorNodeId'))
+      return self.Node.get(config.get('cursorNodeId'))
     },
 
     get activeModes() {
@@ -258,6 +252,7 @@ export const Graph = graphFactory({
     },
 
     get selectedNodes() {
-      return self.Config.get('system')?.get('selectedNodes')
+      const config = self.Config.get('system')
+      return config?.get('selectedNodes')
     },
   }))
