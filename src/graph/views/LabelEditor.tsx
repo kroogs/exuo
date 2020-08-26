@@ -28,11 +28,6 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
-      fontSize: 0,
-      padding: 0,
-    },
-
-    inputBase: {
       padding: 0,
       '& input, & textarea': {
         // Extra pixel to account for body1 being 18px tall and
@@ -66,20 +61,24 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
   const classes = useStyles()
   const [inputValue, setInputValue] = React.useState(label ?? '')
 
+  const [didRender, setDidRender] = React.useState(false)
   React.useEffect(() => {
-    inputRef.current?.setSelectionRange(inputValue.length, inputValue.length)
-  })
+    if (!didRender) {
+      inputRef.current?.setSelectionRange(inputValue.length, inputValue.length)
+      setDidRender(true)
+    }
+  }, [didRender, inputValue.length])
 
   return useGraph(graph => {
     const handleValue = (
       event?: React.KeyboardEvent<HTMLInputElement>,
     ): void => {
       if (onValue) {
-        setInputValue(onValue?.(inputValue, event) || '')
+        setInputValue(onValue(inputValue, event) || '')
       }
     }
 
-    const handleFormEvent = (event: React.FormEvent<HTMLFormElement>): void => {
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
       event.preventDefault()
       handleValue()
     }
@@ -98,24 +97,19 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
     }
 
     return (
-      <form
-        onSubmit={handleFormEvent}
-        onBlur={handleFormEvent}
+      <InputBase
+        autoFocus
+        multiline
+        fullWidth
+        inputRef={inputRef}
+        placeholder={placeholder}
+        value={inputValue}
+        onKeyDown={handleKeyDown}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        inputProps={{ 'aria-label': 'label' }}
         className={[classes.root, className].join(' ')}
-      >
-        <InputBase
-          inputRef={inputRef}
-          autoFocus
-          multiline
-          fullWidth
-          placeholder={placeholder}
-          value={inputValue}
-          onKeyDown={handleKeyDown}
-          onChange={handleChange}
-          inputProps={{ 'aria-label': 'label' }}
-          className={classes.inputBase}
-        />
-      </form>
+      />
     )
   })
 }
