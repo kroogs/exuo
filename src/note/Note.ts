@@ -18,13 +18,24 @@
  */
 
 import { types } from 'mobx-state-tree'
+import { convertToRaw } from 'draft-js'
 
 export const Note = types
   .model('Note', {
-    body: types.string,
+    label: types.string,
+    summary: types.maybe(types.string),
+    rawContentState: types.maybe(types.string),
   })
   .actions(self => ({
-    setBody(content: string) {
-      self.body = content
+    setLabel(label: string) {
+      self.label = label
+    },
+
+    setSummary(summary: string) {
+      self.summary = summary
+    },
+
+    setRawContentState(value: ReturnType<typeof convertToRaw>) {
+      self.rawContentState = JSON.stringify(value)
     },
   }))

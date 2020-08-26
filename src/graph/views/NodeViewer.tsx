@@ -34,7 +34,9 @@ export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
       node = lookup
     }
 
-    graph.setCursorNode(node)
+    if (node) {
+      graph.setCursorNode(node)
+    }
 
     return node ? (
       <NodeLayout node={node}>

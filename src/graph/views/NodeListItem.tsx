@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
 
       '&.selectMode': {
+        cursor: 'default',
         color: 'unset',
         backgroundColor: 'unset',
       },
@@ -119,6 +120,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     childButton: {
+      cursor: 'pointer',
       color: theme.palette.text.primary,
       transition: theme.transitions.create(['color'], {
         duration: theme.transitions.duration.shortest,
@@ -232,15 +234,12 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
           isSelected ? 'isSelected' : '',
         ].join(' ')}
       >
-        {/* <NoteEditor text={node.label} /> */}
         {isEditing ? (
-          <LabelEditor
-            label={node.label}
+          <NoteEditor
+            note={node}
+            autoFocus
             onValue={value => {
               setIsEditing(false)
-              if (value) {
-                node.setLabel(value)
-              }
             }}
           />
         ) : (

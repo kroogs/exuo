@@ -36,7 +36,18 @@ import FormatUnderlined from '@material-ui/icons/FormatUnderlined'
 import SpaceBar from '@material-ui/icons/SpaceBar'
 import FormatListNumbered from '@material-ui/icons/FormatListNumbered'
 import FormatListBulleted from '@material-ui/icons/FormatListBulleted'
-import * as Draft from 'draft-js'
+import {
+  ContentBlock,
+  ContentState,
+  DraftEditorCommand,
+  DraftHandleValue,
+  Editor,
+  EditorState,
+  RichUtils,
+  getDefaultKeyBinding,
+  convertFromRaw,
+  convertToRaw,
+} from 'draft-js'
 import 'draft-js/dist/Draft.css'
 
 import { Note } from './Note'
@@ -76,7 +87,7 @@ const styleMap = {
   },
 }
 
-function getBlockStyle(block: Draft.ContentBlock): string {
+const getBlockStyle = (block: ContentBlock): string => {
   switch (block.getType()) {
     case 'blockquote':
       return 'RichEditor-blockquote'
@@ -127,7 +138,7 @@ const StyleButton: React.FunctionComponent<StyleButtonProps> = ({
 }
 
 interface BlockStyleControlsProps {
-  editorState: Draft.EditorState
+  editorState: EditorState
   onToggle: (style: string) => void
 }
 
@@ -158,7 +169,7 @@ const BlockStyleControls: React.FunctionComponent<BlockStyleControlsProps> = ({
 }
 
 interface InlineStyleControlsProps {
-  editorState: Draft.EditorState
+  editorState: EditorState
   onToggle: (style: string) => void
 }
 
@@ -185,7 +196,9 @@ const InlineStyleControls: React.FunctionComponent<InlineStyleControlsProps> = (
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
+    root: {
+      width: '100%',
+    },
     input: {
       padding: 0,
     },
@@ -196,28 +209,72 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface NoteEditorProps {
-  /* note?: Instance<typeof Note> */
+  note?: Instance<typeof Note>
   text?: string
+  placeholder?: string
+  autoFocus?: boolean
   className?: string
+  onValue?: (
+    value?: Instance<typeof Note>,
+    event?: React.KeyboardEvent<HTMLInputElement>,
+  ) => void | null | string
 }
 
 export const NoteEditor: React.FunctionComponent<NoteEditorProps> = ({
+  note,
   text,
+  placeholder,
+  autoFocus,
+  onValue,
   className,
 }) => {
   const classes = useStyles()
-  const editorRef = React.useRef(null)
-  const [editorState, setEditorState] = React.useState(
-    Draft.EditorState.createWithContent(
-      Draft.ContentState.createFromText(text ?? ''),
-    ),
+  const editorRef = React.useRef<Editor | null>()
+  const rawContentState = note?.rawContentState
+  const noteContentState = React.useMemo(
+    () => rawContentState && convertFromRaw(JSON.parse(rawContentState)),
+    [rawContentState],
   )
+  const [editorState, setEditorState] = React.useState(() => {
+    return EditorState.createWithContent(
+      noteContentState ||
+        ContentState.createFromText(text ?? note?.label ?? ''),
+    )
+  })
 
-  function handleKeyCommand(
-    command: Draft.DraftEditorCommand,
-    editorState: Draft.EditorState,
-  ): Draft.DraftHandleValue {
-    const newState = Draft.RichUtils.handleKeyCommand(editorState, command)
+  const [didRender, setDidRender] = React.useState(false)
+  React.useEffect(() => {
+    if (!didRender && autoFocus) {
+      editorRef.current?.focus()
+      setEditorState(EditorState.moveFocusToEnd(editorState))
+      setDidRender(true)
+    }
+  }, [didRender, autoFocus, editorState])
+
+  const handleValue = (event?: React.KeyboardEvent<HTMLInputElement>): void => {
+    const contentState = editorState.getCurrentContent()
+    const rawContent = convertToRaw(contentState)
+
+    if (note) {
+      note.setRawContentState(rawContent)
+      note.setLabel(contentState.getFirstBlock().getText())
+    }
+
+    if (onValue) {
+      onValue(note)
+    }
+  }
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
+    event.preventDefault()
+    handleValue()
+  }
+
+  const handleKeyCommand = (
+    command: DraftEditorCommand,
+    editorState: EditorState,
+  ): DraftHandleValue => {
+    const newState = RichUtils.handleKeyCommand(editorState, command)
     if (newState) {
       setEditorState(newState)
       return 'handled'
@@ -227,33 +284,50 @@ export const NoteEditor: React.FunctionComponent<NoteEditorProps> = ({
   }
 
   const mapKeyToEditorCommand = (
-    e: React.KeyboardEvent,
-  ): Draft.DraftEditorCommand | null => {
-    if (e.keyCode === 9) {
-      e.preventDefault()
-
-      const newEditorState = Draft.RichUtils.onTab(e, editorState, 4)
-
-      if (newEditorState !== editorState) {
-        setEditorState(newEditorState)
-      }
-
+    event: React.KeyboardEvent,
+  ): DraftEditorCommand | null => {
+    if (event.keyCode === 13 && event.shiftKey) {
+      handleValue()
       return null
     } else {
-      return Draft.getDefaultKeyBinding(e)
+      return getDefaultKeyBinding(event)
     }
   }
 
-  function toggleBlockType(blockType: string): void {
-    setEditorState(Draft.RichUtils.toggleBlockType(editorState, blockType))
+  /* const handleKeyDown = ( */
+  /*   event: React.KeyboardEvent<HTMLInputElement>, */
+  /* ): void => { */
+  /*   if (event.keyCode === 13 && !event.shiftKey) { */
+  /*     event.preventDefault() */
+  /*     handleValue(event) */
+  /*   } */
+  /* } */
+
+  const toggleBlockType = (blockType: string): void => {
+    setEditorState(RichUtils.toggleBlockType(editorState, blockType))
   }
 
-  function toggleInlineStyle(inlineStyle: string): void {
-    setEditorState(Draft.RichUtils.toggleInlineStyle(editorState, inlineStyle))
+  const toggleInlineStyle = (inlineStyle: string): void => {
+    setEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle))
   }
 
   return (
     <div className={[classes.root, className].join(' ')}>
+      <div className={classes.input}>
+        <Editor
+          ref={ref => (editorRef.current = ref)}
+          blockStyleFn={getBlockStyle}
+          customStyleMap={styleMap}
+          editorState={editorState}
+          handleKeyCommand={handleKeyCommand}
+          keyBindingFn={mapKeyToEditorCommand}
+          onChange={setEditorState}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          spellCheck={true}
+        />
+      </div>
+
       <Toolbar variant="dense" className={classes.toolbar}>
         <Box flexGrow={1}>
           <InlineStyleControls
@@ -266,19 +340,6 @@ export const NoteEditor: React.FunctionComponent<NoteEditorProps> = ({
           onToggle={toggleBlockType}
         />
       </Toolbar>
-      <div className={classes.input}>
-        <Draft.Editor
-          ref={editorRef}
-          blockStyleFn={getBlockStyle}
-          customStyleMap={styleMap}
-          editorState={editorState}
-          handleKeyCommand={handleKeyCommand}
-          keyBindingFn={mapKeyToEditorCommand}
-          onChange={setEditorState}
-          placeholder="Write here"
-          spellCheck={true}
-        />
-      </div>
     </div>
   )
 }
