@@ -80,28 +80,21 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
 }) => {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
-  const anchorRef = React.useRef<HTMLDivElement>(null)
+  const anchorRef = React.useRef<HTMLButtonElement>(null)
 
   return useGraph(graph => (
     <div className={[classes.root, className].join(' ')}>
-      <ButtonGroup
-        variant="text"
+      <Button
         ref={anchorRef}
-        aria-label="split button"
-        className={classes.buttonGroup}
+        startIcon={<CropFreeIcon />}
+        onClick={
+          graph.selectedNodes.size ? () => setOpen(value => !value) : onClick
+        }
+        className={classes.selectButton}
+        {...extraProps}
       >
-        <Button
-          startIcon={<CropFreeIcon />}
-          onClick={
-            graph.selectedNodes.size ? () => setOpen(value => !value) : onClick
-          }
-          className={classes.selectButton}
-          {...extraProps}
-        >
-          select
-        </Button>
-      </ButtonGroup>
-
+        select
+      </Button>
       <Popper
         open={open}
         anchorEl={anchorRef.current}
@@ -113,7 +106,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
           graph.setCursorNode(node)
           return (
             <ClickAwayListener onClickAway={() => setOpen(false)}>
-              <Paper>
+              <Paper elevation={0}>
                 <MenuList dense id="select-button">
                   <MenuItem
                     divider
