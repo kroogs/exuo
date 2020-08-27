@@ -63,6 +63,9 @@ const useStyles = makeStyles((theme: Theme) =>
         marginRight: theme.spacing(1),
       },
     },
+    selectMenu: {
+      outline: 0,
+    },
   }),
 )
 
@@ -107,7 +110,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
           return (
             <ClickAwayListener onClickAway={() => setOpen(false)}>
               <Paper elevation={0}>
-                <MenuList dense id="select-button">
+                <MenuList dense className={classes.selectMenu}>
                   <MenuItem
                     divider
                     onClick={() => {
