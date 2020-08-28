@@ -76,7 +76,7 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
       },
 
       overrides: {
-        MuiButton: {
+        MuiButtonBase: {
           root: {
             cursor: 'default',
           },

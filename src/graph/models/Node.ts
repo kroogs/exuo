@@ -24,19 +24,24 @@ import { Note } from 'note'
 import { nodeFactory, edgeMapFactory, Config } from 'graph'
 
 export const Node = nodeFactory([
-  nodeFactory(Note),
   edgeMapFactory(() =>
     types.union(
       types.late((): IAnyType => Node),
       nodeFactory(Config),
+      nodeFactory(Note),
     ),
   ),
-]).views(self => ({
-  get childCount(): number {
-    return self.edgeMap.get('child')?.length ?? 0
-  },
-
-  // get createDate(): Date {
-  //   return self.events[0]?.date
-  // },
-}))
+])
+  .props({
+    label: types.optional(types.string, ''),
+  })
+  .actions(self => ({
+    setLabel(label: string): void {
+      self.label = label
+    },
+  }))
+  .views(self => ({
+    get childCount(): number {
+      return self.edgeMap.get('child')?.length ?? 0
+    },
+  }))

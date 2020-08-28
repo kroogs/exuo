@@ -20,6 +20,8 @@
 import React from 'react'
 import {
   Toolbar,
+  IconButton,
+  Fab,
   Button,
   createStyles,
   makeStyles,
@@ -41,6 +43,11 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       justifyContent: 'center',
     },
+
+    addButton: {
+      margin: theme.spacing(0, 2, 0, 2),
+      boxShadow: 'unset',
+    },
   }),
 )
 
@@ -49,14 +56,11 @@ interface NodeActionsProps {
   className?: string
 }
 
-type ActionMode = 'normal' | 'add' | 'edit' | 'share'
-
 export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   node,
   className,
 }) => {
   const classes = useStyles()
-  const [mode, setMode] = React.useState<ActionMode>('normal')
   const navigate = useNavigate()
 
   return useGraph(graph => {
@@ -64,83 +68,58 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
     const selectedCount = graph.selectedNodes.size ?? 0
 
     return (
-      <Toolbar variant="dense" className={[classes.root, className].join(' ')}>
-        {mode === 'normal' && (
-          <>
-            <Button
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setMode('add')
-              }}
-            >
-              new
-            </Button>
+      <Toolbar
+        disableGutters
+        variant="dense"
+        className={[classes.root, className].join(' ')}
+      >
+        <>
+          <IconButton
+            disabled={!hasChildren}
+            color={graph.activeModes.includes('edit') ? 'primary' : undefined}
+            onClick={() => graph.toggleActiveMode('edit')}
+          >
+            <EditIcon />
+          </IconButton>
 
-            {hasChildren && (
-              <Button
-                color={
-                  graph.activeModes.includes('edit') ? 'primary' : undefined
-                }
-                startIcon={<EditIcon />}
-                onClick={() => graph.toggleActiveMode('edit')}
-              >
-                edit
-              </Button>
-            )}
+          <Fab
+            color="primary"
+            onClick={() => {
+              graph.toggleActiveMode('insert')
+            }}
+            className={classes.addButton}
+          >
+            <AddIcon />
+          </Fab>
 
-            {(hasChildren || selectedCount > 0) && (
-              <SelectButton
-                node={node}
-                color={
-                  graph.activeModes.includes('select') ? 'primary' : undefined
-                }
-                onClick={() => {
-                  graph.toggleActiveMode('select')
-                }}
-              />
-            )}
-
-            {false && (
-              <Button
-                disabled
-                startIcon={<GroupIcon />}
-                onClick={() => {
-                  if (graph.activeModes.includes('share')) {
-                    graph.closePeerConnection()
-                  } else {
-                    graph.offerPeerConnection(node)
-                  }
-                }}
-                color={
-                  graph.activeModes.includes('share') ? 'primary' : undefined
-                }
-              >
-                share
-              </Button>
-            )}
-          </>
-        )}
-
-        {mode === 'add' && (
-          <LabelEditor
-            placeholder="Label"
-            onValue={(value, event) => {
-              if (value) {
-                const child = graph.createChild(node, { label: value })
-
-                if (event?.ctrlKey) {
-                  navigate(makeUrl(`/node/${child.id}/`)).then(() => {
-                    setMode('add')
-                  })
-                }
-
-                return ''
-              } else {
-                setMode('normal')
-              }
+          <SelectButton
+            disabled={!(hasChildren || selectedCount > 0)}
+            node={node}
+            color={graph.activeModes.includes('select') ? 'primary' : undefined}
+            onClick={() => {
+              graph.toggleActiveMode('select')
             }}
           />
-        )}
+
+          {false && (
+            <Button
+              disabled
+              startIcon={<GroupIcon />}
+              onClick={() => {
+                if (graph.activeModes.includes('share')) {
+                  graph.closePeerConnection()
+                } else {
+                  graph.offerPeerConnection(node)
+                }
+              }}
+              color={
+                graph.activeModes.includes('share') ? 'primary' : undefined
+              }
+            >
+              share
+            </Button>
+          )}
+        </>
       </Toolbar>
     )
   })

@@ -46,17 +46,13 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   const classes = useStyles()
   return useGraph(graph => (
     <List aria-label="edge list" className={classes.list}>
-      {node.edgeMap
-        .get(edgeTag)
-        ?.slice()
-        .reverse()
-        .map((item: Instance<typeof Node>) => (
-          <NodeListItem
-            node={item}
-            parentNode={node}
-            key={`${edgeTag}-${item.id}`}
-          />
-        ))}
+      {node.edgeMap.get(edgeTag)?.map((item: Instance<typeof Node>) => (
+        <NodeListItem
+          node={item}
+          parentNode={node}
+          key={`${edgeTag}-${item.id}`}
+        />
+      ))}
     </List>
   ))
 }

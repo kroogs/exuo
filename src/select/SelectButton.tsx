@@ -20,6 +20,7 @@
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
 import {
+  IconButton,
   Button,
   ButtonGroup,
   ClickAwayListener,
@@ -27,7 +28,7 @@ import {
   Popper,
   MenuItem,
   MenuList,
-  ButtonProps,
+  IconButtonProps,
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/DeleteOutlined'
 import FlipToBackIcon from '@material-ui/icons/FlipToBackOutlined'
@@ -52,9 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
         minWidth: 'unset',
       },
     },
-    selectButton: {
-      paddingRight: theme.spacing(1) / 2,
-    },
+    selectButton: {},
     deleteButton: {
       color: theme.palette.error.main,
     },
@@ -69,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface SelectButtonProps extends ButtonProps {
+interface SelectButtonProps extends IconButtonProps {
   node: Instance<typeof Node>
   onClick: React.MouseEventHandler
   className?: string
@@ -87,17 +86,16 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
 
   return useGraph(graph => (
     <div className={[classes.root, className].join(' ')}>
-      <Button
+      <IconButton
         ref={anchorRef}
-        startIcon={<CropFreeIcon />}
         onClick={
           graph.selectedNodes.size ? () => setOpen(value => !value) : onClick
         }
         className={classes.selectButton}
         {...extraProps}
       >
-        select
-      </Button>
+        <CropFreeIcon />
+      </IconButton>
       <Popper
         open={open}
         anchorEl={anchorRef.current}
@@ -108,28 +106,34 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
         {({ placement }) => {
           graph.setCursorNode(node)
           return (
-            <ClickAwayListener onClickAway={() => setOpen(false)}>
+            <ClickAwayListener
+              onClickAway={e => {
+                e.preventDefault()
+                setOpen(false)
+              }}
+            >
               <Paper elevation={0}>
                 <MenuList dense className={classes.selectMenu}>
                   <MenuItem
                     divider
                     onClick={() => {
-                      graph.clearSelectedNodes()
+                      graph.removeSelectedNodes()
                       setOpen(false)
                     }}
+                    className={classes.deleteButton}
                   >
-                    <CancelIcon />
-                    Clear selection
+                    <DeleteIcon />
+                    Remove
                   </MenuItem>
 
                   <MenuItem
                     onClick={() => {
-                      graph.moveSelectedNodes()
+                      graph.linkSelectedNodes()
                       setOpen(false)
                     }}
                   >
-                    <FolderIcon />
-                    Move here
+                    <FlipToBackIcon />
+                    Link here
                   </MenuItem>
 
                   <MenuItem
@@ -145,12 +149,12 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
                   <MenuItem
                     divider
                     onClick={() => {
-                      graph.linkSelectedNodes()
+                      graph.moveSelectedNodes()
                       setOpen(false)
                     }}
                   >
-                    <FlipToBackIcon />
-                    Link here
+                    <FolderIcon />
+                    Move here
                   </MenuItem>
 
                   {/* <MenuItem */}
@@ -166,13 +170,12 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
 
                   <MenuItem
                     onClick={() => {
-                      graph.removeSelectedNodes()
+                      graph.clearSelectedNodes()
                       setOpen(false)
                     }}
-                    className={classes.deleteButton}
                   >
-                    <DeleteIcon />
-                    Remove
+                    <CancelIcon />
+                    Clear selection
                   </MenuItem>
                 </MenuList>
               </Paper>

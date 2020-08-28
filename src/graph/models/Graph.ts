@@ -27,6 +27,7 @@ import {
 } from 'mobx-state-tree'
 
 import { persist } from 'store/persist'
+import { Note } from 'note'
 
 import { graphFactory, nodeFactory } from './factories'
 import { Node } from './Node'
@@ -35,6 +36,7 @@ import { Config } from './Config'
 export const Graph = graphFactory({
   Node,
   Config: nodeFactory(Config),
+  Note: nodeFactory(Note),
 })
   .actions(self => ({
     setActiveMode(mode: string) {
@@ -82,8 +84,6 @@ export const Graph = graphFactory({
 
   .actions(self => ({
     toggleSelectNode(node: Instance<typeof Node>) {
-      console.log('wtf', self.cursorNode)
-
       if (!self.cursorNode) {
         throw Error('Cannot select without a cursorNode')
       }

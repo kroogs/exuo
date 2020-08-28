@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(0, 2, 0, 2),
     },
     backButton: {
+      cursor: 'pointer',
       '&[disabled]': {
         visibility: 'hidden',
         pointerEvents: 'none',

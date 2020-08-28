@@ -18,24 +18,40 @@
  */
 
 import React from 'react'
-import { AppBar, Box } from '@material-ui/core'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import { AppBar, Box, fade } from '@material-ui/core'
 import { Instance } from 'mobx-state-tree'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import { useNavigate } from '@reach/router'
 
+import { makeUrl } from 'route'
 import { TitleBar } from 'common'
 
-import { Node, useGraph, NodeActions } from 'graph'
+import { Node, useGraph, NodeActions, LabelEditor } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
-    actions: {
-      color: theme.palette.text.secondary,
-      backgroundColor: theme.palette.background.default,
-      padding: theme.spacing(0, 2, 0, 2),
+    root: {
+      textAlign: 'center',
     },
+
+    actions: {
+      position: 'fixed',
+      bottom: theme.spacing(6),
+      left: '50%',
+      transform: 'translateX(-50%)',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.background.default, 0.9),
+      backdropFilter: 'blur(2px)',
+      padding: theme.spacing(1),
+    },
+
     children: {
-      marginTop: -theme.spacing(1),
+      paddingBottom: theme.spacing(6) * 2 + theme.spacing(1),
+    },
+
+    labelEditor: {
+      margin: theme.spacing(0, 2, 0, 2),
+      width: '100%',
     },
   }),
 )
@@ -51,13 +67,34 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
   children,
 }) => {
   const classes = useStyles()
+  const navigate = useNavigate()
   return useGraph(graph => (
     <Box className={[classes.root, className].join(' ')}>
       <AppBar elevation={0} position="sticky">
         <TitleBar title={node.label} />
-        <NodeActions node={node} className={classes.actions} />
       </AppBar>
-      <Box className={classes.children}>{children}</Box>
+      <Box className={classes.children}>
+        {children}
+        {graph.activeModes.includes('insert') && (
+          <LabelEditor
+            className={classes.labelEditor}
+            placeholder="Label"
+            onValue={(value, event) => {
+              if (value) {
+                const child = graph.createChild(node, { label: value })
+                if (event?.ctrlKey) {
+                  navigate(makeUrl(`/node/${child.id}/`))
+                } else {
+                  return ''
+                }
+              } else {
+                graph.toggleActiveMode('insert')
+              }
+            }}
+          />
+        )}
+      </Box>
+      <NodeActions node={node} className={classes.actions} />
     </Box>
   ))
 }

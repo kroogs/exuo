@@ -19,46 +19,42 @@
 
 import React from 'react'
 import {
-  Checkbox,
   Button,
-  IconButton,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core'
-import Check from '@material-ui/icons/Check'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
 
-import { NoteEditor } from 'note'
 import { makeUrl } from 'route'
 import { useGraph, Node, LabelEditor } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItem: {
+      cursor: 'pointer',
       marginBottom: '1px',
+
       transition: theme.transitions.create(['color', 'background'], {
         duration: theme.transitions.duration.shortest,
       }),
 
-      '&:hover': { color: theme.palette.primary.main },
+      '&:hover': {
+        color: theme.palette.primary.main,
+        background: 'unset',
+      },
+
       '&.editMode': {
         cursor: 'text',
         color: 'unset',
-        backgroundColor: 'unset',
       },
 
       '&.selectMode': {
         cursor: 'default',
         color: 'unset',
-        backgroundColor: 'unset',
-      },
-
-      '&.MuiListItem-button:not(.isSelected):hover': {
-        backgroundColor: 'unset',
       },
 
       '&.isSelected': {
@@ -235,11 +231,13 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         ].join(' ')}
       >
         {isEditing ? (
-          <NoteEditor
-            note={node}
-            autoFocus
+          <LabelEditor
+            label={node.label}
             onValue={value => {
               setIsEditing(false)
+              if (value) {
+                node.setLabel(value)
+              }
             }}
           />
         ) : (
