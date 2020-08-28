@@ -31,12 +31,9 @@ import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
 import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
-import { useNavigate } from '@reach/router'
 
-import { makeUrl } from 'route'
 import { SelectButton } from 'select'
-
-import { Node, useGraph, LabelEditor } from 'graph'
+import { Node, useGraph } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,9 +41,12 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
     },
 
-    addButton: {
+    insertButton: {
       margin: theme.spacing(0, 2, 0, 2),
       boxShadow: 'unset',
+      '&:active': {
+        boxShadow: 'unset',
+      },
     },
   }),
 )
@@ -61,7 +61,6 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   className,
 }) => {
   const classes = useStyles()
-  const navigate = useNavigate()
 
   return useGraph(graph => {
     const hasChildren = node.childCount > 0
@@ -87,7 +86,7 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
             onClick={() => {
               graph.toggleActiveMode('insert')
             }}
-            className={classes.addButton}
+            className={classes.insertButton}
           >
             <AddIcon />
           </Fab>
