@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     insertButton: {
-      background: `radial-gradient(circle at bottom, ${theme.palette.secondary.main}, ${theme.palette.primary.main} 75%)`,
+      background: `radial-gradient(circle at bottom, ${theme.palette.secondary.main}, ${theme.palette.primary.main} 90%)`,
       margin: theme.spacing(0, 2, 0, 2),
       boxShadow: 'unset',
       '&:active': {

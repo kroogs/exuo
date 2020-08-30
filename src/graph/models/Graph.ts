@@ -83,29 +83,28 @@ export const Graph = graphFactory({
   }))
 
   .actions(self => ({
-    toggleSelectNode(node: Instance<typeof Node>) {
-      if (!self.cursorNode) {
-        throw Error('Cannot select without a cursorNode')
-      }
-
+    toggleSelectNode(
+      node: Instance<typeof Node>,
+      parentNode: Instance<typeof Node>,
+    ) {
       const selectedNodes = self.Config.get('system').get('selectedNodes')
       if (!selectedNodes) {
         return
       }
 
-      const nodeIds = selectedNodes.get(self.cursorNode.id)
+      const nodeIds = selectedNodes.get(parentNode.id)
 
       if (nodeIds) {
         if (nodeIds.includes(node.id)) {
           nodeIds.remove(node.id)
           if (nodeIds.length === 0) {
-            selectedNodes.delete(self.cursorNode.id)
+            selectedNodes.delete(parentNode.id)
           }
         } else {
           nodeIds.push(node.id)
         }
       } else {
-        selectedNodes.set(self.cursorNode.id, [node.id])
+        selectedNodes.set(parentNode.id, [node.id])
       }
     },
 

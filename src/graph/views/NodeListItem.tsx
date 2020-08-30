@@ -38,14 +38,12 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItem: {
       cursor: 'pointer',
-      background: 'rgba(0, 0, 0, 0)',
 
       transition: theme.transitions.create(['color'], {
         duration: theme.transitions.duration.standard,
       }),
 
       '&:hover, &:focus': {
-        background: 'unset',
         color: theme.palette.primary.main,
       },
 
@@ -59,8 +57,9 @@ const useStyles = makeStyles((theme: Theme) =>
         color: 'unset',
       },
 
-      '&.isSelected': {
+      '&.Mui-selected': {
         background: `
+
         linear-gradient(
           to top,
           ${fade(theme.palette.background.default, 0)},
@@ -72,6 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
           ${theme.palette.primary.main},
           ${theme.palette.secondary.main} 
         )`,
+
         '&:hover': { color: 'unset' },
         '& a:hover': { color: 'unset' },
       },
@@ -217,12 +217,12 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       e.preventDefault()
 
       if (graph.activeModes.includes('select')) {
-        graph.toggleSelectNode(node)
+        graph.toggleSelectNode(node, parentNode)
       } else if (graph.activeModes.includes('edit')) {
         setIsEditing(true)
       } else if (e.metaKey || e.ctrlKey) {
         graph.toggleActiveMode('select')
-        graph.toggleSelectNode(node)
+        graph.toggleSelectNode(node, parentNode)
       } else {
         navigate(makeUrl(`/node/${node.id}/`))
       }
@@ -236,11 +236,11 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         <ListItem
           component={'li'}
           onClick={clickHandler}
+          selected={isSelected}
           className={[
             classes.listItem,
             graph.activeModes.includes('edit') ? 'editMode' : '',
             graph.activeModes.includes('select') ? 'selectMode' : '',
-            isSelected ? 'isSelected' : '',
           ].join(' ')}
         >
           {isEditing ? (
@@ -285,7 +285,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             )}
           </ListItemSecondaryAction>
         </ListItem>
-        <Collapse in={isSelected} timeout="auto" unmountOnExit>
+        <Collapse component="li" in={isSelected} timeout="auto" unmountOnExit>
           <EdgeList node={node} edgeTag="child" className={classes.childList} />
         </Collapse>
       </>

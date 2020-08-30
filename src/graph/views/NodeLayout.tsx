@@ -36,7 +36,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
     appBar: {
       borderBottom: `.01px solid ${theme.palette.divider}`,
-      backgroundColor: fade(theme.palette.background.default, 0.9),
+      background: `
+        linear-gradient(
+          to top,
+          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 1)} 72%
+        )`,
       backdropFilter: 'blur(2px)',
     },
 
@@ -50,7 +55,12 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       padding: theme.spacing(2, 2, 4, 2),
       borderTop: `.01px solid ${theme.palette.divider}`,
-      backgroundColor: fade(theme.palette.background.default, 0.9),
+      background: `
+        linear-gradient(
+          to bottom,
+          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 1)} 72%
+        )`,
       backdropFilter: 'blur(2px)',
     },
 

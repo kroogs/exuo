@@ -35,14 +35,14 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
   const theme: ReturnType<typeof createMuiTheme> = React.useMemo(() => {
     const palette = {
       type: (prefersDarkMode ? 'dark' : 'light') as PaletteType,
-      primary: { main: '#f94d94' },
-      secondary: { main: '#ff8032' },
+      primary: { main: '#FF2EA2' },
+      secondary: { main: '#FF8F00' },
       background: {
         default: prefersDarkMode ? '#000000' : '#ffffff',
       },
       text: {
-        primary: prefersDarkMode ? '#dddddd' : '#333333',
-        secondary: prefersDarkMode ? '#aaaaaa' : '#777777',
+        primary: prefersDarkMode ? '#dddddd' : '#212121',
+        secondary: prefersDarkMode ? '#aaaaaa' : '#454545',
       },
     }
 
