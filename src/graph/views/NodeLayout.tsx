@@ -34,20 +34,27 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center',
     },
 
-    actions: {
-      position: 'fixed',
-      bottom: theme.spacing(6),
-      left: '50%',
-      transform: 'translateX(-50%)',
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.background.default, 0.9),
-      backdropFilter: 'blur(2px)',
-      padding: theme.spacing(1),
+    appBar: {
+      background: 'unset',
     },
 
-    children: {
-      paddingBottom: theme.spacing(6) * 2 + theme.spacing(1),
+    titleBar: {
+      borderBottom: `.01px solid ${theme.palette.divider}`,
+      backgroundColor: fade(theme.palette.background.default, 0.9),
+      backdropFilter: 'blur(2px)',
     },
+
+    actions: {
+      position: 'sticky',
+      bottom: 0,
+      width: '100%',
+      padding: theme.spacing(2, 2, 4, 2),
+      borderTop: `.01px solid ${theme.palette.divider}`,
+      backgroundColor: fade(theme.palette.background.default, 0.9),
+      backdropFilter: 'blur(2px)',
+    },
+
+    children: {},
 
     labelEditor: {
       margin: theme.spacing(0, 2, 0, 2),
@@ -70,8 +77,8 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
   const navigate = useNavigate()
   return useGraph(graph => (
     <Box className={[classes.root, className].join(' ')}>
-      <AppBar elevation={0} position="sticky">
-        <TitleBar title={node.label} />
+      <AppBar elevation={0} position="sticky" className={classes.appBar}>
+        <TitleBar title={node.label} className={classes.titleBar} />
       </AppBar>
       <Box className={classes.children}>
         {children}

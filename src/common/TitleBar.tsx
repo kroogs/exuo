@@ -75,7 +75,7 @@ export const TitleBar: React.FunctionComponent<TitleBarProps> = ({
   const newlinePosition = title?.indexOf('\n') ?? -1
 
   return (
-    <Toolbar variant="dense" className={[classes.root, className].join(' ')}>
+    <Toolbar className={[classes.root, className].join(' ')}>
       <IconButton
         disabled={isRootPath()}
         edge="start"

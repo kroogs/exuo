@@ -19,10 +19,12 @@
 
 import React from 'react'
 import {
+  Collapse,
   Button,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
+  ListItemIcon,
 } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
@@ -30,13 +32,12 @@ import { Instance } from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
 
 import { makeUrl } from 'route'
-import { useGraph, Node, LabelEditor } from 'graph'
+import { useGraph, Node, LabelEditor, EdgeList } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItem: {
       cursor: 'pointer',
-      marginBottom: '1px',
 
       transition: theme.transitions.create(['color', 'background'], {
         duration: theme.transitions.duration.shortest,
@@ -58,14 +59,19 @@ const useStyles = makeStyles((theme: Theme) =>
       },
 
       '&.isSelected': {
-        backgroundColor: fade(theme.palette.primary.main, 0.3),
+        background: `linear-gradient(
+          to right,
+          ${fade(theme.palette.primary.main, 0.7)} ${theme.spacing(1)}px,
+          ${fade(theme.palette.primary.main, 0)} ${theme.spacing(6)}px
+        )`,
         '&:hover': { color: 'unset' },
         '& a:hover': { color: 'unset' },
       },
+    },
 
-      [theme.breakpoints.up('sm')]: {
-        borderRadius: theme.shape.borderRadius,
-      },
+    childList: {
+      marginLeft: theme.spacing(2),
+      padding: 0,
     },
 
     itemText: {
@@ -218,60 +224,65 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     const newlinePosition = node.label.indexOf('\n')
 
     return (
-      <ListItem
-        button
-        disableRipple
-        component={'li'}
-        onClick={clickHandler}
-        className={[
-          classes.listItem,
-          graph.activeModes.includes('edit') ? 'editMode' : '',
-          graph.activeModes.includes('select') ? 'selectMode' : '',
-          isSelected ? 'isSelected' : '',
-        ].join(' ')}
-      >
-        {isEditing ? (
-          <LabelEditor
-            label={node.label}
-            onValue={value => {
-              setIsEditing(false)
-              if (value) {
-                node.setLabel(value)
+      <>
+        <ListItem
+          button
+          disableRipple
+          component={'li'}
+          onClick={clickHandler}
+          className={[
+            classes.listItem,
+            graph.activeModes.includes('edit') ? 'editMode' : '',
+            graph.activeModes.includes('select') ? 'selectMode' : '',
+            isSelected ? 'isSelected' : '',
+          ].join(' ')}
+        >
+          {isEditing ? (
+            <LabelEditor
+              label={node.label}
+              onValue={value => {
+                /* setIsEditing(false) */
+                /* if (value) { */
+                /*   node.setLabel(value) */
+                /* } */
+              }}
+            />
+          ) : (
+            <ListItemText
+              primary={
+                newlinePosition > 0
+                  ? node.label.slice(0, newlinePosition)
+                  : node.label
               }
-            }}
-          />
-        ) : (
-          <ListItemText
-            primary={
-              newlinePosition > 0
-                ? node.label.slice(0, newlinePosition)
-                : node.label
-            }
-            secondary={
-              newlinePosition > 0
-                ? node.label.slice(newlinePosition + 1)
-                : undefined
-            }
-            className={[
-              classes.itemText,
-              expandSecondaryTypography ? 'expand' : '',
-            ].join(' ')}
-          />
-        )}
-        <ListItemSecondaryAction className={classes.secondaryActions}>
-          {(node.childCount > 0 || graph.activeModes.includes('select')) && (
-            <Button
-              to={makeUrl(`/node/${node.id}/`)}
-              component={Link}
-              className={classes.childButton}
-              endIcon={<ChevronRightIcon />}
-              size="small"
-            >
-              {node.childCount > 0 && node.childCount}
-            </Button>
+              secondary={
+                newlinePosition > 0
+                  ? node.label.slice(newlinePosition + 1)
+                  : undefined
+              }
+              className={[
+                classes.itemText,
+                expandSecondaryTypography ? 'expand' : '',
+              ].join(' ')}
+            />
           )}
-        </ListItemSecondaryAction>
-      </ListItem>
+          <ListItemSecondaryAction className={classes.secondaryActions}>
+            {(node.childCount > 0 || graph.activeModes.includes('select')) && (
+              <Button
+                to={makeUrl(`/node/${node.id}/`)}
+                component={Link}
+                className={classes.childButton}
+                endIcon={<ChevronRightIcon />}
+                size="small"
+              >
+                {node.childCount > 0 && node.childCount}
+              </Button>
+            )}
+          </ListItemSecondaryAction>
+        </ListItem>
+        <Collapse in={isSelected} timeout="auto" unmountOnExit>
+          <EdgeList node={node} edgeTag="child" className={classes.childList} />
+        </Collapse>
+      </>
     )
   })
 }

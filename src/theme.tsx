@@ -36,6 +36,7 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
     const palette = {
       type: (prefersDarkMode ? 'dark' : 'light') as PaletteType,
       primary: { main: '#f94d94' },
+      secondary: { main: '#ff8032' },
       background: {
         default: prefersDarkMode ? '#000000' : '#ffffff',
       },
@@ -98,12 +99,6 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
                 height: '100%',
               },
             },
-
-            /* '#root': { */
-            /*   height: '100%', */
-            /*   backgroundImage: 'url(/background.jpg)', */
-            /*   backgroundSize: 'cover', */
-            /* }, */
           },
         },
       },

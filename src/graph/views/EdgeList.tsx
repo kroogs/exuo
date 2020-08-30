@@ -28,29 +28,43 @@ import { Node } from '../models/Node'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    list: {},
+    list: {
+      padding: 0,
+      '&>li': {
+        borderTop: `.01px solid ${theme.palette.divider}`,
+      },
+
+      '&.outer>li:first-child': {
+        borderTop: 'unset',
+      },
+    },
   }),
 )
 
 interface EdgeListProps {
   node: Instance<IAnyModelType>
   edgeTag: string
+  outer?: boolean
   className?: string
 }
 
 export const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   node,
   edgeTag,
+  outer,
   className,
 }) => {
   const classes = useStyles()
   return useGraph(graph => (
-    <List aria-label="edge list" className={classes.list}>
+    <List
+      aria-label="edge list"
+      className={[classes.list, outer ? 'outer' : '', className].join(' ')}
+    >
       {node.edgeMap.get(edgeTag)?.map((item: Instance<typeof Node>) => (
         <NodeListItem
           node={item}
           parentNode={node}
-          key={`${edgeTag}-${item.id}`}
+          key={`${node.id}-${edgeTag}-${item.id}`}
         />
       ))}
     </List>

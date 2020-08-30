@@ -62,6 +62,9 @@ const useStyles = makeStyles((theme: Theme) =>
         marginRight: theme.spacing(1),
       },
     },
+    paper: {
+      border: `.01px solid ${theme.palette.divider}`,
+    },
     selectMenu: {
       outline: 0,
     },
@@ -112,7 +115,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
                 setOpen(false)
               }}
             >
-              <Paper elevation={0}>
+              <Paper elevation={0} className={classes.paper}>
                 <MenuList dense className={classes.selectMenu}>
                   <MenuItem
                     divider

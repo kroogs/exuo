@@ -29,6 +29,8 @@ import {
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
+import SearchIcon from '@material-ui/icons/Search'
+import TuneIcon from '@material-ui/icons/Tune'
 import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
 
@@ -42,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     insertButton: {
+      background: `radial-gradient(circle at bottom, ${theme.palette.secondary.main}, ${theme.palette.primary.main} 75%)`,
       margin: theme.spacing(0, 2, 0, 2),
       boxShadow: 'unset',
       '&:active': {
@@ -74,6 +77,14 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
       >
         <>
           <IconButton
+            disabled
+            /* color={graph.activeModes.includes('edit') ? 'primary' : undefined} */
+            onClick={() => graph.toggleActiveMode('search')}
+          >
+            <SearchIcon />
+          </IconButton>
+
+          <IconButton
             disabled={!hasChildren}
             color={graph.activeModes.includes('edit') ? 'primary' : undefined}
             onClick={() => graph.toggleActiveMode('edit')}
@@ -84,7 +95,8 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
           <Fab
             color="primary"
             onClick={() => {
-              graph.toggleActiveMode('insert')
+              graph.setActiveMode('insert')
+              graph.setActiveMode('edit')
             }}
             className={classes.insertButton}
           >
@@ -99,6 +111,10 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
               graph.toggleActiveMode('select')
             }}
           />
+
+          <IconButton disabled onClick={() => graph.toggleActiveMode('edit')}>
+            <TuneIcon />
+          </IconButton>
 
           {false && (
             <Button

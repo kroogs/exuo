@@ -40,7 +40,7 @@ export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
 
     return node ? (
       <NodeLayout node={node}>
-        <EdgeList node={node} edgeTag="child" />
+        <EdgeList node={node} edgeTag="child" outer />
       </NodeLayout>
     ) : null
   })
