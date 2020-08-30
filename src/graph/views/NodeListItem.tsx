@@ -38,14 +38,15 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItem: {
       cursor: 'pointer',
+      background: 'rgba(0, 0, 0, 0)',
 
-      transition: theme.transitions.create(['color', 'background'], {
-        duration: theme.transitions.duration.shortest,
+      transition: theme.transitions.create(['color'], {
+        duration: theme.transitions.duration.standard,
       }),
 
-      '&:hover': {
-        color: theme.palette.primary.main,
+      '&:hover, &:focus': {
         background: 'unset',
+        color: theme.palette.primary.main,
       },
 
       '&.editMode': {
@@ -59,10 +60,17 @@ const useStyles = makeStyles((theme: Theme) =>
       },
 
       '&.isSelected': {
-        background: `linear-gradient(
+        background: `
+        linear-gradient(
+          to top,
+          ${fade(theme.palette.background.default, 0)},
+          ${fade(theme.palette.background.default, 0.8)} 6% 94%,
+          ${fade(theme.palette.background.default, 0)}
+        ),
+        linear-gradient(
           to right,
-          ${fade(theme.palette.primary.main, 0.7)} ${theme.spacing(1)}px,
-          ${fade(theme.palette.primary.main, 0)} ${theme.spacing(6)}px
+          ${theme.palette.primary.main},
+          ${theme.palette.secondary.main} 
         )`,
         '&:hover': { color: 'unset' },
         '& a:hover': { color: 'unset' },
@@ -226,8 +234,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     return (
       <>
         <ListItem
-          button
-          disableRipple
           component={'li'}
           onClick={clickHandler}
           className={[
