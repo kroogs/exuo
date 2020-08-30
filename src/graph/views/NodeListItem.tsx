@@ -27,6 +27,7 @@ import {
   ListItemIcon,
 } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
@@ -164,6 +165,9 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   const classes = useStyles()
   const navigate = useNavigate()
   const [isEditing, setIsEditing] = React.useState(false)
+  const [isExpanded, setIsExpanded] = React.useState(false)
+  const toggleIsExpanded = (): void => setIsExpanded(value => !value)
+
   /* const isMouseDown = React.useRef(false) */
   /* const timer = React.useRef<ReturnType<typeof setTimeout>>() */
 
@@ -216,7 +220,9 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     const clickHandler: React.EventHandler<React.MouseEvent> = e => {
       e.preventDefault()
 
-      if (graph.activeModes.includes('select')) {
+      if (e.altKey) {
+        toggleIsExpanded()
+      } else if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node, parentNode)
       } else if (graph.activeModes.includes('edit')) {
         setIsEditing(true)
@@ -277,7 +283,9 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
                 to={makeUrl(`/node/${node.id}/`)}
                 component={Link}
                 className={classes.childButton}
-                endIcon={<ChevronRightIcon />}
+                endIcon={
+                  isExpanded ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />
+                }
                 size="small"
               >
                 {node.childCount > 0 && node.childCount}
@@ -285,9 +293,15 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             )}
           </ListItemSecondaryAction>
         </ListItem>
-        <Collapse in={isSelected} timeout="auto" unmountOnExit>
-          <EdgeList node={node} edgeTag="child" className={classes.childList} />
-        </Collapse>
+        {node.childCount > 0 && (
+          <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+            <EdgeList
+              node={node}
+              edgeTag="child"
+              className={classes.childList}
+            />
+          </Collapse>
+        )}
       </>
     )
   })
