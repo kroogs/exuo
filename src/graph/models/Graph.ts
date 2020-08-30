@@ -255,4 +255,14 @@ export const Graph = graphFactory({
       const config = self.Config.get('system')
       return config?.get('selectedNodes')
     },
+
+    get selectedNodeCount() {
+      let count = 0
+
+      for (const kv of self.selectedNodes) {
+        count += kv[1].length
+      }
+
+      return count
+    },
   }))

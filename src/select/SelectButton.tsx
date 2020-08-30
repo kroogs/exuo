@@ -21,6 +21,7 @@ import React from 'react'
 import { Instance } from 'mobx-state-tree'
 import {
   IconButton,
+  Badge,
   Button,
   ButtonGroup,
   ClickAwayListener,
@@ -44,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'inherit',
+      position: 'relative',
     },
     buttonGroup: {
       '& .MuiButtonGroup-groupedTextHorizontal': {
@@ -52,6 +54,13 @@ const useStyles = makeStyles((theme: Theme) =>
       '& .MuiButtonGroup-grouped': {
         minWidth: 'unset',
       },
+    },
+    selectCount: {
+      color: theme.palette.primary.main,
+      fontSize: 12,
+      position: 'absolute',
+      width: '100%',
+      bottom: -theme.spacing(1),
     },
     selectButton: {},
     deleteButton: {
@@ -87,105 +96,112 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
   const [open, setOpen] = React.useState(false)
   const anchorRef = React.useRef<HTMLButtonElement>(null)
 
-  return useGraph(graph => (
-    <div className={[classes.root, className].join(' ')}>
-      <IconButton
-        ref={anchorRef}
-        onClick={
-          graph.selectedNodes.size ? () => setOpen(value => !value) : onClick
-        }
-        className={classes.selectButton}
-        {...extraProps}
-      >
-        <CropFreeIcon />
-      </IconButton>
-      <Popper
-        open={open}
-        anchorEl={anchorRef.current}
-        role={undefined}
-        disablePortal
-        className={classes.popper}
-      >
-        {({ placement }) => {
-          graph.setCursorNode(node)
-          return (
-            <ClickAwayListener
-              onClickAway={e => {
-                e.preventDefault()
-                setOpen(false)
-              }}
-            >
-              <Paper elevation={0} className={classes.paper}>
-                <MenuList dense className={classes.selectMenu}>
-                  <MenuItem
-                    divider
-                    onClick={() => {
-                      graph.removeSelectedNodes()
-                      setOpen(false)
-                    }}
-                    className={classes.deleteButton}
-                  >
-                    <DeleteIcon />
-                    Remove
-                  </MenuItem>
+  return useGraph(graph => {
+    const selectedCount = graph.selectedNodeCount
+    return (
+      <div className={[classes.root, className].join(' ')}>
+        {selectedCount > 0 && (
+          <span className={classes.selectCount}>{selectedCount}</span>
+        )}
+        <IconButton
+          color="primary"
+          ref={anchorRef}
+          onClick={
+            graph.selectedNodes.size ? () => setOpen(value => !value) : onClick
+          }
+          className={classes.selectButton}
+          {...extraProps}
+        >
+          <CropFreeIcon />
+        </IconButton>
+        <Popper
+          open={open}
+          anchorEl={anchorRef.current}
+          role={undefined}
+          disablePortal
+          className={classes.popper}
+        >
+          {({ placement }) => {
+            graph.setCursorNode(node)
+            return (
+              <ClickAwayListener
+                onClickAway={e => {
+                  e.preventDefault()
+                  setOpen(false)
+                }}
+              >
+                <Paper elevation={0} className={classes.paper}>
+                  <MenuList dense className={classes.selectMenu}>
+                    <MenuItem
+                      divider
+                      onClick={() => {
+                        graph.removeSelectedNodes()
+                        setOpen(false)
+                      }}
+                      className={classes.deleteButton}
+                    >
+                      <DeleteIcon />
+                      Remove
+                    </MenuItem>
 
-                  <MenuItem
-                    onClick={() => {
-                      graph.linkSelectedNodes()
-                      setOpen(false)
-                    }}
-                  >
-                    <FlipToBackIcon />
-                    Link here
-                  </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        graph.linkSelectedNodes()
+                        setOpen(false)
+                      }}
+                    >
+                      <FlipToBackIcon />
+                      Link here
+                    </MenuItem>
 
-                  <MenuItem
-                    disabled
-                    onClick={() => {
-                      setOpen(false)
-                    }}
-                  >
-                    <FileCopyIcon />
-                    Copy here
-                  </MenuItem>
+                    <MenuItem
+                      disabled
+                      onClick={() => {
+                        setOpen(false)
+                      }}
+                    >
+                      <FileCopyIcon />
+                      Copy here
+                    </MenuItem>
 
-                  <MenuItem
-                    divider
-                    onClick={() => {
-                      graph.moveSelectedNodes()
-                      setOpen(false)
-                    }}
-                  >
-                    <FolderIcon />
-                    Move here
-                  </MenuItem>
+                    <MenuItem
+                      divider
+                      onClick={() => {
+                        graph.moveSelectedNodes()
+                        setOpen(false)
+                      }}
+                    >
+                      <FolderIcon />
+                      Move here
+                    </MenuItem>
 
-                  {/* <MenuItem */}
-                  {/*   onClick={() => { */}
-                  {/*     graph.deleteSelectedNodes() */}
-                  {/*     setOpen(false) */}
-                  {/*   }} */}
-                  {/*   className={classes.deleteButton} */}
-                  {/* > */}
-                  {/*   <DeleteIcon /> */}
-                  {/*   Delete */}
-                  {/* </MenuItem> */}
+                    {/* <MenuItem */}
+                    {/*   onClick={() => { */}
+                    {/*     graph.deleteSelectedNodes() */}
+                    {/*     setOpen(false) */}
+                    {/*   }} */}
+                    {/*   className={classes.deleteButton} */}
+                    {/* > */}
+                    {/*   <DeleteIcon /> */}
+                    {/*   Delete */}
+                    {/* </MenuItem> */}
 
-                  <MenuItem
-                    onClick={() => {
-                      graph.clearSelectedNodes()
-                      setOpen(false)
-                    }}
-                  >
-                    <CancelIcon />
-                    Clear selection
-                  </MenuItem>
-                </MenuList>
-              </Paper>
-            </ClickAwayListener>
-          )
-        }}
-      </Popper>
-    </div>
-  ))
+                    <MenuItem
+                      onClick={() => {
+                        graph.clearSelectedNodes()
+                        setOpen(false)
+                      }}
+                    >
+                      <CancelIcon />
+                      Clear selection
+                    </MenuItem>
+                  </MenuList>
+                </Paper>
+              </ClickAwayListener>
+            )
+          }}
+        </Popper>
+      </div>
+    )
+  })
 }
