@@ -217,7 +217,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     /*   } */
     /* } */
 
-    const clickHandler: React.EventHandler<React.MouseEvent> = e => {
+    const handleItemClick: React.EventHandler<React.MouseEvent> = e => {
       e.preventDefault()
 
       if (e.altKey) {
@@ -234,6 +234,23 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       }
     }
 
+    const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
+      if (e.altKey) {
+        e.preventDefault()
+        toggleIsExpanded()
+      }
+
+      if (
+        graph.activeModes.includes('select') ||
+        graph.activeModes.includes('edit')
+      ) {
+        return
+      }
+
+      e.preventDefault()
+      toggleIsExpanded()
+    }
+
     const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
     const newlinePosition = node.label.indexOf('\n')
 
@@ -241,7 +258,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       <>
         <ListItem
           component={'li'}
-          onClick={clickHandler}
+          onClick={handleItemClick}
           selected={isSelected}
           className={[
             classes.listItem,
@@ -282,9 +299,14 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
               <Button
                 to={makeUrl(`/node/${node.id}/`)}
                 component={Link}
+                onClick={handleArrowClick}
                 className={classes.childButton}
                 endIcon={
-                  isExpanded ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />
+                  node.childCount > 0 && isExpanded ? (
+                    <KeyboardArrowDownIcon />
+                  ) : (
+                    <ChevronRightIcon />
+                  )
                 }
                 size="small"
               >
