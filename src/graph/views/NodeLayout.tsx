@@ -35,13 +35,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     appBar: {
-      background: 'unset',
-    },
-
-    titleBar: {
       borderBottom: `.01px solid ${theme.palette.divider}`,
       backgroundColor: fade(theme.palette.background.default, 0.9),
       backdropFilter: 'blur(2px)',
+    },
+
+    titleBar: {
+      background: 'unset',
     },
 
     actions: {
