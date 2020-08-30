@@ -285,7 +285,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             )}
           </ListItemSecondaryAction>
         </ListItem>
-        <Collapse component="li" in={isSelected} timeout="auto" unmountOnExit>
+        <Collapse in={isSelected} timeout="auto" unmountOnExit>
           <EdgeList node={node} edgeTag="child" className={classes.childList} />
         </Collapse>
       </>
