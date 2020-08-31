@@ -199,21 +199,25 @@ export const Graph = graphFactory({
 
   .actions(self => ({
     afterCreate() {
-      persist(self).then(() => {
-        if (!self.rootNode) {
-          const rootNode = self.createNode('Node', { label: 'Exuo' })
-          applySnapshot(self.Config, {
-            system: {
-              id: 'system',
-              items: {
-                rootNodeId: rootNode.id,
-                selectedNodes: {},
-                activeModes: [],
+      persist(self)
+        .catch(e => {
+          console.error('Persist error', e)
+        })
+        .then(() => {
+          if (!self.rootNode) {
+            const rootNode = self.createNode('Node', { label: 'Exuo' })
+            applySnapshot(self.Config, {
+              system: {
+                id: 'system',
+                items: {
+                  rootNodeId: rootNode.id,
+                  selectedNodes: {},
+                  activeModes: [],
+                },
               },
-            },
-          })
-        }
-      })
+            })
+          }
+        })
     },
 
     createChild<T extends IAnyModelType>(
