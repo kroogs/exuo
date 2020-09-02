@@ -26,6 +26,7 @@ import {
   createStyles,
   makeStyles,
   Theme,
+  fade,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
@@ -44,11 +45,34 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     insertButton: {
-      background: `radial-gradient(circle at bottom, ${theme.palette.secondary.main}, ${theme.palette.primary.main} 90%)`,
+      background: `
+        radial-gradient(
+          circle at top,
+          rgba(255, 255, 255, .2),
+          rgba(255, 255, 255, .6) 45%,
+          rgba(255, 255, 255, 0) 46%
+        ),
+        radial-gradient(
+          circle at bottom,
+          ${theme.palette.secondary.main},
+          ${theme.palette.primary.main} 75%
+        )`,
+      backgroundBlendMode: 'overlay, normal',
       margin: theme.spacing(0, 2, 0, 2),
       boxShadow: 'unset',
+      '&:hover, &:focus': {
+        boxShadow: `
+          0px 3px 3px -1px ${fade(theme.palette.secondary.main, 0.6)},
+          0px 6px 6px 0px ${fade(theme.palette.secondary.main, 0.3)},
+          0px -1px 6px 0px ${fade(theme.palette.primary.main, 0.7)}
+        `,
+      },
       '&:active': {
-        boxShadow: 'unset',
+        boxShadow: `
+          0px 3px 3px -1px ${fade(theme.palette.secondary.main, 0.6)},
+          0px 6px 6px 0px ${fade(theme.palette.secondary.main, 0.3)},
+          0px -1px 6px 0px ${fade(theme.palette.primary.main, 0.7)}
+        `,
       },
     },
   }),
@@ -70,71 +94,67 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
     const selectedCount = graph.selectedNodes.size ?? 0
 
     return (
-      <Toolbar
-        disableGutters
-        variant="dense"
-        className={[classes.root, className].join(' ')}
-      >
-        <>
-          <IconButton
+      <Toolbar className={[classes.root, className].join(' ')}>
+        <IconButton
+          disabled
+          color={graph.activeModes.includes('edit') ? 'primary' : undefined}
+          onClick={() => graph.toggleActiveMode('edit')}
+        >
+          <SearchIcon />
+        </IconButton>
+
+        <IconButton
+          disabled={!hasChildren}
+          color={graph.activeModes.includes('edit') ? 'primary' : undefined}
+          onClick={() => graph.toggleActiveMode('edit')}
+        >
+          <EditIcon />
+        </IconButton>
+
+        <Fab
+          color="primary"
+          onClick={() => {
+            graph.setActiveMode('insert')
+            graph.setActiveMode('edit')
+          }}
+          className={classes.insertButton}
+        >
+          <AddIcon />
+        </Fab>
+
+        <SelectButton
+          disabled={!(hasChildren || selectedCount > 0)}
+          node={node}
+          color={graph.activeModes.includes('select') ? 'primary' : undefined}
+          onClick={() => {
+            graph.toggleActiveMode('select')
+          }}
+        />
+
+        <IconButton
+          disabled
+          color={graph.activeModes.includes('edit') ? 'primary' : undefined}
+          onClick={() => graph.toggleActiveMode('edit')}
+        >
+          <TuneIcon />
+        </IconButton>
+
+        {false && (
+          <Button
             disabled
-            /* color={graph.activeModes.includes('edit') ? 'primary' : undefined} */
-            onClick={() => graph.toggleActiveMode('search')}
-          >
-            <SearchIcon />
-          </IconButton>
-
-          <IconButton
-            disabled={!hasChildren}
-            color={graph.activeModes.includes('edit') ? 'primary' : undefined}
-            onClick={() => graph.toggleActiveMode('edit')}
-          >
-            <EditIcon />
-          </IconButton>
-
-          <Fab
-            color="primary"
+            startIcon={<GroupIcon />}
             onClick={() => {
-              graph.setActiveMode('insert')
-              graph.setActiveMode('edit')
-            }}
-            className={classes.insertButton}
-          >
-            <AddIcon />
-          </Fab>
-
-          <SelectButton
-            disabled={!(hasChildren || selectedCount > 0)}
-            node={node}
-            color={graph.activeModes.includes('select') ? 'primary' : undefined}
-            onClick={() => {
-              graph.toggleActiveMode('select')
-            }}
-          />
-
-          <IconButton disabled onClick={() => graph.toggleActiveMode('edit')}>
-            <TuneIcon />
-          </IconButton>
-
-          {false && (
-            <Button
-              disabled
-              startIcon={<GroupIcon />}
-              onClick={() => {
-                if (graph.activeModes.includes('share')) {
-                  graph.closePeerConnection()
-                } else {
-                  graph.offerPeerConnection(node)
-                }
-              }}
-              color={
-                graph.activeModes.includes('share') ? 'primary' : undefined
+              if (graph.activeModes.includes('share')) {
+                graph.closePeerConnection()
+              } else {
+                graph.offerPeerConnection(node)
               }
-            >
-              share
-            </Button>
-          )}
-        </>
+            }}
+            color={graph.activeModes.includes('share') ? 'primary' : undefined}
+          >
+            share
+          </Button>
+        )}
       </Toolbar>
     )
   })

@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
       background: `
         linear-gradient(
           to top,
-          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 0.7)},
           ${fade(theme.palette.background.default, 1)} 72%
         )`,
       backdropFilter: 'blur(2px)',
@@ -49,26 +49,48 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'unset',
     },
 
-    actions: {
+    children: {
+      opacity: 1,
+      transition: theme.transitions.create(['opacity'], {
+        duration: theme.transitions.duration.standard,
+      }),
+      '&.fade': {
+        opacity: 0.35,
+      },
+    },
+
+    labelEditor: {
+      borderTop: `.01px solid ${theme.palette.divider}`,
+      borderBottom: `.01px solid ${theme.palette.divider}`,
+      padding: theme.spacing(1, 2, 1, 2),
+      background: `${fade(theme.palette.background.default, 0.9)}`,
+      backdropFilter: 'blur(3px)',
+    },
+
+    footer: {
       position: 'sticky',
       bottom: 0,
       width: '100%',
+    },
+
+    actions: {
       padding: theme.spacing(2, 2, 4, 2),
       borderTop: `.01px solid ${theme.palette.divider}`,
       background: `
         linear-gradient(
           to bottom,
-          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 0.7)},
           ${fade(theme.palette.background.default, 1)} 72%
         )`,
       backdropFilter: 'blur(2px)',
-    },
 
-    children: {},
-
-    labelEditor: {
-      margin: theme.spacing(0, 2, 0, 2),
-      width: '100%',
+      opacity: 1,
+      transition: theme.transitions.create(['opacity'], {
+        duration: theme.transitions.duration.standard,
+      }),
+      '&.fade': {
+        opacity: 0.15,
+      },
     },
   }),
 )
@@ -85,13 +107,31 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
 }) => {
   const classes = useStyles()
   const navigate = useNavigate()
+
+  /* React.useEffect(() => { */
+  /*   window.scrollTo({ */
+  /*     left: 0, */
+  /*     top: document.body.scrollHeight, */
+  /*     behavior: 'smooth', */
+  /*   }) */
+  /* }) */
+
   return useGraph(graph => (
     <Box className={[classes.root, className].join(' ')}>
       <AppBar elevation={0} position="sticky" className={classes.appBar}>
         <TitleBar title={node.label} className={classes.titleBar} />
       </AppBar>
-      <Box className={classes.children}>
+
+      <Box
+        className={[
+          classes.children,
+          graph.activeModes.includes('insert') ? 'fade' : '',
+        ].join(' ')}
+      >
         {children}
+      </Box>
+
+      <Box className={classes.footer}>
         {graph.activeModes.includes('insert') && (
           <LabelEditor
             className={classes.labelEditor}
@@ -99,19 +139,28 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
             onValue={(value, event) => {
               if (value) {
                 const child = graph.createChild(node, { label: value })
+
                 if (event?.ctrlKey) {
                   navigate(makeUrl(`/node/${child.id}/`))
-                } else {
-                  return ''
+                  return
                 }
+
+                return ''
               } else {
                 graph.toggleActiveMode('insert')
               }
             }}
           />
         )}
+
+        <NodeActions
+          node={node}
+          className={[
+            classes.actions,
+            graph.activeModes.includes('insert') ? 'fade' : '',
+          ].join(' ')}
+        />
       </Box>
-      <NodeActions node={node} className={classes.actions} />
     </Box>
   ))
 }

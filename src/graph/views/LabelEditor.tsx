@@ -19,7 +19,7 @@
 
 import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-import { InputBase } from '@material-ui/core'
+import { InputBase, ClickAwayListener } from '@material-ui/core'
 import 'draft-js/dist/Draft.css'
 
 import { useGraph } from 'graph'
@@ -27,7 +27,6 @@ import { useGraph } from 'graph'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: '100%',
       padding: 0,
       '& input, & textarea': {
         // Extra pixel to account for body1 being 18px tall and
@@ -48,7 +47,7 @@ interface LabelEditorProps {
   onValue?: (
     value: string,
     event?: React.KeyboardEvent<HTMLInputElement>,
-  ) => void | null | string
+  ) => void | string
 }
 
 export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
@@ -78,7 +77,7 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
       }
     }
 
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
+    const handleClickAway = (event: React.MouseEvent<Document>): void => {
       event.preventDefault()
       handleValue()
     }
@@ -97,19 +96,19 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
     }
 
     return (
-      <InputBase
-        autoFocus
-        multiline
-        fullWidth
-        inputRef={inputRef}
-        placeholder={placeholder}
-        value={inputValue}
-        onKeyDown={handleKeyDown}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        inputProps={{ 'aria-label': 'label' }}
-        className={[classes.root, className].join(' ')}
-      />
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <InputBase
+          fullWidth
+          multiline
+          inputRef={inputRef}
+          placeholder={placeholder}
+          value={inputValue}
+          onKeyDown={handleKeyDown}
+          onChange={handleChange}
+          inputProps={{ 'aria-label': 'label' }}
+          className={[classes.root, className].join(' ')}
+        />
+      </ClickAwayListener>
     )
   })
 }

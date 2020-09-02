@@ -21,7 +21,6 @@ import React from 'react'
 import { Instance } from 'mobx-state-tree'
 import {
   IconButton,
-  Badge,
   Button,
   ButtonGroup,
   ClickAwayListener,
