@@ -48,6 +48,8 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
 
     return createMuiTheme({
       typography: {
+        fontSize: 16,
+
         fontFamily: [
           '-apple-system',
           'system-ui',
