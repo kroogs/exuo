@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme: Theme) =>
       background: `
         linear-gradient(
           to top,
-          ${fade(theme.palette.background.default, 0.7)},
-          ${fade(theme.palette.background.default, 1)} 72%
+          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 1)} 90%
         )`,
       backdropFilter: 'blur(2px)',
     },
@@ -79,8 +79,8 @@ const useStyles = makeStyles((theme: Theme) =>
       background: `
         linear-gradient(
           to bottom,
-          ${fade(theme.palette.background.default, 0.7)},
-          ${fade(theme.palette.background.default, 1)} 72%
+          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 1)} 90%
         )`,
       backdropFilter: 'blur(2px)',
 
