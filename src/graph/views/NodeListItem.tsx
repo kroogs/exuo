@@ -29,19 +29,33 @@ import {
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
-import { Instance } from 'mobx-state-tree'
+import {
+  Instance,
+  getSnapshot,
+  IArrayType,
+  IMapType,
+  ISimpleType,
+} from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
 
 import { makeUrl } from 'route'
-import { useGraph, Node, LabelEditor, EdgeList } from 'graph'
+import { useGraph, Node, LabelEditor, EdgeList, Config } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    itemContainer: {
+      '&.isExpanded': {
+        /* background: theme.palette.background.default, */
+        /* position: 'sticky', */
+        /* top: 65, */
+      },
+    },
+
     listItem: {
       cursor: 'pointer',
 
       transition: theme.transitions.create(['color'], {
-        duration: theme.transitions.duration.standard,
+        duration: theme.transitions.duration.shortest,
       }),
 
       '&:hover, &:focus': {
@@ -60,7 +74,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
       '&.Mui-selected': {
         background: `
-
         linear-gradient(
           to top,
           ${fade(theme.palette.background.default, 0)},
@@ -79,7 +92,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     childList: {
-      marginLeft: theme.spacing(2),
+      marginLeft: theme.spacing(3),
       padding: 0,
     },
 
@@ -165,13 +178,18 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   const classes = useStyles()
   const navigate = useNavigate()
   const [isEditing, setIsEditing] = React.useState(false)
-  const [isExpanded, setIsExpanded] = React.useState(false)
-  const toggleIsExpanded = (): void => setIsExpanded(value => !value)
 
   /* const isMouseDown = React.useRef(false) */
   /* const timer = React.useRef<ReturnType<typeof setTimeout>>() */
 
   return useGraph(graph => {
+    const cursorNode = graph.cursorNode
+    const isExpanded = cursorNode.isExpanded(node, parentNode)
+    const toggleExpand = (): void => {
+      cursorNode.toggleExpand(node, parentNode)
+      console.log(graph.cursorNode.expandedNodes)
+    }
+
     /* const downHandler: React.EventHandler<React.SyntheticEvent> = e => { */
     /*   e.preventDefault() */
     /*   e.persist() */
@@ -221,7 +239,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
       e.preventDefault()
 
       if (e.altKey) {
-        toggleIsExpanded()
+        toggleExpand()
       } else if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node, parentNode)
       } else if (graph.activeModes.includes('edit')) {
@@ -230,6 +248,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         graph.toggleActiveMode('select')
         graph.toggleSelectNode(node, parentNode)
       } else {
+        graph.setCursorNode(node)
         navigate(makeUrl(`/node/${node.id}/`))
       }
     }
@@ -237,18 +256,13 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
       if (e.altKey) {
         e.preventDefault()
-        toggleIsExpanded()
-      }
-
-      if (
-        graph.activeModes.includes('select') ||
-        graph.activeModes.includes('edit')
-      ) {
+        toggleExpand()
         return
       }
 
-      e.preventDefault()
-      toggleIsExpanded()
+      if (graph.activeModes.includes('select')) {
+        graph.setCursorNode(node)
+      }
     }
 
     const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
@@ -257,9 +271,14 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     return (
       <>
         <ListItem
-          component={'li'}
           onClick={handleItemClick}
           selected={isSelected}
+          ContainerProps={{
+            className: [
+              classes.itemContainer,
+              node.childCount > 0 && isExpanded ? 'isExpanded' : '',
+            ].join(' '),
+          }}
           className={[
             classes.listItem,
             graph.activeModes.includes('edit') ? 'editMode' : '',
@@ -270,10 +289,10 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             <LabelEditor
               label={node.label}
               onValue={value => {
-                /* setIsEditing(false) */
-                /* if (value) { */
-                /*   node.setLabel(value) */
-                /* } */
+                setIsEditing(false) // TODO causes leak error
+                if (value) {
+                  node.setLabel(value)
+                }
               }}
             />
           ) : (
@@ -294,27 +313,33 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
               ].join(' ')}
             />
           )}
-          <ListItemSecondaryAction className={classes.secondaryActions}>
-            {(node.childCount > 0 || graph.activeModes.includes('select')) && (
-              <Button
-                to={makeUrl(`/node/${node.id}/`)}
-                component={Link}
-                onClick={handleArrowClick}
-                className={classes.childButton}
-                endIcon={
-                  node.childCount > 0 && isExpanded ? (
-                    <KeyboardArrowDownIcon />
-                  ) : (
-                    <ChevronRightIcon />
-                  )
-                }
-                size="small"
-              >
-                {node.childCount > 0 && node.childCount}
-              </Button>
-            )}
-          </ListItemSecondaryAction>
+
+          {!isEditing && (
+            <ListItemSecondaryAction className={classes.secondaryActions}>
+              {(node.childCount > 0 ||
+                graph.activeModes.includes('select') ||
+                graph.activeModes.includes('edit')) && (
+                <Button
+                  to={makeUrl(`/node/${node.id}/`)}
+                  component={Link}
+                  onClick={handleArrowClick}
+                  className={classes.childButton}
+                  endIcon={
+                    node.childCount > 0 && isExpanded ? (
+                      <KeyboardArrowDownIcon />
+                    ) : (
+                      <ChevronRightIcon />
+                    )
+                  }
+                  size="small"
+                >
+                  {node.childCount > 0 && node.childCount}
+                </Button>
+              )}
+            </ListItemSecondaryAction>
+          )}
         </ListItem>
+
         {node.childCount > 0 && (
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <EdgeList

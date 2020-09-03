@@ -26,7 +26,7 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  fade,
+  emphasize,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
@@ -45,34 +45,36 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     insertButton: {
+      color: theme.palette.background.default,
+      textShadow: `3px 3px ${theme.palette.background.default}`,
+      boxShadow: 'unset',
+      margin: theme.spacing(0, 1, 0, 1),
+      backgroundBlendMode: 'normal',
       background: `
-        radial-gradient(
-          circle at top,
-          rgba(255, 255, 255, .2),
-          rgba(255, 255, 255, .6) 45%,
-          rgba(255, 255, 255, 0) 46%
-        ),
         radial-gradient(
           circle at bottom,
           ${theme.palette.secondary.main},
           ${theme.palette.primary.main} 75%
         )`,
-      backgroundBlendMode: 'overlay, normal',
-      margin: theme.spacing(0, 2, 0, 2),
-      boxShadow: 'unset',
+
       '&:hover, &:focus': {
-        boxShadow: `
-          0px 3px 3px -1px ${fade(theme.palette.secondary.main, 0.6)},
-          0px 6px 6px 0px ${fade(theme.palette.secondary.main, 0.3)},
-          0px -1px 6px 0px ${fade(theme.palette.primary.main, 0.7)}
-        `,
+        boxShadow: 'unset',
+        background: `
+        radial-gradient(
+          circle at bottom,
+          ${emphasize(theme.palette.secondary.main, 0.3)},
+          ${theme.palette.primary.main} 75%
+        )`,
       },
+
       '&:active': {
-        boxShadow: `
-          0px 3px 3px -1px ${fade(theme.palette.secondary.main, 0.6)},
-          0px 6px 6px 0px ${fade(theme.palette.secondary.main, 0.3)},
-          0px -1px 6px 0px ${fade(theme.palette.primary.main, 0.7)}
-        `,
+        boxShadow: 'unset',
+        background: `
+        radial-gradient(
+          circle at bottom,
+          ${emphasize(theme.palette.secondary.main, 0.3)},
+          ${theme.palette.primary.main} 75%
+        )`,
       },
     },
   }),
@@ -111,7 +113,7 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
           <EditIcon />
         </IconButton>
 
-        <Fab
+        <IconButton
           color="primary"
           onClick={() => {
             graph.setActiveMode('insert')
@@ -120,7 +122,7 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
           className={classes.insertButton}
         >
           <AddIcon />
-        </Fab>
+        </IconButton>
 
         <SelectButton
           disabled={!(hasChildren || selectedCount > 0)}

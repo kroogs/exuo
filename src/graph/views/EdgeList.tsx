@@ -34,8 +34,8 @@ const useStyles = makeStyles((theme: Theme) =>
         borderTop: `.01px solid ${theme.palette.divider}`,
       },
 
-      '&.outer>li:first-child': {
-        borderTop: 'unset',
+      '&.outer': {
+        borderBottom: `.01px solid ${theme.palette.divider}`,
       },
     },
   }),

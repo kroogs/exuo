@@ -32,17 +32,17 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       textAlign: 'center',
+      position: 'relative',
     },
 
     appBar: {
-      borderBottom: `.01px solid ${theme.palette.divider}`,
+      backdropFilter: 'blur(2px)',
       background: `
         linear-gradient(
           to top,
           ${fade(theme.palette.background.default, 0.9)},
           ${fade(theme.palette.background.default, 1)} 90%
         )`,
-      backdropFilter: 'blur(2px)',
     },
 
     titleBar: {
@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     children: {
+      paddingBottom: theme.spacing(9),
       opacity: 1,
       transition: theme.transitions.create(['opacity'], {
         duration: theme.transitions.duration.standard,
@@ -67,30 +68,34 @@ const useStyles = makeStyles((theme: Theme) =>
       backdropFilter: 'blur(3px)',
     },
 
-    footer: {
-      position: 'sticky',
+    actionArea: {
+      zIndex: theme.zIndex.appBar,
+      position: 'fixed',
       bottom: 0,
       width: '100%',
     },
 
     actions: {
-      padding: theme.spacing(2, 2, 4, 2),
-      borderTop: `.01px solid ${theme.palette.divider}`,
+      maxWidth: '600px',
+      backdropFilter: 'blur(2px)',
       background: `
         linear-gradient(
           to bottom,
           ${fade(theme.palette.background.default, 0.9)},
           ${fade(theme.palette.background.default, 1)} 90%
         )`,
-      backdropFilter: 'blur(2px)',
+
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
 
       opacity: 1,
-      transition: theme.transitions.create(['opacity'], {
-        duration: theme.transitions.duration.standard,
-      }),
       '&.fade': {
         opacity: 0.15,
       },
+
+      transition: theme.transitions.create(['opacity'], {
+        duration: theme.transitions.duration.standard,
+      }),
     },
   }),
 )
@@ -122,16 +127,7 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
         <TitleBar title={node.label} className={classes.titleBar} />
       </AppBar>
 
-      <Box
-        className={[
-          classes.children,
-          graph.activeModes.includes('insert') ? 'fade' : '',
-        ].join(' ')}
-      >
-        {children}
-      </Box>
-
-      <Box className={classes.footer}>
+      <Box className={classes.actionArea}>
         {graph.activeModes.includes('insert') && (
           <LabelEditor
             className={classes.labelEditor}
@@ -141,6 +137,7 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
                 const child = graph.createChild(node, { label: value })
 
                 if (event?.ctrlKey) {
+                  graph.setCursorNode(child)
                   navigate(makeUrl(`/node/${child.id}/`))
                   return
                 }
@@ -152,7 +149,6 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
             }}
           />
         )}
-
         <NodeActions
           node={node}
           className={[
@@ -160,6 +156,15 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
             graph.activeModes.includes('insert') ? 'fade' : '',
           ].join(' ')}
         />
+      </Box>
+
+      <Box
+        className={[
+          classes.children,
+          graph.activeModes.includes('insert') ? 'fade' : '',
+        ].join(' ')}
+      >
+        {children}
       </Box>
     </Box>
   ))

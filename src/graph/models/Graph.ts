@@ -246,7 +246,7 @@ export const Graph = graphFactory({
 
     get cursorNode() {
       const config = self.Config.get('system')
-      return self.Node.get(config.get('cursorNodeId'))
+      return self.Node.get(config.get('cursorNodeId')) ?? self.rootNode
     },
 
     get activeModes() {

@@ -27,8 +27,11 @@ export const Config = types
     items: types.map(Unknown),
   })
   .actions(self => ({
-    set(key: string, value: SnapshotIn<typeof Unknown>) {
-      self.items.set(key, value)
+    set(
+      key: string,
+      value: SnapshotIn<typeof Unknown>,
+    ): SnapshotIn<typeof Unknown> {
+      return self.items.set(key, value)
     },
   }))
   .views(self => ({
