@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       textAlign: 'center',
       position: 'relative',
+      paddingBottom: theme.spacing(9),
     },
 
     appBar: {
@@ -50,7 +51,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     children: {
-      paddingBottom: theme.spacing(9),
       opacity: 1,
       transition: theme.transitions.create(['opacity'], {
         duration: theme.transitions.duration.standard,
@@ -72,11 +72,15 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: theme.zIndex.appBar,
       position: 'fixed',
       bottom: 0,
+      left: '50%',
+      transform: 'translateX(-50%)',
       width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        width: '600px',
+      },
     },
 
     actions: {
-      maxWidth: '600px',
       backdropFilter: 'blur(2px)',
       background: `
         linear-gradient(
@@ -88,14 +92,13 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
 
-      opacity: 1,
-      '&.fade': {
-        opacity: 0.15,
+      '&>*': {
+        opacity: 1,
+        transition: theme.transitions.create(['opacity'], {
+          duration: theme.transitions.duration.standard,
+        }),
       },
-
-      transition: theme.transitions.create(['opacity'], {
-        duration: theme.transitions.duration.standard,
-      }),
+      '&.fade>*': { opacity: 0.15 },
     },
   }),
 )
