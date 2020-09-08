@@ -74,20 +74,32 @@ const useStyles = makeStyles((theme: Theme) =>
 
       '&.Mui-selected': {
         background: `
-        linear-gradient(
-          to top,
-          ${fade(theme.palette.background.default, 0)},
-          ${fade(theme.palette.background.default, 0.8)} 6% 94%,
-          ${fade(theme.palette.background.default, 0)}
-        ),
-        linear-gradient(
-          to right,
-          ${theme.palette.primary.main},
-          ${theme.palette.secondary.main} 
-        )`,
+          linear-gradient(
+            to top,
+            ${fade(theme.palette.background.default, 0)},
+            ${fade(theme.palette.background.default, 0.8)} \
+              ${theme.spacing(1) / 3}px calc(100% - ${theme.spacing(1) / 3}px),
+            ${fade(theme.palette.background.default, 0)}
+          ),
+          linear-gradient(
+            to right,
+            ${theme.palette.primary.main},
+            ${theme.palette.secondary.main} 
+          )
+        `,
 
         '&:hover': { color: 'unset' },
         '& a:hover': { color: 'unset' },
+      },
+
+      '&.isEditing': {
+        padding: 0,
+
+        // From EdgeList but it conflicts here slightly, so hide it
+        borderTop: `.01px solid ${fade(theme.palette.divider, 0)}`,
+        '&+li': {
+          borderTop: `.01px solid ${fade(theme.palette.divider, 0)}`,
+        },
       },
     },
 
@@ -130,13 +142,29 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 'auto',
     },
 
-    editItemText: {
+    labelEditor: {
       display: 'inline-block',
       margin: 0,
+      padding: theme.spacing(1, 2, 1, 2),
       overflowX: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
       ...theme.typography.body1,
+
+      background: `
+          linear-gradient(
+            to top,
+            ${fade(theme.palette.background.default, 0.2)},
+            ${fade(theme.palette.background.default, 1)} \
+              ${theme.spacing(1) / 3}px calc(100% - ${theme.spacing(1) / 3}px),
+            ${fade(theme.palette.background.default, 0.2)}
+          ),
+          linear-gradient(
+            to right,
+            ${theme.palette.primary.main},
+            ${theme.palette.secondary.main} 
+          )
+        `,
     },
 
     secondaryActions: {
@@ -167,12 +195,14 @@ interface NodeListItemProps {
   node: Instance<typeof Node>
   parentNode: Instance<typeof Node>
   expandSecondaryTypography?: boolean
+  expanded?: boolean
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   node,
   parentNode,
   expandSecondaryTypography,
+  expanded,
   ...props
 }) => {
   const classes = useStyles()
@@ -184,7 +214,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
 
   return useGraph(graph => {
     const cursorNode = graph.cursorNode
-    const isExpanded = cursorNode.isExpanded(node, parentNode)
+    /* const isExpanded = cursorNode.isExpanded(node, parentNode) */
+    const isExpanded = false
     const toggleExpand = (): void => {
       cursorNode.toggleExpand(node, parentNode)
       console.log(graph.cursorNode.expandedNodes)
@@ -283,13 +314,15 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             classes.listItem,
             graph.activeModes.includes('edit') ? 'editMode' : '',
             graph.activeModes.includes('select') ? 'selectMode' : '',
+            isEditing ? 'isEditing' : '',
           ].join(' ')}
         >
           {isEditing ? (
             <LabelEditor
               label={node.label}
+              className={classes.labelEditor}
               onValue={value => {
-                setIsEditing(false) // TODO causes leak error
+                setIsEditing(false)
                 if (value) {
                   node.setLabel(value)
                 }
