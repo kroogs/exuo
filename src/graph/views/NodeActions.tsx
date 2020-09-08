@@ -21,12 +21,13 @@ import React from 'react'
 import {
   Toolbar,
   IconButton,
-  Fab,
+  Box,
   Button,
   createStyles,
   makeStyles,
   Theme,
   emphasize,
+  fade,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditIcon from '@material-ui/icons/Edit'
@@ -34,14 +35,32 @@ import SearchIcon from '@material-ui/icons/Search'
 import TuneIcon from '@material-ui/icons/Tune'
 import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
+import { useNavigate } from '@reach/router'
 
+import { makeUrl } from 'route'
 import { SelectButton } from 'select'
-import { Node, useGraph } from 'graph'
+import { Node, useGraph, LabelEditor } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      justifyContent: 'center',
+    root: {},
+
+    toolbar: {
+      justifyContent: 'space-evenly',
+      [theme.breakpoints.up('sm')]: {
+        justifyContent: 'center',
+      },
+
+      backdropFilter: 'blur(2px)',
+      background: `
+        linear-gradient(
+          to bottom,
+          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 1)} 90%
+        )`,
+
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
     },
 
     insertButton: {
@@ -77,6 +96,23 @@ const useStyles = makeStyles((theme: Theme) =>
         )`,
       },
     },
+
+    labelEditor: {
+      background: `
+          linear-gradient(
+            to top,
+            ${fade(theme.palette.background.default, 0)},
+            ${fade(theme.palette.background.default, 1)} \
+              ${theme.spacing(1) / 3}px calc(100% - ${theme.spacing(1) / 3}px),
+            ${fade(theme.palette.background.default, 0)}
+          ),
+          linear-gradient(
+            to right,
+            ${theme.palette.primary.main},
+            ${theme.palette.secondary.main} 
+          )
+        `,
+    },
   }),
 )
 
@@ -90,74 +126,100 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   className,
 }) => {
   const classes = useStyles()
+  const navigate = useNavigate()
+
+  // does LabelEditor need to behave like a fully controlled component?
+  // the issue here is that it doesn't clear the label?
 
   return useGraph(graph => {
     const hasChildren = node.childCount > 0
     const selectedCount = graph.selectedNodes.size ?? 0
 
     return (
-      <Toolbar className={[classes.root, className].join(' ')}>
-        <IconButton
-          disabled
-          color={graph.activeModes.includes('edit') ? 'primary' : undefined}
-          onClick={() => graph.toggleActiveMode('edit')}
-        >
-          <SearchIcon />
-        </IconButton>
+      <Box className={[classes.root, className].join(' ')}>
+        {graph.activeModes.includes('insert') && (
+          <LabelEditor
+            className={classes.labelEditor}
+            placeholder="Label"
+            onValue={(value, event) => {
+              if (value) {
+                const child = graph.createChild(node, { label: value })
 
-        <IconButton
-          disabled={!hasChildren}
-          color={graph.activeModes.includes('edit') ? 'primary' : undefined}
-          onClick={() => graph.toggleActiveMode('edit')}
-        >
-          <EditIcon />
-        </IconButton>
-
-        <IconButton
-          color="primary"
-          onClick={() => {
-            graph.setActiveMode('insert')
-            graph.setActiveMode('edit')
-          }}
-          className={classes.insertButton}
-        >
-          <AddIcon />
-        </IconButton>
-
-        <SelectButton
-          disabled={!(hasChildren || selectedCount > 0)}
-          node={node}
-          color={graph.activeModes.includes('select') ? 'primary' : undefined}
-          onClick={() => {
-            graph.toggleActiveMode('select')
-          }}
-        />
-
-        <IconButton
-          disabled
-          color={graph.activeModes.includes('edit') ? 'primary' : undefined}
-          onClick={() => graph.toggleActiveMode('edit')}
-        >
-          <TuneIcon />
-        </IconButton>
-
-        {false && (
-          <Button
-            disabled
-            startIcon={<GroupIcon />}
-            onClick={() => {
-              if (graph.activeModes.includes('share')) {
-                graph.closePeerConnection()
+                if (event?.ctrlKey) {
+                  graph.setCursorNode(child)
+                  navigate(makeUrl(`/node/${child.id}/`))
+                }
               } else {
-                graph.offerPeerConnection(node)
+                graph.toggleActiveMode('insert')
               }
             }}
-            color={graph.activeModes.includes('share') ? 'primary' : undefined}
-          >
-            share
-          </Button>
+          />
         )}
-      </Toolbar>
+
+        <Toolbar className={classes.toolbar}>
+          <IconButton
+            disabled
+            color={graph.activeModes.includes('edit') ? 'primary' : undefined}
+            onClick={() => graph.toggleActiveMode('edit')}
+          >
+            <SearchIcon />
+          </IconButton>
+
+          <IconButton
+            disabled={!hasChildren}
+            color={graph.activeModes.includes('edit') ? 'primary' : undefined}
+            onClick={() => graph.toggleActiveMode('edit')}
+          >
+            <EditIcon />
+          </IconButton>
+
+          <IconButton
+            color="primary"
+            onClick={() => {
+              graph.setActiveMode('insert')
+            }}
+            className={classes.insertButton}
+          >
+            <AddIcon />
+          </IconButton>
+
+          <SelectButton
+            disabled={!(hasChildren || selectedCount > 0)}
+            node={node}
+            color={graph.activeModes.includes('select') ? 'primary' : undefined}
+            onClick={() => {
+              graph.toggleActiveMode('select')
+            }}
+          />
+
+          <IconButton
+            disabled
+            color={graph.activeModes.includes('edit') ? 'primary' : undefined}
+            onClick={() => graph.toggleActiveMode('edit')}
+          >
+            <TuneIcon />
+          </IconButton>
+
+          {false && (
+            <Button
+              disabled
+              startIcon={<GroupIcon />}
+              onClick={() => {
+                if (graph.activeModes.includes('share')) {
+                  graph.closePeerConnection()
+                } else {
+                  graph.offerPeerConnection(node)
+                }
+              }}
+              color={
+                graph.activeModes.includes('share') ? 'primary' : undefined
+              }
+            >
+              share
+            </Button>
+          )}
+        </Toolbar>
+      </Box>
     )
   })
 }
