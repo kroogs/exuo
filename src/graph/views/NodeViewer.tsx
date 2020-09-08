@@ -27,8 +27,8 @@ interface NodeViewerProps {
 
 export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
   useGraph(graph => {
-    let node = graph.rootNode
     const lookup = graph.Node.get(id)
+    let node = graph.rootNode
 
     if (lookup) {
       node = lookup

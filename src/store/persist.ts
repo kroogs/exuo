@@ -62,8 +62,6 @@ export async function persist(
         buffer.forEach(patch => {
           const [typeName, id, propName] = patch.path.split('/').slice(1)
 
-          console.log('write', patch)
-
           if (patch.op === 'add') {
             db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
           } else if (patch.op === 'replace' || patch.op === 'remove') {

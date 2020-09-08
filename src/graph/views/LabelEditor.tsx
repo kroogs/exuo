@@ -19,23 +19,20 @@
 
 import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-import { InputBase, ClickAwayListener } from '@material-ui/core'
-import 'draft-js/dist/Draft.css'
+import { InputBase, ClickAwayListener, Backdrop } from '@material-ui/core'
 
 import { useGraph } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      padding: 0,
-      '& input, & textarea': {
-        // Extra pixel to account for body1 being 18px tall and
-        // this typography being 19px tall for some reason.
-        // I assume it has something to do with a calculated lineHeight.
-        // TODO This causes FF to be off by a pixel, so I'll have to figure
-        // out a real solution.
-        padding: '3px 0 2px 0',
-      },
+      display: 'inline-block',
+      margin: 0,
+      padding: theme.spacing(1, 2, 1, 2),
+      overflowX: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      ...theme.typography.body1,
     },
   }),
 )
@@ -47,7 +44,7 @@ interface LabelEditorProps {
   onValue?: (
     value: string,
     event?: React.KeyboardEvent<HTMLInputElement>,
-  ) => void | string
+  ) => void
 }
 
 export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
@@ -73,7 +70,8 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
       event?: React.KeyboardEvent<HTMLInputElement>,
     ): void => {
       if (onValue) {
-        setInputValue(onValue(inputValue, event) || '')
+        setInputValue('')
+        onValue(inputValue, event)
       }
     }
 

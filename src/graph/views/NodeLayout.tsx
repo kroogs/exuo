@@ -21,12 +21,10 @@ import React from 'react'
 import { AppBar, Box, fade } from '@material-ui/core'
 import { Instance } from 'mobx-state-tree'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import { useNavigate } from '@reach/router'
 
-import { makeUrl } from 'route'
 import { TitleBar } from 'common'
 
-import { Node, useGraph, NodeActions, LabelEditor } from 'graph'
+import { Node, useGraph, NodeActions } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,25 +48,9 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'unset',
     },
 
-    children: {
-      opacity: 1,
-      transition: theme.transitions.create(['opacity'], {
-        duration: theme.transitions.duration.standard,
-      }),
-      '&.fade': {
-        opacity: 0.35,
-      },
-    },
+    children: {},
 
-    labelEditor: {
-      borderTop: `.01px solid ${theme.palette.divider}`,
-      borderBottom: `.01px solid ${theme.palette.divider}`,
-      padding: theme.spacing(1, 2, 1, 2),
-      background: `${fade(theme.palette.background.default, 0.9)}`,
-      backdropFilter: 'blur(3px)',
-    },
-
-    actionArea: {
+    actions: {
       zIndex: theme.zIndex.appBar,
       position: 'fixed',
       bottom: 0,
@@ -78,27 +60,6 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         width: '600px',
       },
-    },
-
-    actions: {
-      backdropFilter: 'blur(2px)',
-      background: `
-        linear-gradient(
-          to bottom,
-          ${fade(theme.palette.background.default, 0.9)},
-          ${fade(theme.palette.background.default, 1)} 90%
-        )`,
-
-      paddingTop: theme.spacing(1),
-      paddingBottom: theme.spacing(1),
-
-      '&>*': {
-        opacity: 1,
-        transition: theme.transitions.create(['opacity'], {
-          duration: theme.transitions.duration.standard,
-        }),
-      },
-      '&.fade>*': { opacity: 0.15 },
     },
   }),
 )
@@ -114,15 +75,6 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
   children,
 }) => {
   const classes = useStyles()
-  const navigate = useNavigate()
-
-  /* React.useEffect(() => { */
-  /*   window.scrollTo({ */
-  /*     left: 0, */
-  /*     top: document.body.scrollHeight, */
-  /*     behavior: 'smooth', */
-  /*   }) */
-  /* }) */
 
   return useGraph(graph => (
     <Box className={[classes.root, className].join(' ')}>
@@ -130,36 +82,13 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
         <TitleBar title={node.label} className={classes.titleBar} />
       </AppBar>
 
-      <Box className={classes.actionArea}>
-        {graph.activeModes.includes('insert') && (
-          <LabelEditor
-            className={classes.labelEditor}
-            placeholder="Label"
-            onValue={(value, event) => {
-              if (value) {
-                const child = graph.createChild(node, { label: value })
-
-                if (event?.ctrlKey) {
-                  graph.setCursorNode(child)
-                  navigate(makeUrl(`/node/${child.id}/`))
-                  return
-                }
-
-                return ''
-              } else {
-                graph.toggleActiveMode('insert')
-              }
-            }}
-          />
-        )}
-        <NodeActions
-          node={node}
-          className={[
-            classes.actions,
-            graph.activeModes.includes('insert') ? 'fade' : '',
-          ].join(' ')}
-        />
-      </Box>
+      <NodeActions
+        node={node}
+        className={[
+          classes.actions,
+          graph.activeModes.includes('insert') ? 'fade' : '',
+        ].join(' ')}
+      />
 
       <Box
         className={[

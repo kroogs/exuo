@@ -143,14 +143,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     labelEditor: {
-      display: 'inline-block',
-      margin: 0,
-      padding: theme.spacing(1, 2, 1, 2),
-      overflowX: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      ...theme.typography.body1,
-
       background: `
           linear-gradient(
             to top,
