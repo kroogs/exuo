@@ -154,10 +154,10 @@ const useStyles = makeStyles((theme: Theme) =>
       background: `
           linear-gradient(
             to top,
-            ${fade(theme.palette.background.default, 0.2)},
+            ${fade(theme.palette.background.default, 0)},
             ${fade(theme.palette.background.default, 1)} \
               ${theme.spacing(1) / 3}px calc(100% - ${theme.spacing(1) / 3}px),
-            ${fade(theme.palette.background.default, 0.2)}
+            ${fade(theme.palette.background.default, 0)}
           ),
           linear-gradient(
             to right,
