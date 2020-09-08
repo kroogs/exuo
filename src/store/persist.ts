@@ -24,6 +24,7 @@ import {
   getMembers,
   applySnapshot,
   IAnyModelType,
+  IJsonPatch,
   isStateTreeNode,
 } from 'mobx-state-tree'
 import Dexie from 'dexie'
@@ -46,28 +47,46 @@ export async function persist(
     ),
   ).then(resolved => {
     applySnapshot(instance, Object.fromEntries(resolved))
+
+    let buffer: Array<IJsonPatch> = []
+    let timeout: ReturnType<typeof setTimeout>
+
     onPatch(instance, patch => {
-      const [typeName, id, propName] = patch.path.split('/').slice(1)
+      buffer.push(patch)
 
-      if (patch.op === 'add') {
-        db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
-      } else if (patch.op === 'replace' || patch.op === 'remove') {
-        if (propName) {
-          let propValue = instance[typeName].get(id)[propName]
-
-          if (isStateTreeNode(propValue)) {
-            propValue = getSnapshot(propValue)
-          }
-
-          db.table(typeName).update(id, {
-            [propName]: propValue,
-          })
-        } else {
-          db.table(typeName).delete(id)
-        }
-      } else {
-        throw Error(`Unknown patch op '${patch.op}'`)
+      if (timeout) {
+        clearTimeout(timeout)
       }
+
+      timeout = setTimeout(() => {
+        buffer.forEach(patch => {
+          const [typeName, id, propName] = patch.path.split('/').slice(1)
+
+          console.log('write', patch)
+
+          if (patch.op === 'add') {
+            db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
+          } else if (patch.op === 'replace' || patch.op === 'remove') {
+            if (propName) {
+              let propValue = instance[typeName].get(id)[propName]
+
+              if (isStateTreeNode(propValue)) {
+                propValue = getSnapshot(propValue)
+              }
+
+              db.table(typeName).update(id, {
+                [propName]: propValue,
+              })
+            } else {
+              db.table(typeName).delete(id)
+            }
+          } else {
+            throw Error(`Unknown patch op '${patch.op}'`)
+          }
+        })
+
+        buffer = []
+      }, 1000)
     })
   })
 }
