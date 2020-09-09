@@ -19,7 +19,7 @@
 
 import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-import { InputBase, ClickAwayListener, Backdrop } from '@material-ui/core'
+import { InputBase, ClickAwayListener } from '@material-ui/core'
 
 import { useGraph } from 'graph'
 
@@ -76,7 +76,6 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
     }
 
     const handleClickAway = (event: React.MouseEvent<Document>): void => {
-      event.preventDefault()
       handleValue()
     }
 
