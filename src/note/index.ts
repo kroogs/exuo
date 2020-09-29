@@ -17,5 +17,5 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from './Note'
+export * from './models/Note'
 export * from './NoteEditor'

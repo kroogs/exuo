@@ -142,13 +142,13 @@ describe('graph', () => {
     })
 
     test('supports relationships with custom models', () => {
-      const Label = t.model({ label: t.string })
-      const Node = nodeFactory(edgeMapFactory(() => t.union(Node, LabelNode)))
-      const LabelNode = nodeFactory([
-        Label,
-        edgeMapFactory(() => t.union(Node, LabelNode)),
+      const Text = t.model({ text: t.string })
+      const Node = nodeFactory(edgeMapFactory(() => t.union(Node, TextNode)))
+      const TextNode = nodeFactory([
+        Text,
+        edgeMapFactory(() => t.union(Node, TextNode)),
       ])
-      const Graph = graphFactory({ Node, Label: LabelNode })
+      const Graph = graphFactory({ Node, Text: TextNode })
 
       const graph = Graph.create()
       const one = graph.createNode()
@@ -157,7 +157,7 @@ describe('graph', () => {
       two.addEdge('side', one)
       expect(graph.Node.get(two.id).edgeMap.get('side')?.[0]).toBe(one)
 
-      const potato = graph.createNode('Label', { label: 'potato' })
+      const potato = graph.createNode('Text', { text: 'potato' })
       one.addEdge('item', potato)
       expect(graph.Node.get(one.id).edgeMap.get('item')?.[0]).toBe(potato)
 

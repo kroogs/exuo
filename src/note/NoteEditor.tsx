@@ -20,22 +20,25 @@
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
 import {
-  Box,
+  ClickAwayListener,
+  Backdrop,
   Button,
   IconButton,
-  Toolbar,
   Theme,
-  makeStyles,
+  Toolbar,
   createStyles,
+  fade,
+  makeStyles,
+  useMediaQuery,
 } from '@material-ui/core'
 import Code from '@material-ui/icons/Code'
-import FormatQuote from '@material-ui/icons/FormatQuote'
-import FormatBold from '@material-ui/icons/FormatBold'
-import FormatItalic from '@material-ui/icons/FormatItalic'
-import FormatUnderlined from '@material-ui/icons/FormatUnderlined'
+import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
+import FormatBoldIcon from '@material-ui/icons/FormatBold'
+import FormatItalicIcon from '@material-ui/icons/FormatItalic'
+import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined'
 import SpaceBar from '@material-ui/icons/SpaceBar'
-import FormatListNumbered from '@material-ui/icons/FormatListNumbered'
-import FormatListBulleted from '@material-ui/icons/FormatListBulleted'
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
+import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted'
 import {
   ContentBlock,
   ContentState,
@@ -44,13 +47,35 @@ import {
   Editor,
   EditorState,
   RichUtils,
+  Modifier,
+  SelectionState,
   getDefaultKeyBinding,
   convertFromRaw,
   convertToRaw,
 } from 'draft-js'
 import 'draft-js/dist/Draft.css'
 
-import { Note } from './Note'
+import { Note } from './models/Note'
+
+export const isPlainText = (
+  contentState: string | ReturnType<typeof convertToRaw>,
+): boolean => {
+  if (typeof contentState === 'string') {
+    return true
+  }
+
+  for (const block of contentState.blocks) {
+    if (
+      block.depth ||
+      block.type !== 'unstyled' ||
+      block.inlineStyleRanges.length
+    ) {
+      return false
+    }
+  }
+
+  return true
+}
 
 interface ButtonConfig {
   label: string
@@ -65,29 +90,25 @@ const BLOCK_TYPES: Array<ButtonConfig> = [
   /* { label: 'H4', style: 'header-four' }, */
   /* { label: 'H5', style: 'header-five' }, */
   /* { label: 'H6', style: 'header-six' }, */
-  { label: 'UL', style: 'unordered-list-item', icon: <FormatListNumbered /> },
-  { label: 'OL', style: 'ordered-list-item', icon: <FormatListBulleted /> },
-  { label: 'Blockquote', style: 'blockquote', icon: <FormatQuote /> },
+  {
+    label: 'UL',
+    style: 'unordered-list-item',
+    icon: <FormatListNumberedIcon />,
+  },
+  { label: 'OL', style: 'ordered-list-item', icon: <FormatListBulletedIcon /> },
+  { label: 'Blockquote', style: 'blockquote', icon: <FormatQuoteIcon /> },
   { label: 'Code Block', style: 'code-block', icon: <Code /> },
 ]
 
 const INLINE_STYLES: Array<ButtonConfig> = [
-  { label: 'Bold', style: 'BOLD', icon: <FormatBold /> },
-  { label: 'Italic', style: 'ITALIC', icon: <FormatItalic /> },
-  { label: 'Underline', style: 'UNDERLINE', icon: <FormatUnderlined /> },
+  { label: 'Bold', style: 'BOLD', icon: <FormatBoldIcon /> },
+  { label: 'Italic', style: 'ITALIC', icon: <FormatItalicIcon /> },
+  { label: 'Underline', style: 'UNDERLINE', icon: <FormatUnderlinedIcon /> },
   { label: 'Monospace', style: 'CODE', icon: <SpaceBar /> },
 ]
 
-const styleMap = {
-  CODE: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
-    fontSize: 16,
-    padding: 2,
-  },
-}
-
 const getBlockStyle = (block: ContentBlock): string => {
+  /* console.log('block type', block.getType()) */
   switch (block.getType()) {
     case 'blockquote':
       return 'RichEditor-blockquote'
@@ -153,7 +174,7 @@ const BlockStyleControls: React.FunctionComponent<BlockStyleControlsProps> = ({
     .getType()
 
   return (
-    <div className="RichEditor-controls">
+    <div>
       {BLOCK_TYPES.map(type => (
         <StyleButton
           key={type.label}
@@ -179,7 +200,7 @@ const InlineStyleControls: React.FunctionComponent<InlineStyleControlsProps> = (
 }) => {
   const currentStyle = editorState.getCurrentInlineStyle()
   return (
-    <div className="RichEditor-controls">
+    <div>
       {INLINE_STYLES.map(type => (
         <StyleButton
           key={type.label}
@@ -198,148 +219,265 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
+      zIndex: theme.zIndex.appBar + 10,
     },
-    input: {
-      padding: 0,
+
+    backdrop: {
+      cursor: 'default',
+      backdropFilter: 'blur(3px) saturate(0%)',
+      backgroundColor: fade(theme.palette.background.default, 0.8),
     },
+
+    wrapper: {
+      outline: 'none',
+
+      background: `
+        linear-gradient(
+          to top,
+          ${fade(theme.palette.background.default, 0)},
+          ${fade(theme.palette.background.default, 1)} \
+            ${theme.spacing(1) / 2}px calc(100% - ${theme.spacing(1) / 2}px),
+          ${fade(theme.palette.background.default, 0)}
+        ),
+        linear-gradient(
+          to right,
+          ${theme.palette.primary.main},
+          ${theme.palette.secondary.main} 
+        )
+      `,
+
+      '& .DraftEditor-editorContainer': {
+        maxHeight: '70vh',
+        overflowY: 'auto',
+        border: 0,
+        padding: theme.spacing(1, 2, 1, 2),
+
+        '& [data-contents=true] > [data-block=true]': {
+          ...theme.typography.body2,
+          '&:first-child': {
+            ...theme.typography.body1,
+          },
+        },
+      },
+    },
+
     toolbar: {
-      padding: 0,
+      justifyContent: 'center',
+      background: `
+        linear-gradient(
+          to bottom,
+          ${theme.palette.background.default} 30%,
+          ${fade(theme.palette.background.default, 0)}
+        )
+      `,
+
+      '&>div:first-child': {
+        marginRight: theme.spacing(4),
+      },
     },
   }),
 )
 
+// TODO autofocus doesn't work on iOS
+
 interface NoteEditorProps {
   note?: Instance<typeof Note>
   text?: string
+  rawContent?: ReturnType<typeof convertToRaw>
   placeholder?: string
   autoFocus?: boolean
+  showBackdrop?: boolean
+  showControls?: boolean
+  showRichTextControls?: boolean
   className?: string
+  inputClassName?: string
   onValue?: (
-    value?: Instance<typeof Note>,
-    event?: React.KeyboardEvent<HTMLInputElement>,
-  ) => void | null | string
+    value?: Instance<typeof Note> | ContentState,
+    event?: React.KeyboardEvent | React.MouseEvent<HTMLDocument>,
+  ) => void | true
+  onClickAway?: () => void
+  onEscape?: () => void
 }
 
-export const NoteEditor: React.FunctionComponent<NoteEditorProps> = ({
-  note,
-  text,
-  placeholder,
-  autoFocus,
-  onValue,
-  className,
-}) => {
-  const classes = useStyles()
-  const editorRef = React.useRef<Editor | null>()
-  const rawContentState = note?.rawContentState
-  const noteContentState = React.useMemo(
-    () => rawContentState && convertFromRaw(JSON.parse(rawContentState)),
-    [rawContentState],
-  )
-  const [editorState, setEditorState] = React.useState(() => {
-    return EditorState.createWithContent(
-      noteContentState ||
-        ContentState.createFromText(text ?? note?.label ?? ''),
+export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
+  function (
+    {
+      note,
+      text,
+      rawContent,
+      placeholder,
+      autoFocus,
+      showBackdrop,
+      showControls,
+      showRichTextControls,
+      className,
+      inputClassName,
+      onValue,
+      onClickAway,
+      onEscape,
+    },
+    ref,
+  ) {
+    const classes = useStyles()
+
+    const containerRef = React.useRef<HTMLDivElement>(null)
+    const editorRef = React.useRef<Editor>(null)
+
+    const nodeContent = note?.nodeContent
+    const contentState = React.useMemo(
+      () =>
+        (nodeContent && convertFromRaw(JSON.parse(nodeContent))) ||
+        (rawContent && convertFromRaw(rawContent)),
+      [nodeContent, rawContent],
     )
-  })
+    const [editorState, setEditorState] = React.useState(() =>
+      EditorState.createWithContent(
+        contentState ||
+          ContentState.createFromText(text ?? note?.content ?? ''),
+      ),
+    )
 
-  const [didRender, setDidRender] = React.useState(false)
-  React.useEffect(() => {
-    if (!didRender && autoFocus) {
-      editorRef.current?.focus()
-      setEditorState(EditorState.moveFocusToEnd(editorState))
-      setDidRender(true)
+    React.useEffect(() => {
+      if (autoFocus) {
+        setEditorState(EditorState.moveFocusToEnd(editorState))
+      }
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Needs to ensure the containerRef is partly offscreen before running
+    /* React.useEffect(() => { */
+    /*   containerRef.current?.scrollIntoView(false) */
+    /* }) */
+
+    const handleValue = (
+      event?:
+        | React.KeyboardEvent<HTMLInputElement>
+        | React.MouseEvent<HTMLDocument>,
+    ): void => {
+      const contentState = editorState.getCurrentContent()
+      const rawContent = convertToRaw(contentState)
+
+      if (note) {
+        note.setRawContentState(rawContent)
+        note.setContent(contentState.getFirstBlock().getText())
+      }
+
+      if (
+        onValue?.(
+          note || isPlainText(rawContent)
+            ? contentState.getPlainText()
+            : rawContent,
+          event,
+        )
+      ) {
+        setEditorState(
+          EditorState.forceSelection(
+            EditorState.push(
+              EditorState.moveFocusToEnd(editorState),
+              ContentState.createFromText(''),
+              'remove-range',
+            ),
+            contentState.getSelectionAfter(),
+          ),
+        )
+      }
     }
-  }, [didRender, autoFocus, editorState])
 
-  const handleValue = (event?: React.KeyboardEvent<HTMLInputElement>): void => {
-    const contentState = editorState.getCurrentContent()
-    const rawContent = convertToRaw(contentState)
-
-    if (note) {
-      note.setRawContentState(rawContent)
-      note.setLabel(contentState.getFirstBlock().getText())
+    const handleKeyCommand = (
+      command: DraftEditorCommand,
+      editorState: EditorState,
+    ): DraftHandleValue => {
+      const newState = RichUtils.handleKeyCommand(editorState, command)
+      if (newState) {
+        setEditorState(newState)
+        return 'handled'
+      } else {
+        return 'not-handled'
+      }
     }
 
-    if (onValue) {
-      onValue(note)
+    const mapKeyToEditorCommand = (
+      event: React.KeyboardEvent,
+    ): DraftEditorCommand | null => {
+      if (event.keyCode === 13 && !event.shiftKey) {
+        handleValue()
+        return null
+      } else if (event.keyCode === 27) {
+        onEscape?.()
+        return null
+      } else {
+        return getDefaultKeyBinding(event)
+      }
     }
-  }
 
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
-    event.preventDefault()
-    handleValue()
-  }
-
-  const handleKeyCommand = (
-    command: DraftEditorCommand,
-    editorState: EditorState,
-  ): DraftHandleValue => {
-    const newState = RichUtils.handleKeyCommand(editorState, command)
-    if (newState) {
-      setEditorState(newState)
-      return 'handled'
-    } else {
-      return 'not-handled'
+    const toggleBlockType = (blockType: string): void => {
+      setEditorState(RichUtils.toggleBlockType(editorState, blockType))
     }
-  }
 
-  const mapKeyToEditorCommand = (
-    event: React.KeyboardEvent,
-  ): DraftEditorCommand | null => {
-    if (event.keyCode === 13 && event.shiftKey) {
-      handleValue()
-      return null
-    } else {
-      return getDefaultKeyBinding(event)
+    const toggleInlineStyle = (inlineStyle: string): void => {
+      setEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle))
     }
-  }
 
-  /* const handleKeyDown = ( */
-  /*   event: React.KeyboardEvent<HTMLInputElement>, */
-  /* ): void => { */
-  /*   if (event.keyCode === 13 && !event.shiftKey) { */
-  /*     event.preventDefault() */
-  /*     handleValue(event) */
-  /*   } */
-  /* } */
+    const blockCount = editorState.getCurrentContent().getBlocksAsArray().length
 
-  const toggleBlockType = (blockType: string): void => {
-    setEditorState(RichUtils.toggleBlockType(editorState, blockType))
-  }
+    return (
+      <div ref={ref} className={[classes.root, className].join(' ')}>
+        {blockCount > 1 && showBackdrop && (
+          <Backdrop open={Boolean(showBackdrop)} className={classes.backdrop} />
+        )}
 
-  const toggleInlineStyle = (inlineStyle: string): void => {
-    setEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle))
-  }
+        <ClickAwayListener
+          mouseEvent={'onMouseDown'}
+          touchEvent={'onTouchStart'}
+          onClickAway={event => {
+            if (onClickAway) {
+              onClickAway()
+            } else {
+              handleValue(event)
+            }
+          }}
+        >
+          <div ref={containerRef}>
+            <div
+              tabIndex={-1}
+              className={[classes.wrapper, inputClassName].join(' ')}
+            >
+              <Editor
+                ref={editorRef}
+                blockStyleFn={getBlockStyle}
+                editorState={editorState}
+                handleKeyCommand={handleKeyCommand}
+                keyBindingFn={mapKeyToEditorCommand}
+                onChange={setEditorState}
+                placeholder={placeholder}
+                spellCheck={true}
+              />
+            </div>
 
-  return (
-    <div className={[classes.root, className].join(' ')}>
-      <div className={classes.input}>
-        <Editor
-          ref={ref => (editorRef.current = ref)}
-          blockStyleFn={getBlockStyle}
-          customStyleMap={styleMap}
-          editorState={editorState}
-          handleKeyCommand={handleKeyCommand}
-          keyBindingFn={mapKeyToEditorCommand}
-          onChange={setEditorState}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          spellCheck={true}
-        />
+            {blockCount > 1 && showControls && (
+              <Toolbar variant="dense" className={classes.toolbar}>
+                {showRichTextControls && (
+                  <>
+                    <InlineStyleControls
+                      editorState={editorState}
+                      onToggle={toggleInlineStyle}
+                    />
+                    <BlockStyleControls
+                      editorState={editorState}
+                      onToggle={toggleBlockType}
+                    />
+                  </>
+                )}
+              </Toolbar>
+            )}
+          </div>
+        </ClickAwayListener>
       </div>
+    )
+  },
+)
 
-      <Toolbar variant="dense" className={classes.toolbar}>
-        <Box flexGrow={1}>
-          <InlineStyleControls
-            editorState={editorState}
-            onToggle={toggleInlineStyle}
-          />
-        </Box>
-        <BlockStyleControls
-          editorState={editorState}
-          onToggle={toggleBlockType}
-        />
-      </Toolbar>
-    </div>
-  )
+NoteEditor.defaultProps = {
+  showBackdrop: true,
+  showControls: true,
+  showRichTextControls: true,
 }

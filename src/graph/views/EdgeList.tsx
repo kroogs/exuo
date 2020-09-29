@@ -22,7 +22,7 @@ import { List } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { IAnyModelType, Instance } from 'mobx-state-tree'
 
-import { useGraph } from '../useGraph'
+import { useGraph } from '../utils'
 import { NodeListItem } from './NodeListItem'
 import { Node } from '../models/Node'
 
@@ -32,10 +32,14 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: 0,
       '&>li': {
         borderTop: `.01px solid ${theme.palette.divider}`,
+        '&:first-child': {
+          borderTop: 'unset',
+        },
       },
 
-      '&.outer': {
-        borderBottom: `.01px solid ${theme.palette.divider}`,
+      borderBottom: `.01px solid ${theme.palette.divider}`,
+      '&.inner': {
+        borderBottom: 'unset',
       },
     },
   }),
@@ -44,29 +48,32 @@ const useStyles = makeStyles((theme: Theme) =>
 interface EdgeListProps {
   node: Instance<IAnyModelType>
   edgeTag: string
-  outer?: boolean
+  inner?: boolean
   className?: string
 }
 
 export const EdgeList: React.FunctionComponent<EdgeListProps> = ({
   node,
   edgeTag,
-  outer,
+  inner,
   className,
 }) => {
   const classes = useStyles()
-  return useGraph(graph => (
-    <List
-      aria-label="edge list"
-      className={[classes.list, outer ? 'outer' : '', className].join(' ')}
-    >
-      {node.edgeMap.get(edgeTag)?.map((item: Instance<typeof Node>) => (
-        <NodeListItem
-          node={item}
-          parentNode={node}
-          key={`${node.id}-${edgeTag}-${item.id}`}
-        />
-      ))}
-    </List>
-  ))
+  return useGraph(graph => {
+    const edges = node.edgeMap.get(edgeTag)
+    return edges?.length ? (
+      <List
+        aria-label="edge list"
+        className={[classes.list, inner ? 'inner' : '', className].join(' ')}
+      >
+        {edges?.map((item: Instance<typeof Node>) => (
+          <NodeListItem
+            node={item}
+            parentNode={node}
+            key={`${node.id}-${edgeTag}-${item.id}`}
+          />
+        ))}
+      </List>
+    ) : null
+  })
 }

@@ -24,22 +24,16 @@ import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  ListItemIcon,
 } from '@material-ui/core'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
-import {
-  Instance,
-  getSnapshot,
-  IArrayType,
-  IMapType,
-  ISimpleType,
-} from 'mobx-state-tree'
+import { Instance } from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
 
 import { makeUrl } from 'route'
-import { useGraph, Node, LabelEditor, EdgeList, Config } from 'graph'
+import { NoteEditor } from 'note'
+import { useGraph, Node, EdgeList, useActive } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -52,18 +46,20 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     listItem: {
+      position: 'relative',
       cursor: 'pointer',
 
-      transition: theme.transitions.create(['color'], {
+      transition: theme.transitions.create(['color', 'background'], {
         duration: theme.transitions.duration.shortest,
       }),
 
-      '&:hover, &:focus': {
+      '&:hover': {
         color: theme.palette.primary.main,
+        backgroundColor: theme.palette.background.paper,
       },
 
       '&.editMode': {
-        cursor: 'text',
+        cursor: 'default',
         color: 'unset',
       },
 
@@ -72,13 +68,17 @@ const useStyles = makeStyles((theme: Theme) =>
         color: 'unset',
       },
 
+      '&.isEditing, &.isEditing + li': {
+        borderColor: 'transparent',
+      },
+
       '&.Mui-selected': {
         background: `
           linear-gradient(
             to top,
             ${fade(theme.palette.background.default, 0)},
-            ${fade(theme.palette.background.default, 0.8)} \
-              ${theme.spacing(1) / 3}px calc(100% - ${theme.spacing(1) / 3}px),
+            ${fade(theme.palette.background.default, 0.9)} \
+              ${theme.spacing(1) / 2}px calc(100% - ${theme.spacing(1) / 2}px),
             ${fade(theme.palette.background.default, 0)}
           ),
           linear-gradient(
@@ -90,16 +90,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
         '&:hover': { color: 'unset' },
         '& a:hover': { color: 'unset' },
-      },
-
-      '&.isEditing': {
-        padding: 0,
-
-        // From EdgeList but it conflicts here slightly, so hide it
-        borderTop: `.01px solid ${fade(theme.palette.divider, 0)}`,
-        '&+li': {
-          borderTop: `.01px solid ${fade(theme.palette.divider, 0)}`,
-        },
       },
     },
 
@@ -113,6 +103,10 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowX: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
+
+      '.isEditing &': {
+        opacity: 0,
+      },
 
       '& .MuiListItemText-primary': {
         display: 'inline',
@@ -142,21 +136,15 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 'auto',
     },
 
-    labelEditor: {
-      background: `
-          linear-gradient(
-            to top,
-            ${fade(theme.palette.background.default, 0)},
-            ${fade(theme.palette.background.default, 1)} \
-              ${theme.spacing(1) / 3}px calc(100% - ${theme.spacing(1) / 3}px),
-            ${fade(theme.palette.background.default, 0)}
-          ),
-          linear-gradient(
-            to right,
-            ${theme.palette.primary.main},
-            ${theme.palette.secondary.main} 
-          )
-        `,
+    noteEditor: {
+      cursor: 'default',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+    },
+
+    noteEditorInput: {
+      cursor: 'text',
     },
 
     secondaryActions: {
@@ -172,8 +160,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
       // Ensure ChevronRight lines up without a label
       minWidth: 'unset',
-      paddingLeft: theme.spacing(2),
+
       paddingRight: theme.spacing(2),
+      paddingLeft: theme.spacing(2),
 
       '&:hover, &:focus': {
         color: theme.palette.primary.main,
@@ -188,6 +177,7 @@ interface NodeListItemProps {
   parentNode: Instance<typeof Node>
   expandSecondaryTypography?: boolean
   expanded?: boolean
+  className?: string
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
@@ -195,83 +185,37 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
   parentNode,
   expandSecondaryTypography,
   expanded,
-  ...props
+  className,
 }) => {
   const classes = useStyles()
   const navigate = useNavigate()
   const [isEditing, setIsEditing] = React.useState(false)
-
-  /* const isMouseDown = React.useRef(false) */
-  /* const timer = React.useRef<ReturnType<typeof setTimeout>>() */
+  const active = useActive()
 
   return useGraph(graph => {
-    const cursorNode = graph.cursorNode
-    /* const isExpanded = cursorNode.isExpanded(node, parentNode) */
-    const isExpanded = false
+    const isExpanded = active?.isExpanded(node, parentNode) ?? false
+    const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
+
     const toggleExpand = (): void => {
-      cursorNode.toggleExpand(node, parentNode)
-      console.log(graph.cursorNode.expandedNodes)
+      active.toggleExpand(node, parentNode)
+      console.log('expanded nodes', active.expandedNodes)
     }
-
-    /* const downHandler: React.EventHandler<React.SyntheticEvent> = e => { */
-    /*   e.preventDefault() */
-    /*   e.persist() */
-
-    /*   isMouseDown.current = true */
-
-    /*   timer.current = setTimeout(() => { */
-    /*     isMouseDown.current = false */
-
-    /*     if (graph.activeModes.includes('edit')) { */
-    /*       return */
-    /*     } */
-
-    /*     if (timer.current) { */
-    /*       clearTimeout(timer.current) */
-    /*     } */
-
-    /*     graph.toggleActiveMode('select') */
-    /*     if (graph.activeModes.includes('select')) { */
-    /*       graph.toggleSelectNode(node) */
-    /*     } */
-    /*   }, 190) */
-    /* } */
-
-    /* const upHandler: React.EventHandler<React.SyntheticEvent> = e => { */
-    /*   if (!isMouseDown.current) { */
-    /*     return */
-    /*   } */
-
-    /*   isMouseDown.current = false */
-    /*   e.preventDefault() */
-
-    /*   if (graph.activeModes.includes('select')) { */
-    /*     graph.toggleSelectNode(node) */
-    /*   } else if (graph.activeModes.includes('edit')) { */
-    /*     setIsEditing(true) */
-    /*   } else { */
-    /*     navigate(makeUrl(`/node/${node.id}`)) */
-    /*   } */
-
-    /*   if (timer.current) { */
-    /*     clearTimeout(timer.current) */
-    /*   } */
-    /* } */
 
     const handleItemClick: React.EventHandler<React.MouseEvent> = e => {
       e.preventDefault()
 
       if (e.altKey) {
-        toggleExpand()
+        setIsEditing(true)
+        graph.setActiveMode('edit')
+      } else if (e.shiftKey) {
+        setIsEditing(false)
+        graph.setActiveMode('select')
+        graph.toggleSelectNode(node, parentNode)
       } else if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node, parentNode)
       } else if (graph.activeModes.includes('edit')) {
         setIsEditing(true)
-      } else if (e.metaKey || e.ctrlKey) {
-        graph.toggleActiveMode('select')
-        graph.toggleSelectNode(node, parentNode)
       } else {
-        graph.setCursorNode(node)
         navigate(makeUrl(`/node/${node.id}/`))
       }
     }
@@ -282,24 +226,41 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         toggleExpand()
         return
       }
-
-      if (graph.activeModes.includes('select')) {
-        graph.setCursorNode(node)
-      }
     }
 
-    const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
-    const newlinePosition = node.label.indexOf('\n')
+    let primaryText = node.id
+    let secondaryText = undefined
+
+    const rawContent = node.content?.toJSON?.()
+
+    if (typeof node.content === 'string') {
+      const newlinePosition = node.content.indexOf('\n')
+
+      primaryText =
+        newlinePosition > 0
+          ? node.content.slice(0, newlinePosition)
+          : node.content
+
+      secondaryText =
+        newlinePosition > 0
+          ? node.content.slice(newlinePosition + 1)
+          : undefined
+    } else if (rawContent) {
+      primaryText = rawContent.blocks[0].text
+      secondaryText = rawContent.blocks[1]?.text
+    }
 
     return (
       <>
         <ListItem
           onClick={handleItemClick}
           selected={isSelected}
+          component="li"
           ContainerProps={{
             className: [
               classes.itemContainer,
               node.childCount > 0 && isExpanded ? 'isExpanded' : '',
+              className,
             ].join(' '),
           }}
           className={[
@@ -309,35 +270,38 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
             isEditing ? 'isEditing' : '',
           ].join(' ')}
         >
-          {isEditing ? (
-            <LabelEditor
-              label={node.label}
-              className={classes.labelEditor}
+          {isEditing && (
+            <NoteEditor
+              autoFocus
+              text={rawContent ? undefined : node.content}
+              rawContent={rawContent}
+              className={classes.noteEditor}
+              inputClassName={classes.noteEditorInput}
               onValue={value => {
                 setIsEditing(false)
                 if (value) {
-                  node.setLabel(value)
+                  if (typeof value === 'string') {
+                    node.setContent(value)
+                  } else if (Object.keys(value).includes('blocks')) {
+                    node.setContent(value)
+                  }
                 }
               }}
-            />
-          ) : (
-            <ListItemText
-              primary={
-                newlinePosition > 0
-                  ? node.label.slice(0, newlinePosition)
-                  : node.label
-              }
-              secondary={
-                newlinePosition > 0
-                  ? node.label.slice(newlinePosition + 1)
-                  : undefined
-              }
-              className={[
-                classes.itemText,
-                expandSecondaryTypography ? 'expand' : '',
-              ].join(' ')}
+              onEscape={() => {
+                setIsEditing(false)
+                graph.unsetActiveMode('edit')
+              }}
             />
           )}
+
+          <ListItemText
+            primary={primaryText}
+            secondary={secondaryText}
+            className={[
+              classes.itemText,
+              expandSecondaryTypography ? 'expand' : '',
+            ].join(' ')}
+          />
 
           {!isEditing && (
             <ListItemSecondaryAction className={classes.secondaryActions}>
@@ -368,6 +332,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         {node.childCount > 0 && (
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <EdgeList
+              inner
               node={node}
               edgeTag="child"
               className={classes.childList}

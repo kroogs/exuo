@@ -65,7 +65,7 @@ export const PropertyEditor: React.FunctionComponent<PropertyEditorProps> = prop
             <ListItem dense button key={value} className={classes.item}>
               <ListItemText
                 primary={value}
-                id={`list-label-${value}`}
+                id={`list-content-${value}`}
                 className={classes.itemText}
               />
             </ListItem>

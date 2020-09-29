@@ -21,8 +21,11 @@ import React from 'react'
 import { AppBar, Box, fade } from '@material-ui/core'
 import { Instance } from 'mobx-state-tree'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import { useNavigate } from '@reach/router'
 
+import { makeUrl } from 'route'
 import { TitleBar } from 'common'
+import { NoteEditor } from 'note'
 
 import { Node, useGraph, NodeActions } from 'graph'
 
@@ -35,7 +38,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     appBar: {
-      backdropFilter: 'blur(2px)',
+      position: 'sticky',
+      borderBottom: `.01px solid ${theme.palette.divider}`,
+      backdropFilter: 'blur(3px)',
       background: `
         linear-gradient(
           to top,
@@ -50,15 +55,23 @@ const useStyles = makeStyles((theme: Theme) =>
 
     children: {},
 
+    textEditor: {
+      position: 'sticky',
+      bottom: 0,
+    },
+
     actions: {
+      borderTop: `.01px solid ${theme.palette.divider}`,
       zIndex: theme.zIndex.appBar,
+
       position: 'fixed',
       bottom: 0,
       left: '50%',
-      transform: 'translateX(-50%)',
       width: '100%',
+      transform: 'translateX(-50%)',
+
       [theme.breakpoints.up('sm')]: {
-        width: '600px',
+        maxWidth: '900px',
       },
     },
   }),
@@ -75,29 +88,75 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
   children,
 }) => {
   const classes = useStyles()
+  const navigate = useNavigate()
 
-  return useGraph(graph => (
-    <Box className={[classes.root, className].join(' ')}>
-      <AppBar elevation={0} position="sticky" className={classes.appBar}>
-        <TitleBar title={node.label} className={classes.titleBar} />
-      </AppBar>
+  React.useEffect(() => {
+    const handler = (event: KeyboardEvent): void => {
+      console.log({ event })
+    }
 
-      <NodeActions
-        node={node}
-        className={[
-          classes.actions,
-          graph.activeModes.includes('insert') ? 'fade' : '',
-        ].join(' ')}
-      />
+    document.addEventListener('keydown', handler)
+    return () => {
+      document.removeEventListener('keydown', handler)
+    }
+  })
 
-      <Box
-        className={[
-          classes.children,
-          graph.activeModes.includes('insert') ? 'fade' : '',
-        ].join(' ')}
-      >
-        {children}
+  return useGraph(graph => {
+    let titleText: string
+    const content = node.content?.toJSON?.()
+
+    if (typeof node.content === 'string') {
+      titleText = node.content
+    } else if (content) {
+      titleText = content.blocks?.[0]?.text
+    } else {
+      titleText = node.id
+    }
+
+    return (
+      <Box className={[classes.root, className].join(' ')}>
+        <AppBar elevation={0} className={classes.appBar}>
+          <TitleBar title={titleText} className={classes.titleBar} />
+        </AppBar>
+
+        <Box
+          className={[
+            classes.children,
+            graph.activeModes.includes('insert') ? 'fade' : '',
+          ].join(' ')}
+        >
+          {children}
+        </Box>
+        {graph.activeModes.includes('insert') && (
+          <NoteEditor
+            autoFocus
+            className={classes.textEditor}
+            onValue={(value, event) => {
+              if (value) {
+                const child = graph.createChild(node, { content: value })
+                if (event?.ctrlKey) {
+                  navigate(makeUrl(`/node/${child.id}/`))
+                } else {
+                  return true
+                }
+              } else {
+                graph.toggleActiveMode('insert')
+              }
+            }}
+            onEscape={() => {
+              graph.unsetActiveMode('insert')
+            }}
+          />
+        )}
+
+        <NodeActions
+          node={node}
+          className={[
+            classes.actions,
+            graph.activeModes.includes('insert') ? 'fade' : '',
+          ].join(' ')}
+        />
       </Box>
-    </Box>
-  ))
+    )
+  })
 }

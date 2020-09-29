@@ -38,8 +38,9 @@ import { Instance } from 'mobx-state-tree'
 import { useNavigate } from '@reach/router'
 
 import { makeUrl } from 'route'
+import { NoteEditor } from 'note'
 import { SelectButton } from 'select'
-import { Node, useGraph, LabelEditor } from 'graph'
+import { Node, useGraph } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -51,24 +52,19 @@ const useStyles = makeStyles((theme: Theme) =>
         justifyContent: 'center',
       },
 
-      backdropFilter: 'blur(2px)',
+      backdropFilter: 'blur(3px)',
       background: `
         linear-gradient(
           to bottom,
           ${fade(theme.palette.background.default, 0.9)},
           ${fade(theme.palette.background.default, 1)} 90%
         )`,
-
-      paddingTop: theme.spacing(1),
-      paddingBottom: theme.spacing(1),
     },
 
     insertButton: {
       color: theme.palette.background.default,
-      textShadow: `3px 3px ${theme.palette.background.default}`,
       boxShadow: 'unset',
       margin: theme.spacing(0, 1, 0, 1),
-      backgroundBlendMode: 'normal',
       background: `
         radial-gradient(
           circle at bottom,
@@ -96,23 +92,6 @@ const useStyles = makeStyles((theme: Theme) =>
         )`,
       },
     },
-
-    labelEditor: {
-      background: `
-          linear-gradient(
-            to top,
-            ${fade(theme.palette.background.default, 0)},
-            ${fade(theme.palette.background.default, 1)} \
-              ${theme.spacing(1) / 3}px calc(100% - ${theme.spacing(1) / 3}px),
-            ${fade(theme.palette.background.default, 0)}
-          ),
-          linear-gradient(
-            to right,
-            ${theme.palette.primary.main},
-            ${theme.palette.secondary.main} 
-          )
-        `,
-    },
   }),
 )
 
@@ -128,34 +107,12 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   const classes = useStyles()
   const navigate = useNavigate()
 
-  // does LabelEditor need to behave like a fully controlled component?
-  // the issue here is that it doesn't clear the label?
-
   return useGraph(graph => {
     const hasChildren = node.childCount > 0
     const selectedCount = graph.selectedNodes.size ?? 0
 
     return (
       <Box className={[classes.root, className].join(' ')}>
-        {graph.activeModes.includes('insert') && (
-          <LabelEditor
-            className={classes.labelEditor}
-            placeholder="Label"
-            onValue={(value, event) => {
-              if (value) {
-                const child = graph.createChild(node, { label: value })
-
-                if (event?.ctrlKey) {
-                  graph.setCursorNode(child)
-                  navigate(makeUrl(`/node/${child.id}/`))
-                }
-              } else {
-                graph.toggleActiveMode('insert')
-              }
-            }}
-          />
-        )}
-
         <Toolbar className={classes.toolbar}>
           <IconButton
             disabled

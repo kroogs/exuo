@@ -17,7 +17,7 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from './useGraph'
+export * from './utils'
 
 export * from './models/factories'
 export * from './models/Graph'

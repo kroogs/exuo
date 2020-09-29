@@ -37,18 +37,22 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
       type: (prefersDarkMode ? 'dark' : 'light') as PaletteType,
       primary: { main: '#FF2EA2' },
       secondary: { main: '#FF8F00' },
+      divider: prefersDarkMode ? '#222222' : '#e0e0e0',
       background: {
         default: prefersDarkMode ? '#000000' : '#ffffff',
+        paper: prefersDarkMode ? '#101010' : '#fbfbfb',
       },
       text: {
         primary: prefersDarkMode ? '#dddddd' : '#212121',
-        secondary: prefersDarkMode ? '#aaaaaa' : '#454545',
+        secondary: prefersDarkMode ? '#aaaaaa' : '#595959',
       },
     }
 
     return createMuiTheme({
       typography: {
         fontSize: 16,
+
+        // use responsiveFontSizes
 
         fontFamily: [
           '-apple-system',
@@ -88,14 +92,14 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
         MuiCssBaseline: {
           '@global': {
             '*::selection': {
-              backgroundColor: fade(palette.primary.main, 0.3),
+              backgroundColor: fade(palette.primary.main, 0.2),
             },
 
             html: {
               userSelect: 'none',
               overscrollBehavior: 'none',
               '-webkit-touch-callout': 'none',
-              maxWidth: '600px',
+              maxWidth: '900px',
               margin: 'auto',
               '&, & body': {
                 height: '100%',

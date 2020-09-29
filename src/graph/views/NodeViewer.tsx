@@ -19,7 +19,7 @@
 
 import React from 'react'
 
-import { NodeLayout, EdgeList, useGraph } from 'graph'
+import { NodeLayout, EdgeList, useGraph, ActiveProvider } from 'graph'
 
 interface NodeViewerProps {
   id?: string
@@ -28,15 +28,13 @@ interface NodeViewerProps {
 export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
   useGraph(graph => {
     const lookup = graph.Node.get(id)
-    let node = graph.rootNode
-
-    if (lookup) {
-      node = lookup
-    }
+    const node = lookup ?? graph.rootNode
 
     return node ? (
-      <NodeLayout node={node}>
-        <EdgeList node={node} edgeTag="child" outer />
-      </NodeLayout>
+      <ActiveProvider value={node}>
+        <NodeLayout node={node}>
+          <EdgeList node={node} edgeTag="child" />
+        </NodeLayout>
+      </ActiveProvider>
     ) : null
   })

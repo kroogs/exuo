@@ -20,29 +20,36 @@
 import {
   Instance,
   applySnapshot,
-  getSnapshot,
   SnapshotIn,
-  SnapshotOut,
   IAnyModelType,
 } from 'mobx-state-tree'
 
 import { persist } from 'store/persist'
-import { Note } from 'note'
 
-import { graphFactory, nodeFactory } from './factories'
+import { graphFactory } from './factories'
 import { Node } from './Node'
 import { Config } from './Config'
 
 export const Graph = graphFactory({
   Node,
-  Config: nodeFactory(Config),
-  Note: nodeFactory(Note),
+  Config,
 })
   .actions(self => ({
+    // TODO mode and select stuff don't belong here
+
     setActiveMode(mode: string) {
       const activeModes = self.activeModes
       if (!activeModes?.includes(mode)) {
         activeModes.push(mode)
+
+        if (mode === 'select') {
+          activeModes.remove('edit')
+        }
+
+        if (mode === 'edit') {
+          activeModes.remove('select')
+          self.clearSelectedNodes()
+        }
       }
     },
 
@@ -60,7 +67,6 @@ export const Graph = graphFactory({
         return
       }
 
-      // TODO mode logic doesn't belong here
       if (activeModes.includes(mode)) {
         activeModes.remove(mode)
 
@@ -123,7 +129,7 @@ export const Graph = graphFactory({
       self.clearSelectedNodes()
     },
 
-    moveSelectedNodes() {
+    moveSelectedNodes(target: Instance<typeof Node>) {
       for (const [accessorId, nodeIds] of self.selectedNodes) {
         const accessor = self.Node.get(accessorId)
         for (const nodeId of nodeIds) {
@@ -132,8 +138,8 @@ export const Graph = graphFactory({
             node.removeEdge('parent', accessor)
             accessor.removeEdge('child', node)
 
-            node.addEdge('parent', self.cursorNode)
-            self.cursorNode.addEdge('child', node)
+            node.addEdge('parent', target)
+            target.addEdge('child', node)
           }
         }
       }
@@ -145,13 +151,13 @@ export const Graph = graphFactory({
       //
     },
 
-    linkSelectedNodes() {
+    linkSelectedNodes(target: Instance<typeof Node>) {
       for (const nodeIds of self.selectedNodes.values()) {
         for (const nodeId of nodeIds) {
           const node = self.Node.get(nodeId)
           if (node) {
-            node.addEdge('parent', self.cursorNode)
-            self.cursorNode.addEdge('child', node)
+            node.addEdge('parent', target)
+            target.addEdge('child', node)
           }
         }
       }
@@ -191,10 +197,6 @@ export const Graph = graphFactory({
 
       self.clearSelectedNodes()
     },
-
-    setCursorNode(node: Instance<typeof Node>) {
-      self.Config.get('system').set('cursorNodeId', node.id)
-    },
   }))
 
   .actions(self => ({
@@ -205,7 +207,7 @@ export const Graph = graphFactory({
         })
         .then(() => {
           if (!self.rootNode) {
-            const rootNode = self.createNode('Node', { label: 'Exuo' })
+            const rootNode = self.createNode('Node', { content: 'Exuo' })
             applySnapshot(self.Config, {
               system: {
                 id: 'system',
@@ -242,11 +244,6 @@ export const Graph = graphFactory({
     get rootNode() {
       const config = self.Config.get('system')
       return self.Node.get(config?.get('rootNodeId'))
-    },
-
-    get cursorNode() {
-      const config = self.Config.get('system')
-      return self.Node.get(config.get('cursorNodeId')) ?? self.rootNode
     },
 
     get activeModes() {

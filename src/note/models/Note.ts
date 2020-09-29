@@ -20,22 +20,19 @@
 import { types } from 'mobx-state-tree'
 import { convertToRaw } from 'draft-js'
 
-export const Note = types
+import { nodeFactory } from 'graph'
+
+// Avoid circular dependency issue
+import { Unknown } from 'graph/models/Unknown'
+
+const NoteBase = types
   .model('Note', {
-    label: types.string,
-    summary: types.maybe(types.string),
-    rawContentState: types.maybe(types.string),
+    content: types.maybe(Unknown),
   })
   .actions(self => ({
-    setLabel(label: string) {
-      self.label = label
-    },
-
-    setSummary(summary: string) {
-      self.summary = summary
-    },
-
-    setRawContentState(value: ReturnType<typeof convertToRaw>) {
-      self.rawContentState = JSON.stringify(value)
+    setContent(value: ReturnType<typeof convertToRaw>) {
+      self.content = value
     },
   }))
+
+export const Note = nodeFactory(NoteBase)

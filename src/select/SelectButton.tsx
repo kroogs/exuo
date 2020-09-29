@@ -35,10 +35,10 @@ import FlipToBackIcon from '@material-ui/icons/FlipToBackOutlined'
 import CancelIcon from '@material-ui/icons/CancelOutlined'
 import FolderIcon from '@material-ui/icons/FolderOutlined'
 import FileCopyIcon from '@material-ui/icons/FileCopyOutlined'
-import CropFreeIcon from '@material-ui/icons/CropFreeOutlined'
+import SelectAllIcon from '@material-ui/icons/SelectAll'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { useGraph, Node } from 'graph'
+import { useGraph, Node, useActive } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,8 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.main,
       fontSize: 12,
       position: 'absolute',
-      width: '100%',
-      bottom: -theme.spacing(1),
+      right: -theme.spacing(1),
     },
     selectButton: {},
     deleteButton: {
@@ -94,6 +93,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
   const anchorRef = React.useRef<HTMLButtonElement>(null)
+  const active = useActive()
 
   return useGraph(graph => {
     const selectedCount = graph.selectedNodeCount
@@ -111,7 +111,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
           className={classes.selectButton}
           {...extraProps}
         >
-          <CropFreeIcon />
+          <SelectAllIcon />
         </IconButton>
         <Popper
           open={open}
@@ -143,7 +143,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
 
                   <MenuItem
                     onClick={() => {
-                      graph.linkSelectedNodes()
+                      graph.linkSelectedNodes(active)
                       setOpen(false)
                     }}
                   >
@@ -164,7 +164,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
                   <MenuItem
                     divider
                     onClick={() => {
-                      graph.moveSelectedNodes()
+                      graph.moveSelectedNodes(active)
                       setOpen(false)
                     }}
                   >

@@ -24,7 +24,7 @@ import 'mobx-react-lite/batchingForReactDom'
 import { StoreProvider } from './store'
 import { ThemeProvider } from './theme'
 import { Router } from './route'
-/* import * as serviceWorker from './serviceWorker' */
+import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -37,4 +37,4 @@ ReactDOM.render(
   document.getElementById('root'),
 )
 
-/* serviceWorker.register() */
+serviceWorker.register()

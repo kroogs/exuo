@@ -19,9 +19,10 @@
 
 import { types, SnapshotIn, Instance } from 'mobx-state-tree'
 
+import { nodeFactory } from 'graph'
 import { Unknown } from './Unknown'
 
-export const Config = types
+const ConfigBase = types
   .model('Config', {
     name: types.maybe(types.string),
     items: types.map(Unknown),
@@ -39,3 +40,5 @@ export const Config = types
       return self.items.get(key)
     },
   }))
+
+export const Config = nodeFactory(ConfigBase)

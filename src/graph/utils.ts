@@ -17,11 +17,20 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import React from 'react'
 import { Instance } from 'mobx-state-tree'
 
 import { useStore } from 'store'
-
-import { Graph } from './models/Graph'
+import { Graph, Node } from 'graph'
 
 export const useGraph = <S>(selector: (s: Instance<typeof Graph>) => S): S =>
   useStore(store => selector(store.graph))
+
+export const activeContext = React.createContext<Instance<typeof Node> | null>(
+  null,
+)
+
+export const ActiveProvider = activeContext.Provider
+
+export const useActive = (): Instance<typeof Node | null> =>
+  React.useContext(activeContext)

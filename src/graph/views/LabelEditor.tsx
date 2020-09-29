@@ -38,8 +38,9 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface LabelEditorProps {
-  label?: string
+  content?: string
   placeholder?: string
+  autoFocus?: boolean
   className?: string
   onValue?: (
     value: string,
@@ -48,14 +49,15 @@ interface LabelEditorProps {
 }
 
 export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
-  label,
+  content,
   placeholder,
+  autoFocus,
   className,
   onValue,
 }) => {
   const inputRef = React.useRef<HTMLInputElement>()
   const classes = useStyles()
-  const [inputValue, setInputValue] = React.useState(label ?? '')
+  const [inputValue, setInputValue] = React.useState(content ?? '')
 
   const [didRender, setDidRender] = React.useState(false)
   React.useEffect(() => {
@@ -76,7 +78,12 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
     }
 
     const handleClickAway = (event: React.MouseEvent<Document>): void => {
-      handleValue()
+      // TODO don't do a create when clicking away
+      // but this is how it should work when editing an existing record
+      // so back to a create mode? D:
+      if (inputValue === '') {
+        handleValue()
+      }
     }
 
     const handleKeyDown = (
@@ -85,6 +92,8 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
       if (event.keyCode === 13 && !event.shiftKey) {
         event.preventDefault()
         handleValue(event)
+      } else if (event.keyCode === 27) {
+        // TODO escape should also exit the editor, but this is ugly to try here
       }
     }
 
@@ -97,12 +106,13 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
         <InputBase
           fullWidth
           multiline
+          autoFocus={autoFocus}
           inputRef={inputRef}
           placeholder={placeholder}
           value={inputValue}
           onKeyDown={handleKeyDown}
           onChange={handleChange}
-          inputProps={{ 'aria-label': 'label' }}
+          inputProps={{ 'aria-label': 'text' }}
           className={[classes.root, className].join(' ')}
         />
       </ClickAwayListener>
@@ -111,5 +121,5 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
 }
 
 LabelEditor.defaultProps = {
-  placeholder: 'Label',
+  placeholder: 'Text',
 }
