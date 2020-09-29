@@ -47,8 +47,6 @@ import {
   Editor,
   EditorState,
   RichUtils,
-  Modifier,
-  SelectionState,
   getDefaultKeyBinding,
   convertFromRaw,
   convertToRaw,
@@ -84,12 +82,6 @@ interface ButtonConfig {
 }
 
 const BLOCK_TYPES: Array<ButtonConfig> = [
-  /* { label: 'H1', style: 'header-one' }, */
-  /* { label: 'H2', style: 'header-two' }, */
-  /* { label: 'H3', style: 'header-three' }, */
-  /* { label: 'H4', style: 'header-four' }, */
-  /* { label: 'H5', style: 'header-five' }, */
-  /* { label: 'H6', style: 'header-six' }, */
   {
     label: 'UL',
     style: 'unordered-list-item',
@@ -108,7 +100,6 @@ const INLINE_STYLES: Array<ButtonConfig> = [
 ]
 
 const getBlockStyle = (block: ContentBlock): string => {
-  /* console.log('block type', block.getType()) */
   switch (block.getType()) {
     case 'blockquote':
       return 'RichEditor-blockquote'
@@ -337,13 +328,15 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
       ),
     )
 
+    const isMobile = useMediaQuery('(pointer: coarse) and (hover: none)')
+    const [submitOnReturn, setSubmitOnReturn] = React.useState(!isMobile)
+
     React.useEffect(() => {
       if (autoFocus) {
         setEditorState(EditorState.moveFocusToEnd(editorState))
       }
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Needs to ensure the containerRef is partly offscreen before running
     /* React.useEffect(() => { */
     /*   containerRef.current?.scrollIntoView(false) */
     /* }) */
@@ -398,9 +391,17 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
     const mapKeyToEditorCommand = (
       event: React.KeyboardEvent,
     ): DraftEditorCommand | null => {
-      if (event.keyCode === 13 && !event.shiftKey) {
-        handleValue()
-        return null
+      if (event.keyCode === 13) {
+        if (submitOnReturn && !event.shiftKey) {
+          handleValue()
+          return null
+        } else if (!submitOnReturn && event.shiftKey) {
+          handleValue()
+          return null
+        } else {
+          setSubmitOnReturn(false)
+          return getDefaultKeyBinding(event)
+        }
       } else if (event.keyCode === 27) {
         onEscape?.()
         return null
