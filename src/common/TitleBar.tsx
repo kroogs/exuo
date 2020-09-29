@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.default,
       padding: theme.spacing(0, 2, 0, 2),
     },
+
     backButton: {
       cursor: 'pointer',
       '&[disabled]': {
@@ -41,11 +42,14 @@ const useStyles = makeStyles((theme: Theme) =>
         pointerEvents: 'none',
       },
     },
+
     hide: {
       visibility: 'hidden',
       mouseEvents: 'none',
     },
+
     settingsButton: {},
+
     title: {
       flexGrow: 1,
       textAlign: 'center',
@@ -90,7 +94,7 @@ export const TitleBar: React.FunctionComponent<TitleBarProps> = ({
       </IconButton>
 
       {title && (
-        <Typography variant="h6" className={classes.title}>
+        <Typography variant="h6" component="h1" className={classes.title}>
           {newlinePosition > 0 ? title.slice(0, title.indexOf('\n')) : title}
         </Typography>
       )}
