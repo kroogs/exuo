@@ -35,10 +35,7 @@ import SearchIcon from '@material-ui/icons/Search'
 import TuneIcon from '@material-ui/icons/Tune'
 import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
-import { useNavigate } from '@reach/router'
 
-import { makeUrl } from 'route'
-import { NoteEditor } from 'note'
 import { SelectButton } from 'select'
 import { Node, useGraph } from 'graph'
 
@@ -51,6 +48,8 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         justifyContent: 'center',
       },
+
+      minHeight: theme.spacing(8),
 
       backdropFilter: 'blur(3px)',
       background: `
@@ -105,7 +104,6 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
   className,
 }) => {
   const classes = useStyles()
-  const navigate = useNavigate()
 
   return useGraph(graph => {
     const hasChildren = node.childCount > 0

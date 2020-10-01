@@ -17,9 +17,15 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types, IAnyType, Instance, getParentOfType } from 'mobx-state-tree'
+import {
+  types,
+  IAnyType,
+  Instance,
+  getParentOfType,
+  getSnapshot,
+} from 'mobx-state-tree'
 
-import { nodeFactory, edgeMapFactory, Config, Graph } from 'graph'
+import { nodeFactory, edgeMapFactory, ViewerConfig, Graph } from 'graph'
 
 // Avoid circular dependency
 import { Unknown } from 'graph/models/Unknown'
@@ -28,7 +34,7 @@ export const Node = nodeFactory([
   edgeMapFactory(() =>
     types.union(
       types.late((): IAnyType => Node),
-      Config,
+      ViewerConfig,
     ),
   ),
 ])
@@ -45,66 +51,21 @@ export const Node = nodeFactory([
       return getParentOfType(self, Graph)
     },
 
-    getConfig(): Instance<typeof Config> {
+    getConfig(doCreate?: boolean): Instance<typeof ViewerConfig> | void {
       if (self.edgeMap.get('config')?.length) {
         return self.edgeMap.get('config')?.[0]
+      } else if (doCreate) {
+        const config = self.graphRoot().createNode('ViewerConfig', {})
+        self.addEdge('config', config)
+        return config
+      } else {
+        return
       }
-
-      const config = self.graphRoot().createNode('Config', {})
-      self.addEdge('config', config)
-
-      return config
-    },
-
-    toggleExpand(node: Instance<IAnyType>, parentNode: Instance<IAnyType>) {
-      return
-
-      // const config = self.getConfig()
-      // let expandedNodes = config.get('expandedNodes')
-
-      // if (!expandedNodes) {
-      //   expandedNodes = config.set('expandedNodes', {
-      //     [parentNode.id]: [node.id],
-      //   })
-      // }
-
-      // const nodeIds = expandedNodes.get(parentNode.id)
-
-      // if (nodeIds) {
-      //   if (nodeIds.includes(node.id)) {
-      //     nodeIds.remove(node.id)
-      //     if (nodeIds.length === 0) {
-      //       expandedNodes.delete(parentNode.id)
-      //     }
-      //   } else {
-      //     nodeIds.push(node.id)
-      //   }
-      // }
-    },
-
-    isExpanded(
-      node: Instance<IAnyType>,
-      parentNode: Instance<IAnyType>,
-    ): boolean {
-      return false
-
-      // Something Fucky's Going On 8|
-      // return Boolean(
-      //   self
-      //     .getConfig()
-      //     .get('expandedNodes')
-      //     ?.get(parentNode.id)
-      //     ?.includes(node.id),
-      // )
     },
   }))
 
   .views(self => ({
     get childCount(): number {
       return self.edgeMap.get('child')?.length ?? 0
-    },
-
-    get expandedNodes() {
-      return self.getConfig().get('expandedNodes')
     },
   }))

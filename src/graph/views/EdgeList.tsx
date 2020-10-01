@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
       borderBottom: `.01px solid ${theme.palette.divider}`,
       '&.inner': {
+        borderTop: `.01px solid ${theme.palette.divider}`,
         borderBottom: 'unset',
       },
     },

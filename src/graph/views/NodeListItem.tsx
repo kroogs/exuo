@@ -189,16 +189,20 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
 }) => {
   const classes = useStyles()
   const navigate = useNavigate()
-  const [isEditing, setIsEditing] = React.useState(false)
   const active = useActive()
+  const [isEditing, setIsEditing] = React.useState(false)
 
   return useGraph(graph => {
-    const isExpanded = active?.isExpanded(node, parentNode) ?? false
+    const config = active?.getConfig()
+    const isExpanded =
+      config?.getItem(parentNode.id, node.id)?.expanded ?? false
     const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
 
     const toggleExpand = (): void => {
-      active.toggleExpand(node, parentNode)
-      console.log('expanded nodes', active.expandedNodes)
+      const configItem = active
+        ?.getConfig(true)
+        ?.getItem(parentNode.id, node.id, true)
+      configItem.setExpanded(!configItem.expanded)
     }
 
     const handleItemClick: React.EventHandler<React.MouseEvent> = e => {
@@ -221,11 +225,13 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     }
 
     const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
-      if (e.altKey) {
-        e.preventDefault()
-        toggleExpand()
-        return
-      }
+      e.preventDefault()
+      toggleExpand()
+      /* if (e.altKey) { */
+      /*   e.preventDefault() */
+      /*   toggleExpand() */
+      /*   return */
+      /* } */
     }
 
     let primaryText = node.id

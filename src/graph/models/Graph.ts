@@ -29,10 +29,12 @@ import { persist } from 'store/persist'
 import { graphFactory } from './factories'
 import { Node } from './Node'
 import { Config } from './Config'
+import { ViewerConfig } from './ViewerConfig'
 
 export const Graph = graphFactory({
   Node,
   Config,
+  ViewerConfig,
 })
   .actions(self => ({
     // TODO mode and select stuff don't belong here

@@ -24,6 +24,7 @@ export * from './models/Graph'
 export * from './models/Node'
 export * from './models/Config'
 export * from './models/Unknown'
+export * from './models/ViewerConfig'
 
 export * from './views/EdgeList'
 export * from './views/LabelEditor'

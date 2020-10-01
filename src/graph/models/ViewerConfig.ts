@@ -17,24 +17,42 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types, SnapshotIn, Instance } from 'mobx-state-tree'
+import { types, Instance } from 'mobx-state-tree'
 
 import { nodeFactory } from 'graph'
-import { Unknown } from './Unknown'
 
-const ConfigBase = types
-  .model('Config', {
-    name: types.maybe(types.string),
-    items: types.map(Unknown),
+const ViewerConfigItem = types
+  .model('ViewerConfigItem', {
+    expanded: types.optional(types.boolean, false),
   })
   .actions(self => ({
-    set(key: string, value: SnapshotIn<typeof Unknown>): void {
-      self.items.set(key, value)
-    },
-
-    get(key: string): Instance<typeof Unknown> {
-      return self.items.get(key)
+    setExpanded(value: boolean) {
+      self.expanded = value
     },
   }))
 
-export const Config = nodeFactory(ConfigBase)
+const ViewerConfigBase = types
+  .model('ViewerConfig', {
+    items: types.map(types.map(ViewerConfigItem)),
+  })
+  .actions(self => ({
+    getItem(
+      parentId: string,
+      childId: string,
+      doCreate?: boolean,
+    ): Instance<typeof ViewerConfigItem> | void {
+      let item = self.items.get(parentId)?.get(childId)
+
+      if (!item && doCreate) {
+        item = ViewerConfigItem.create()
+
+        self.items.set(parentId, {
+          [childId]: item,
+        })
+      }
+
+      return item
+    },
+  }))
+
+export const ViewerConfig = nodeFactory(ViewerConfigBase)

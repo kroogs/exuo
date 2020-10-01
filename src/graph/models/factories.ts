@@ -64,8 +64,7 @@ export const edgeMapFactory = (getEdgeType: EdgeResolver): IAnyModelType =>
       removeEdge(tag: string, target: Instance<IAnyModelType>): void {
         self.edgeMap.get(tag)?.remove(target)
       },
-    }))
-    .views(self => ({
+
       getEdgeTag(tag: string): void | Array<Instance<IAnyModelType>> {
         return self.edgeMap.get(tag)
       },

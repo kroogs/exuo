@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       textAlign: 'center',
       position: 'relative',
-      paddingBottom: theme.spacing(9),
+      paddingBottom: theme.spacing(8),
     },
 
     appBar: {
@@ -90,16 +90,16 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
   const classes = useStyles()
   const navigate = useNavigate()
 
-  React.useEffect(() => {
-    const handler = (event: KeyboardEvent): void => {
-      console.log({ event })
-    }
+  /* React.useEffect(() => { */
+  /*   const handler = (event: KeyboardEvent): void => { */
+  /*     console.log({ event }) */
+  /*   } */
 
-    document.addEventListener('keydown', handler)
-    return () => {
-      document.removeEventListener('keydown', handler)
-    }
-  })
+  /*   document.addEventListener('keydown', handler) */
+  /*   return () => { */
+  /*     document.removeEventListener('keydown', handler) */
+  /*   } */
+  /* }) */
 
   return useGraph(graph => {
     let titleText: string
