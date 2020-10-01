@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import {
   List,
   ListItem,
@@ -34,8 +35,9 @@ import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import { Layout } from 'common'
 import { useGraph } from 'graph'
 
-export const Settings: React.FunctionComponent = () => {
-  return useGraph(graph => (
+export const Settings: React.FunctionComponent = observer(() => {
+  const graph = useGraph()
+  return (
     <Layout>
       <List subheader={<ListSubheader>Global</ListSubheader>}>
         <ListItem>
@@ -107,5 +109,5 @@ export const Settings: React.FunctionComponent = () => {
         </ListItem>
       </List>
     </Layout>
-  ))
-}
+  )
+})

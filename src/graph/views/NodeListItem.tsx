@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import {
   Collapse,
   Button,
@@ -37,14 +38,6 @@ import { useGraph, Node, EdgeList, useActive } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    itemContainer: {
-      '&.isExpanded': {
-        /* background: theme.palette.background.default, */
-        /* position: 'sticky', */
-        /* top: 65, */
-      },
-    },
-
     listItem: {
       position: 'relative',
       cursor: 'pointer',
@@ -68,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
         color: 'unset',
       },
 
-      '&.isEditing, &.isEditing + li': {
+      '&.isEditing, &.isEditing + li, &.isEditing + .MuiCollapse-entered .MuiList-root': {
         borderColor: 'transparent',
       },
 
@@ -180,29 +173,29 @@ interface NodeListItemProps {
   className?: string
 }
 
-export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
-  node,
-  parentNode,
-  expandSecondaryTypography,
-  expanded,
-  className,
-}) => {
-  const classes = useStyles()
-  const navigate = useNavigate()
-  const active = useActive()
-  const [isEditing, setIsEditing] = React.useState(false)
+export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer(
+  ({ node, parentNode, expandSecondaryTypography, expanded, className }) => {
+    const classes = useStyles()
+    const navigate = useNavigate()
+    const active = useActive()
+    const [isEditing, setIsEditing] = React.useState(false)
+    const graph = useGraph()
 
-  return useGraph(graph => {
+    // TODO
+    // detect enter key after setIsEditing(false) to turn it back on
+    // update bug where expanding causes all rows to recalc
+    // viewconfig doesn't get shared with navigated children
+
     const config = active?.getConfig()
+    const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
     const isExpanded =
       config?.getItem(parentNode.id, node.id)?.expanded ?? false
-    const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
 
     const toggleExpand = (): void => {
-      const configItem = active
+      const itemConfig = active
         ?.getConfig(true)
         ?.getItem(parentNode.id, node.id, true)
-      configItem.setExpanded(!configItem.expanded)
+      itemConfig?.setExpanded(!itemConfig.expanded)
     }
 
     const handleItemClick: React.EventHandler<React.MouseEvent> = e => {
@@ -225,13 +218,14 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
     }
 
     const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
-      e.preventDefault()
-      toggleExpand()
-      /* if (e.altKey) { */
-      /*   e.preventDefault() */
-      /*   toggleExpand() */
-      /*   return */
-      /* } */
+      if (
+        !graph.activeModes.includes('edit') ||
+        !graph.activeModes.includes('select') ||
+        e.altKey
+      ) {
+        e.preventDefault()
+        toggleExpand()
+      }
     }
 
     let primaryText = node.id
@@ -261,14 +255,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         <ListItem
           onClick={handleItemClick}
           selected={isSelected}
-          component="li"
-          ContainerProps={{
-            className: [
-              classes.itemContainer,
-              node.childCount > 0 && isExpanded ? 'isExpanded' : '',
-              className,
-            ].join(' '),
-          }}
           className={[
             classes.listItem,
             graph.activeModes.includes('edit') ? 'editMode' : '',
@@ -347,8 +333,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = ({
         )}
       </>
     )
-  })
-}
+  },
+)
 
 NodeListItem.defaultProps = {
   expandSecondaryTypography: true,

@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import { AppBar, Box, fade } from '@material-ui/core'
 import { Instance } from 'mobx-state-tree'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
@@ -84,26 +85,12 @@ interface LayoutProps {
   className?: string
 }
 
-export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
-  node,
-  className,
-  children,
-}) => {
-  const classes = useStyles()
-  const navigate = useNavigate()
+export const NodeLayout: React.FunctionComponent<LayoutProps> = observer(
+  ({ node, className, children }) => {
+    const classes = useStyles()
+    const navigate = useNavigate()
+    const graph = useGraph()
 
-  /* React.useEffect(() => { */
-  /*   const handler = (event: KeyboardEvent): void => { */
-  /*     console.log({ event }) */
-  /*   } */
-
-  /*   document.addEventListener('keydown', handler) */
-  /*   return () => { */
-  /*     document.removeEventListener('keydown', handler) */
-  /*   } */
-  /* }) */
-
-  return useGraph(graph => {
     let titleText: string
     const content = node.content?.toJSON?.()
 
@@ -160,5 +147,5 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = ({
         />
       </Box>
     )
-  })
-}
+  },
+)

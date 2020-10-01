@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 
 import { NodeLayout, EdgeList } from 'graph'
 
@@ -28,13 +29,11 @@ interface InstanceViewerProps {
   type?: string
 }
 
-export const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
-  id,
-  type,
-}) =>
-  useStore(store => {
-    let instance = store.graph.rootNode
+export const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = observer(
+  ({ id, type }) => {
+    const store = useStore()
     const node = store.graph.Node.get(id)
+    let instance = store.graph.rootNode
 
     if (node) {
       instance = node
@@ -45,4 +44,5 @@ export const InstanceViewer: React.FunctionComponent<InstanceViewerProps> = ({
         <EdgeList node={instance} edgeTag="child" />
       </NodeLayout>
     ) : null
-  })
+  },
+)

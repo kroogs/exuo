@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 
 import { NodeLayout, EdgeList, useGraph, ActiveProvider } from 'graph'
 
@@ -25,8 +26,10 @@ interface NodeViewerProps {
   id?: string
 }
 
-export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
-  useGraph(graph => {
+export const NodeViewer: React.FunctionComponent<NodeViewerProps> = observer(
+  ({ id }) => {
+    const graph = useGraph()
+
     const lookup = graph.Node.get(id)
     const node = lookup ?? graph.rootNode
 
@@ -37,4 +40,5 @@ export const NodeViewer: React.FunctionComponent<NodeViewerProps> = ({ id }) =>
         </NodeLayout>
       </ActiveProvider>
     ) : null
-  })
+  },
+)

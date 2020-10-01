@@ -21,8 +21,6 @@ import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import { InputBase, ClickAwayListener } from '@material-ui/core'
 
-import { useGraph } from 'graph'
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -67,57 +65,53 @@ export const LabelEditor: React.FunctionComponent<LabelEditorProps> = ({
     }
   }, [didRender, inputValue.length])
 
-  return useGraph(graph => {
-    const handleValue = (
-      event?: React.KeyboardEvent<HTMLInputElement>,
-    ): void => {
-      if (onValue) {
-        setInputValue('')
-        onValue(inputValue, event)
-      }
+  const handleValue = (event?: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (onValue) {
+      setInputValue('')
+      onValue(inputValue, event)
     }
+  }
 
-    const handleClickAway = (event: React.MouseEvent<Document>): void => {
-      // TODO don't do a create when clicking away
-      // but this is how it should work when editing an existing record
-      // so back to a create mode? D:
-      if (inputValue === '') {
-        handleValue()
-      }
+  const handleClickAway = (event: React.MouseEvent<Document>): void => {
+    // TODO don't do a create when clicking away
+    // but this is how it should work when editing an existing record
+    // so back to a create mode? D:
+    if (inputValue === '') {
+      handleValue()
     }
+  }
 
-    const handleKeyDown = (
-      event: React.KeyboardEvent<HTMLInputElement>,
-    ): void => {
-      if (event.keyCode === 13 && !event.shiftKey) {
-        event.preventDefault()
-        handleValue(event)
-      } else if (event.keyCode === 27) {
-        // TODO escape should also exit the editor, but this is ugly to try here
-      }
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ): void => {
+    if (event.keyCode === 13 && !event.shiftKey) {
+      event.preventDefault()
+      handleValue(event)
+    } else if (event.keyCode === 27) {
+      // TODO escape should also exit the editor, but this is ugly to try here
     }
+  }
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-      setInputValue(event.target.value)
-    }
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setInputValue(event.target.value)
+  }
 
-    return (
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <InputBase
-          fullWidth
-          multiline
-          autoFocus={autoFocus}
-          inputRef={inputRef}
-          placeholder={placeholder}
-          value={inputValue}
-          onKeyDown={handleKeyDown}
-          onChange={handleChange}
-          inputProps={{ 'aria-label': 'text' }}
-          className={[classes.root, className].join(' ')}
-        />
-      </ClickAwayListener>
-    )
-  })
+  return (
+    <ClickAwayListener onClickAway={handleClickAway}>
+      <InputBase
+        fullWidth
+        multiline
+        autoFocus={autoFocus}
+        inputRef={inputRef}
+        placeholder={placeholder}
+        value={inputValue}
+        onKeyDown={handleKeyDown}
+        onChange={handleChange}
+        inputProps={{ 'aria-label': 'text' }}
+        className={[classes.root, className].join(' ')}
+      />
+    </ClickAwayListener>
+  )
 }
 
 LabelEditor.defaultProps = {

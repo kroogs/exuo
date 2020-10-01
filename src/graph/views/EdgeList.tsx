@@ -18,11 +18,11 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import { List } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { IAnyModelType, Instance } from 'mobx-state-tree'
 
-import { useGraph } from '../utils'
 import { NodeListItem } from './NodeListItem'
 import { Node } from '../models/Node'
 
@@ -31,15 +31,15 @@ const useStyles = makeStyles((theme: Theme) =>
     list: {
       padding: 0,
       '&>li': {
-        borderTop: `.01px solid ${theme.palette.divider}`,
+        borderTop: `.1px solid ${theme.palette.divider}`,
         '&:first-child': {
           borderTop: 'unset',
         },
       },
 
-      borderBottom: `.01px solid ${theme.palette.divider}`,
+      borderBottom: `.1px solid ${theme.palette.divider}`,
       '&.inner': {
-        borderTop: `.01px solid ${theme.palette.divider}`,
+        borderTop: `.1px solid ${theme.palette.divider}`,
         borderBottom: 'unset',
       },
     },
@@ -53,15 +53,19 @@ interface EdgeListProps {
   className?: string
 }
 
-export const EdgeList: React.FunctionComponent<EdgeListProps> = ({
-  node,
-  edgeTag,
-  inner,
-  className,
-}) => {
-  const classes = useStyles()
-  return useGraph(graph => {
+export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
+  ({ node, edgeTag, inner, className }) => {
+    const classes = useStyles()
     const edges = node.edgeMap.get(edgeTag)
+
+    /* const [hasAnchor, setHasAnchor] = React.useState(true) */
+
+    /* React.useEffect(() => { */
+    /*   if (hasAnchor) { */
+    /*     window.scroll({ top: document.body.scrollHeight, behavior: 'smooth' }) */
+    /*   } */
+    /* }, [hasAnchor]) */
+
     return edges?.length ? (
       <List
         aria-label="edge list"
@@ -76,5 +80,5 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = ({
         ))}
       </List>
     ) : null
-  })
-}
+  },
+)

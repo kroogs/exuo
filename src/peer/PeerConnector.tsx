@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import { Box, Button, Typography, CircularProgress } from '@material-ui/core'
 import { IAnyStateTreeNode } from 'mobx-state-tree'
 import { useNavigate } from '@reach/router'
@@ -30,14 +31,13 @@ interface PeerConnectorProps {
   id?: string
 }
 
-export const PeerConnector: React.FunctionComponent<PeerConnectorProps> = ({
-  id,
-}) => {
-  const [peerError, setPeerError] = React.useState<null | Error>(null)
-  const [hasAccepted, setHasAccepted] = React.useState(false)
-  const navigate = useNavigate()
+export const PeerConnector: React.FunctionComponent<PeerConnectorProps> = observer(
+  ({ id }) => {
+    const [peerError, setPeerError] = React.useState<null | Error>(null)
+    const [hasAccepted, setHasAccepted] = React.useState(false)
+    const navigate = useNavigate()
+    const graph = useGraph()
 
-  return useGraph(graph => {
     const handleAccept: React.EventHandler<React.SyntheticEvent> = () => {
       setHasAccepted(true)
       graph
@@ -72,5 +72,5 @@ export const PeerConnector: React.FunctionComponent<PeerConnectorProps> = ({
         </Box>
       </Layout>
     )
-  })
-}
+  },
+)

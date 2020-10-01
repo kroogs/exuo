@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import {
   Toolbar,
   IconButton,
@@ -99,13 +100,10 @@ interface NodeActionsProps {
   className?: string
 }
 
-export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
-  node,
-  className,
-}) => {
-  const classes = useStyles()
-
-  return useGraph(graph => {
+export const NodeActions: React.FunctionComponent<NodeActionsProps> = observer(
+  ({ node, className }) => {
+    const classes = useStyles()
+    const graph = useGraph()
     const hasChildren = node.childCount > 0
     const selectedCount = graph.selectedNodes.size ?? 0
 
@@ -176,5 +174,5 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = ({
         </Toolbar>
       </Box>
     )
-  })
-}
+  },
+)

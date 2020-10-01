@@ -19,10 +19,9 @@
 
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
+import { observer } from 'mobx-react-lite'
 import {
   IconButton,
-  Button,
-  ButtonGroup,
   ClickAwayListener,
   Paper,
   Popper,
@@ -84,41 +83,38 @@ interface SelectButtonProps extends IconButtonProps {
   className?: string
 }
 
-export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
-  node,
-  className,
-  onClick,
-  ...extraProps
-}) => {
-  const classes = useStyles()
-  const [open, setOpen] = React.useState(false)
-  const anchorRef = React.useRef<HTMLButtonElement>(null)
-  const active = useActive()
-  const [showAltMenu, setShowAltMenu] = React.useState(false)
+export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer(
+  ({ node, className, onClick, ...extraProps }) => {
+    const classes = useStyles()
+    const [open, setOpen] = React.useState(false)
+    const anchorRef = React.useRef<HTMLButtonElement>(null)
+    const active = useActive()
+    const [showAltMenu, setShowAltMenu] = React.useState(false)
 
-  React.useEffect(() => {
-    const downHandler = (event: KeyboardEvent): void => {
-      if (event.key === 'Alt') {
-        setShowAltMenu(true)
+    React.useEffect(() => {
+      const downHandler = (event: KeyboardEvent): void => {
+        if (event.key === 'Alt') {
+          setShowAltMenu(true)
+        }
       }
-    }
 
-    const upHandler = (event: KeyboardEvent): void => {
-      if (event.key === 'Alt') {
-        setShowAltMenu(false)
+      const upHandler = (event: KeyboardEvent): void => {
+        if (event.key === 'Alt') {
+          setShowAltMenu(false)
+        }
       }
-    }
 
-    document.addEventListener('keydown', downHandler)
-    document.addEventListener('keyup', upHandler)
+      document.addEventListener('keydown', downHandler)
+      document.addEventListener('keyup', upHandler)
 
-    return () => {
-      document.removeEventListener('keydown', downHandler)
-      document.removeEventListener('keyup', upHandler)
-    }
-  })
+      return () => {
+        document.removeEventListener('keydown', downHandler)
+        document.removeEventListener('keyup', upHandler)
+      }
+    })
 
-  return useGraph(graph => {
+    const graph = useGraph()
+
     const selectedCount = graph.selectedNodeCount
     return (
       <div className={[classes.root, className].join(' ')}>
@@ -224,5 +220,5 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
         </Popper>
       </div>
     )
-  })
-}
+  },
+)

@@ -19,14 +19,13 @@
 
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
-import { useObserver } from 'mobx-react-lite'
 
 import { Store, storeContext } from 'store'
 
-export function useStore<S>(selector: (s: Instance<typeof Store>) => S): S {
+export function useStore(): Instance<typeof Store> {
   const store = React.useContext(storeContext)
   if (store) {
-    return useObserver(() => selector(store))
+    return store
   } else {
     throw Error('Cannot use store before setup')
   }

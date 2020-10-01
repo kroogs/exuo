@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import { List, ListItem, ListItemText } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { getMembers, Instance, isStateTreeNode } from 'mobx-state-tree'
@@ -38,11 +39,12 @@ interface PropertyEditorProps {
   minimal?: boolean
 }
 
-export const PropertyEditor: React.FunctionComponent<PropertyEditorProps> = props => {
-  const classes = useStyles()
-
-  return useGraph(graph => {
+export const PropertyEditor: React.FunctionComponent<PropertyEditorProps> = observer(
+  props => {
+    const classes = useStyles()
+    const graph = useGraph()
     let node = props.node
+
     if (typeof node === 'string') {
       node = graph.Node.get(props.node)
     }
@@ -73,5 +75,5 @@ export const PropertyEditor: React.FunctionComponent<PropertyEditorProps> = prop
         </List>
       </form>
     )
-  })
-}
+  },
+)

@@ -23,8 +23,7 @@ import { Instance } from 'mobx-state-tree'
 import { useStore } from 'store'
 import { Graph, Node } from 'graph'
 
-export const useGraph = <S>(selector: (s: Instance<typeof Graph>) => S): S =>
-  useStore(store => selector(store.graph))
+export const useGraph = (): Instance<typeof Graph> => useStore().graph
 
 export const activeContext = React.createContext<Instance<typeof Node> | null>(
   null,

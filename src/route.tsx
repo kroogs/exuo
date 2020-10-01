@@ -18,6 +18,7 @@
  */
 
 import React from 'react'
+import { observer } from 'mobx-react-lite'
 import * as reach from '@reach/router'
 
 import { useGraph } from 'graph'
@@ -39,14 +40,14 @@ export const Route: React.FunctionComponent<RouteProps> = ({
   ...props
 }) => <Component {...props} />
 
-export const Router: React.FunctionComponent = () =>
-  useGraph(graph =>
-    graph.rootNode ? (
-      <reach.Router basepath={process.env.PUBLIC_URL}>
-        <Route path="/" component={NodeViewer} />
-        <Route path=":type/:id" component={NodeViewer} />
-        <Route path="peer/:id" component={PeerConnector} />
-        <Route path="settings" component={Settings} />
-      </reach.Router>
-    ) : null,
-  )
+export const Router: React.FunctionComponent = observer(() => {
+  const graph = useGraph()
+  return graph.rootNode ? (
+    <reach.Router basepath={process.env.PUBLIC_URL}>
+      <Route path="/" component={NodeViewer} />
+      <Route path=":type/:id" component={NodeViewer} />
+      <Route path="peer/:id" component={PeerConnector} />
+      <Route path="settings" component={Settings} />
+    </reach.Router>
+  ) : null
+})
