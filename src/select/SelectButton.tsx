@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     paper: {
-      border: `.01px solid ${theme.palette.divider}`,
+      border: `.1px solid ${theme.palette.divider}`,
     },
     selectMenu: {
       outline: 0,
@@ -94,6 +94,29 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
   const [open, setOpen] = React.useState(false)
   const anchorRef = React.useRef<HTMLButtonElement>(null)
   const active = useActive()
+  const [showAltMenu, setShowAltMenu] = React.useState(false)
+
+  React.useEffect(() => {
+    const downHandler = (event: KeyboardEvent): void => {
+      if (event.key === 'Alt') {
+        setShowAltMenu(true)
+      }
+    }
+
+    const upHandler = (event: KeyboardEvent): void => {
+      if (event.key === 'Alt') {
+        setShowAltMenu(false)
+      }
+    }
+
+    document.addEventListener('keydown', downHandler)
+    document.addEventListener('keyup', upHandler)
+
+    return () => {
+      document.removeEventListener('keydown', downHandler)
+      document.removeEventListener('keyup', upHandler)
+    }
+  })
 
   return useGraph(graph => {
     const selectedCount = graph.selectedNodeCount
@@ -141,25 +164,27 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = ({
                     Remove
                   </MenuItem>
 
-                  <MenuItem
-                    onClick={() => {
-                      graph.linkSelectedNodes(active)
-                      setOpen(false)
-                    }}
-                  >
-                    <FlipToBackIcon />
-                    Link here
-                  </MenuItem>
-
-                  <MenuItem
-                    disabled
-                    onClick={() => {
-                      setOpen(false)
-                    }}
-                  >
-                    <FileCopyIcon />
-                    Copy here
-                  </MenuItem>
+                  {showAltMenu ? (
+                    <MenuItem
+                      onClick={() => {
+                        graph.linkSelectedNodes(active)
+                        setOpen(false)
+                      }}
+                    >
+                      <FlipToBackIcon />
+                      Link here
+                    </MenuItem>
+                  ) : (
+                    <MenuItem
+                      disabled
+                      onClick={() => {
+                        setOpen(false)
+                      }}
+                    >
+                      <FileCopyIcon />
+                      Copy here
+                    </MenuItem>
+                  )}
 
                   <MenuItem
                     divider
