@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
     appBar: {
       position: 'sticky',
-      borderBottom: `.01px solid ${theme.palette.divider}`,
+      borderBottom: `.1px solid ${theme.palette.divider}`,
       backdropFilter: 'blur(3px)',
       background: `
         linear-gradient(
@@ -53,15 +53,17 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'unset',
     },
 
-    children: {},
+    children: {
+      marginBottom: '-.1px',
+    },
 
     textEditor: {
       position: 'sticky',
-      bottom: 0,
+      bottom: theme.spacing(8),
     },
 
     actions: {
-      borderTop: `.01px solid ${theme.palette.divider}`,
+      borderTop: `.1px solid ${theme.palette.divider}`,
       zIndex: theme.zIndex.appBar,
 
       position: 'fixed',
