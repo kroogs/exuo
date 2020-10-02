@@ -183,7 +183,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
 
     // TODO
     // detect enter key after setIsEditing(false) to turn it back on
-    // update bug where expanding causes all rows to recalc
     // viewconfig doesn't get shared with navigated children
 
     const config = active?.getConfig()
@@ -219,8 +218,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
 
     const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
       if (
-        !graph.activeModes.includes('edit') ||
-        !graph.activeModes.includes('select') ||
+        (!graph.activeModes.includes('edit') &&
+          !graph.activeModes.includes('select')) ||
         e.altKey
       ) {
         e.preventDefault()
