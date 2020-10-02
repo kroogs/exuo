@@ -17,13 +17,7 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  types,
-  IAnyType,
-  Instance,
-  getParentOfType,
-  getSnapshot,
-} from 'mobx-state-tree'
+import { types, IAnyType, Instance, getParentOfType } from 'mobx-state-tree'
 
 import { nodeFactory, edgeMapFactory, ViewerConfig, Graph } from 'graph'
 
@@ -47,17 +41,14 @@ export const Node = nodeFactory([
       self.content = content
     },
 
-    graphRoot(): Instance<IAnyType> {
-      return getParentOfType(self, Graph)
-    },
-
     getConfig(doCreate?: boolean): Instance<typeof ViewerConfig> | void {
-      if (self.edgeMap.get('config')?.length) {
+      if (self.edgeMap.has('config')) {
         return self.edgeMap.get('config')?.[0]
       } else if (doCreate) {
-        const config = self.graphRoot().createNode('ViewerConfig', {})
-        self.addEdge('config', config)
-        return config
+        return self.addEdge(
+          'config',
+          self.graphRoot.createNode('ViewerConfig', {}),
+        )
       } else {
         return
       }
@@ -67,5 +58,9 @@ export const Node = nodeFactory([
   .views(self => ({
     get childCount(): number {
       return self.edgeMap.get('child')?.length ?? 0
+    },
+
+    get graphRoot(): Instance<IAnyType> {
+      return getParentOfType(self, Graph)
     },
   }))
