@@ -31,5 +31,11 @@ export const activeContext = React.createContext<Instance<typeof Node> | null>(
 
 export const ActiveProvider = activeContext.Provider
 
-export const useActive = (): Instance<typeof Node | null> =>
-  React.useContext(activeContext)
+export const useActive = (): Instance<typeof Node> => {
+  const active = React.useContext(activeContext)
+  if (active) {
+    return active
+  } else {
+    throw Error('Cannot use active Node before setup')
+  }
+}
