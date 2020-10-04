@@ -53,12 +53,14 @@ export const edgeMapFactory = (getEdgeType: EdgeResolver): IAnyModelType =>
       },
     }))
     .actions(self => ({
-      addEdge(tag: string, target: Instance<IAnyModelType>): void {
+      addEdge<T extends Instance<IAnyModelType>>(tag: string, target: T): T {
         if (!self.edgeMap.has(tag)) {
           self.edgeMap.set(tag, [])
         }
 
         self.edgeMap.get(tag)?.push(target)
+
+        return target
       },
 
       removeEdge(tag: string, target: Instance<IAnyModelType>): void {
