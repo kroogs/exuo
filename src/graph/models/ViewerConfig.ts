@@ -35,23 +35,42 @@ const ViewerConfigBase = types
   .model('ViewerConfig', {
     items: types.map(types.map(ViewerConfigItem)),
   })
-  .actions(self => ({
+
+  .views(self => ({
     getItem(
       parentId: string,
       childId: string,
-      doCreate?: boolean,
     ): Instance<typeof ViewerConfigItem> | void {
-      let item = self.items.get(parentId)?.get(childId)
+      if (self.items.size) {
+        const parent = self.items.get(parentId)
+        if (parent && parent.size) {
+          return parent.get(childId)
+        }
+      }
+    },
+  }))
 
-      if (!item && doCreate) {
-        item = ViewerConfigItem.create()
+  .actions(self => ({
+    initItem(
+      parentId: string,
+      childId: string,
+    ): Instance<typeof ViewerConfigItem> | void {
+      const item = self.getItem(parentId, childId)
 
-        self.items.set(parentId, {
-          [childId]: item,
-        })
+      if (!item) {
+        const parent = self.items.get(parentId)
+        const item = ViewerConfigItem.create()
+
+        if (parent) {
+          parent.set(childId, item)
+        } else {
+          self.items.set(parentId, {
+            [childId]: item,
+          })
+        }
       }
 
-      return item
+      return self.getItem(parentId, childId)
     },
   }))
 

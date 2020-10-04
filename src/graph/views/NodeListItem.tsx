@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
 
       '&.isEditing, &.isEditing + li, &.isEditing + .MuiCollapse-entered .MuiList-root': {
-        borderColor: 'transparent',
+        borderTop: `.1px solid transparent`,
       },
 
       '&.Mui-selected': {
@@ -169,32 +169,26 @@ interface NodeListItemProps {
   node: Instance<typeof Node>
   parentNode: Instance<typeof Node>
   expandSecondaryTypography?: boolean
-  expanded?: boolean
   className?: string
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer(
-  ({ node, parentNode, expandSecondaryTypography, expanded, className }) => {
+  ({ node, parentNode, expandSecondaryTypography, className }) => {
     const classes = useStyles()
     const navigate = useNavigate()
-    const active = useActive()
-    const [isEditing, setIsEditing] = React.useState(false)
     const graph = useGraph()
+    const active = useActive()
+    const config = active.config
 
-    // TODO
-    // detect enter key after setIsEditing(false) to turn it back on
-    // viewconfig doesn't get shared with navigated children
-
-    const config = active?.getConfig()
+    const [isEditing, setIsEditing] = React.useState(false)
     const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
     const isExpanded =
       config?.getItem(parentNode.id, node.id)?.expanded ?? false
 
     const toggleExpand = (): void => {
-      const itemConfig = active
-        ?.getConfig(true)
-        ?.getItem(parentNode.id, node.id, true)
-      itemConfig?.setExpanded(!itemConfig.expanded)
+      const config = active.initConfig()
+      const item = config.initItem(parentNode.id, node.id)
+      item.setExpanded(!item.expanded)
     }
 
     const handleItemClick: React.EventHandler<React.MouseEvent> = e => {

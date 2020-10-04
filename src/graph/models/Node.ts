@@ -17,7 +17,13 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { types, IAnyType, Instance, getParentOfType } from 'mobx-state-tree'
+import {
+  types,
+  IAnyType,
+  Instance,
+  getParentOfType,
+  SnapshotIn,
+} from 'mobx-state-tree'
 
 import { nodeFactory, edgeMapFactory, ViewerConfig, Graph } from 'graph'
 
@@ -41,17 +47,16 @@ export const Node = nodeFactory([
       self.content = content
     },
 
-    getConfig(doCreate?: boolean): Instance<typeof ViewerConfig> | void {
-      if (self.edgeMap.has('config')) {
-        return self.edgeMap.get('config')?.[0]
-      } else if (doCreate) {
-        return self.addEdge(
-          'config',
-          self.graphRoot.createNode('ViewerConfig', {}),
-        )
-      } else {
-        return
+    initConfig(
+      value?: SnapshotIn<typeof ViewerConfig>,
+    ): Instance<typeof ViewerConfig> | void {
+      const config = self.config
+
+      if (!config) {
+        self.addEdge('config', self.graphRoot.createNode('ViewerConfig', value))
       }
+
+      return self.config
     },
   }))
 
@@ -60,7 +65,18 @@ export const Node = nodeFactory([
       return self.edgeMap.get('child')?.length ?? 0
     },
 
-    get graphRoot(): Instance<IAnyType> {
+    get graphRoot(): Instance<typeof Graph> {
       return getParentOfType(self, Graph)
+    },
+
+    get config(): Instance<typeof ViewerConfig> | void {
+      if (self.edgeMap.size) {
+        const edgeTag = self.edgeMap.get('config')
+        if (edgeTag && edgeTag.length) {
+          return edgeTag[0]
+        }
+      }
+
+      return undefined
     },
   }))

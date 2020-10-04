@@ -71,7 +71,7 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
         aria-label="edge list"
         className={[classes.list, inner ? 'inner' : '', className].join(' ')}
       >
-        {edges?.map((item: Instance<typeof Node>) => (
+        {edges.map((item: Instance<typeof Node>) => (
           <NodeListItem
             node={item}
             parentNode={node}
