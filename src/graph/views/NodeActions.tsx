@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
         linear-gradient(
           to bottom,
           ${fade(theme.palette.background.default, 0.9)},
-          ${fade(theme.palette.background.default, 1)} 90%
+          ${fade(theme.palette.background.default, 1)} 80%
         )`,
     },
 
