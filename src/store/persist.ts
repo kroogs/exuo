@@ -29,6 +29,9 @@ import {
 } from 'mobx-state-tree'
 import Dexie from 'dexie'
 
+const bufferLimit = 1000
+const flushWait = 1000
+
 export async function persist(
   instance: Instance<IAnyModelType>,
 ): Promise<void> {
@@ -37,6 +40,30 @@ export async function persist(
   const tableConfig = Object.fromEntries(tableNames.map(name => [name, 'id']))
 
   db.version(1).stores(tableConfig)
+
+  const patchHandler = (patch: IJsonPatch): void => {
+    const [typeName, id, propertyName] = patch.path.split('/').slice(1)
+
+    if (patch.op === 'add') {
+      db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
+    } else if (patch.op === 'replace' || patch.op === 'remove') {
+      if (propertyName) {
+        let propertyValue = instance[typeName].get(id)[propertyName]
+
+        if (isStateTreeNode(propertyValue)) {
+          propertyValue = getSnapshot(propertyValue)
+        }
+
+        db.table(typeName).update(id, {
+          [propertyName]: propertyValue,
+        })
+      } else {
+        db.table(typeName).delete(id)
+      }
+    } else {
+      throw Error(`Unknown patch op '${patch.op}'`)
+    }
+  }
 
   return Promise.all(
     tableNames.map(name =>
@@ -59,32 +86,14 @@ export async function persist(
       }
 
       timeout = setTimeout(() => {
-        buffer.forEach(patch => {
-          const [typeName, id, propName] = patch.path.split('/').slice(1)
-
-          if (patch.op === 'add') {
-            db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
-          } else if (patch.op === 'replace' || patch.op === 'remove') {
-            if (propName) {
-              let propValue = instance[typeName].get(id)[propName]
-
-              if (isStateTreeNode(propValue)) {
-                propValue = getSnapshot(propValue)
-              }
-
-              db.table(typeName).update(id, {
-                [propName]: propValue,
-              })
-            } else {
-              db.table(typeName).delete(id)
-            }
-          } else {
-            throw Error(`Unknown patch op '${patch.op}'`)
-          }
-        })
-
+        buffer.forEach(patchHandler)
         buffer = []
-      }, 1000)
+      }, flushWait)
+
+      if (buffer.length > bufferLimit) {
+        buffer.forEach(patchHandler)
+        buffer = []
+      }
     })
   })
 }
