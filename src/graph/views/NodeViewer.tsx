@@ -36,7 +36,7 @@ export const NodeViewer: React.FunctionComponent<NodeViewerProps> = observer(
     return node ? (
       <ActiveProvider value={node}>
         <NodeLayout node={node}>
-          <EdgeList node={node} edgeTag="child" />
+          <EdgeList node={node} edgeTag="child" outer />
         </NodeLayout>
       </ActiveProvider>
     ) : null

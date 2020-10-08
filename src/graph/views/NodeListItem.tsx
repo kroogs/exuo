@@ -36,11 +36,17 @@ import { makeUrl } from 'route'
 import { NoteEditor } from 'note'
 import { useGraph, Node, EdgeList, useActive } from 'graph'
 
+const isEditingBorderCombinator = `&.isEditing, &.isEditing + li,\
+  &.isEditing + .MuiCollapse-container > .MuiCollapse-wrapper > .MuiCollapse-wrapperInner > .MuiList-root > .MuiListItem-container:first-child`
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    listItem: {
-      position: 'relative',
-      cursor: 'pointer',
+    listItemContainer: {
+      borderTop: `.1px solid ${theme.palette.divider}`,
+
+      [isEditingBorderCombinator]: {
+        borderTop: `.1px solid transparent`,
+      },
 
       transition: theme.transitions.create(['color', 'background'], {
         duration: theme.transitions.duration.shortest,
@@ -51,19 +57,16 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: theme.palette.background.paper,
       },
 
-      '&.editMode': {
+      cursor: 'pointer',
+
+      '.editMode &, .selectMode &': {
         cursor: 'default',
         color: 'unset',
       },
+    },
 
-      '&.selectMode': {
-        cursor: 'default',
-        color: 'unset',
-      },
-
-      '&.isEditing, &.isEditing + li, &.isEditing + .MuiCollapse-entered .MuiList-root': {
-        borderTop: `.1px solid transparent`,
-      },
+    listItem: {
+      position: 'relative',
 
       '&.Mui-selected': {
         background: `
@@ -141,6 +144,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     secondaryActions: {
+      display: 'none',
+
+      '&.hasChild, .selectMode &, .editMode &': {
+        display: 'unset',
+      },
+
       right: 0,
     },
 
@@ -165,18 +174,36 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
+interface DragItem {
+  index: number
+  id: string
+  type: string
+}
+
 interface NodeListItemProps {
   node: Instance<typeof Node>
   parentNode: Instance<typeof Node>
   expandSecondaryTypography?: boolean
   className?: string
+
+  index: number
+  moveItem: (dragIndex: number, hoverIndex: number) => void
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer(
-  ({ node, parentNode, expandSecondaryTypography, className }) => {
+  ({
+    node,
+    parentNode,
+    expandSecondaryTypography,
+    className,
+    index,
+    moveItem,
+  }) => {
     const classes = useStyles()
+    const listRef = React.useRef<HTMLLIElement>(null)
     const navigate = useNavigate()
     const graph = useGraph()
+    const modes = graph.activeModes
     const active = useActive()
     const config = active.config
 
@@ -203,7 +230,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
         graph.toggleSelectNode(node, parentNode)
       } else if (graph.activeModes.includes('select')) {
         graph.toggleSelectNode(node, parentNode)
-      } else if (graph.activeModes.includes('edit')) {
+      } else if (modes.includes('edit')) {
         setIsEditing(true)
       } else {
         navigate(makeUrl(`/node/${node.id}/`))
@@ -211,11 +238,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
     }
 
     const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
-      if (
-        (!graph.activeModes.includes('edit') &&
-          !graph.activeModes.includes('select')) ||
-        e.altKey
-      ) {
+      if ((!modes.includes('edit') && !modes.includes('select')) || e.altKey) {
         e.preventDefault()
         toggleExpand()
       }
@@ -246,14 +269,17 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
     return (
       <>
         <ListItem
+          ref={listRef}
           onClick={handleItemClick}
           selected={isSelected}
-          className={[
-            classes.listItem,
-            graph.activeModes.includes('edit') ? 'editMode' : '',
-            graph.activeModes.includes('select') ? 'selectMode' : '',
-            isEditing ? 'isEditing' : '',
-          ].join(' ')}
+          ContainerProps={{
+            className: [
+              classes.listItemContainer,
+              isEditing ? 'isEditing' : '',
+              className,
+            ].join(' '),
+          }}
+          className={[classes.listItem, isEditing ? 'isEditing' : ''].join(' ')}
         >
           {isEditing && (
             <NoteEditor
@@ -288,36 +314,32 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
             ].join(' ')}
           />
 
-          {!isEditing && (
-            <ListItemSecondaryAction className={classes.secondaryActions}>
-              {(node.childCount > 0 ||
-                graph.activeModes.includes('select') ||
-                graph.activeModes.includes('edit')) && (
-                <Button
-                  to={makeUrl(`/node/${node.id}/`)}
-                  component={Link}
-                  onClick={handleArrowClick}
-                  className={classes.childButton}
-                  endIcon={
-                    node.childCount > 0 && isExpanded ? (
-                      <KeyboardArrowDownIcon />
-                    ) : (
-                      <ChevronRightIcon />
-                    )
-                  }
-                  size="small"
-                >
-                  {node.childCount > 0 && node.childCount}
-                </Button>
-              )}
-            </ListItemSecondaryAction>
-          )}
+          <ListItemSecondaryAction
+            className={[
+              classes.secondaryActions,
+              node.childCount > 0 ? 'hasChild' : '',
+            ].join(' ')}
+          >
+            {
+              <Button
+                to={makeUrl(`/node/${node.id}/`)}
+                component={Link}
+                onClick={handleArrowClick}
+                className={classes.childButton}
+                endIcon={
+                  isExpanded ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />
+                }
+                size="small"
+              >
+                {node.childCount > 0 && node.childCount}
+              </Button>
+            }
+          </ListItemSecondaryAction>
         </ListItem>
 
         {node.childCount > 0 && (
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <EdgeList
-              inner
               node={node}
               edgeTag="child"
               className={classes.childList}

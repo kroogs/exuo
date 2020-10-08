@@ -23,6 +23,7 @@ import { List } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { IAnyModelType, Instance } from 'mobx-state-tree'
 
+import { useGraph } from 'graph'
 import { NodeListItem } from './NodeListItem'
 import { Node } from '../models/Node'
 
@@ -30,17 +31,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     list: {
       padding: 0,
-      '&>li': {
-        borderTop: `.1px solid ${theme.palette.divider}`,
-        '&:first-child': {
-          borderTop: 'unset',
-        },
-      },
 
-      borderBottom: `.1px solid ${theme.palette.divider}`,
-      '&.inner': {
-        borderTop: `.1px solid ${theme.palette.divider}`,
-        borderBottom: 'unset',
+      '&.outer > li:first-child': {
+        border: 0,
       },
     },
   }),
@@ -49,14 +42,16 @@ const useStyles = makeStyles((theme: Theme) =>
 interface EdgeListProps {
   node: Instance<IAnyModelType>
   edgeTag: string
-  inner?: boolean
+  outer?: boolean
   className?: string
 }
 
 export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
-  ({ node, edgeTag, inner, className }) => {
+  ({ node, edgeTag, outer, className }) => {
     const classes = useStyles()
     const edges = node.edgeMap.get(edgeTag)
+    const graph = useGraph()
+    const modes = graph.activeModes
 
     /* const [hasAnchor, setHasAnchor] = React.useState(true) */
 
@@ -66,15 +61,27 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
     /*   } */
     /* }, [hasAnchor]) */
 
+    const moveItem = (dragIndex: number, hoverIndex: number): void => {
+      return
+    }
+
     return edges?.length ? (
       <List
         aria-label="edge list"
-        className={[classes.list, inner ? 'inner' : '', className].join(' ')}
+        className={[
+          classes.list,
+          outer ? 'outer' : '',
+          modes.includes('edit') ? 'editMode' : '',
+          modes.includes('select') ? 'selectMode' : '',
+          className,
+        ].join(' ')}
       >
-        {edges.map((item: Instance<typeof Node>) => (
+        {edges.map((item: Instance<typeof Node>, index: number) => (
           <NodeListItem
             node={item}
             parentNode={node}
+            index={index}
+            moveItem={moveItem}
             key={`${node.id}-${edgeTag}-${item.id}`}
           />
         ))}
