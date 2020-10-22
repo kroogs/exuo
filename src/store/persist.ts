@@ -41,28 +41,30 @@ export async function persist(
 
   db.version(1).stores(tableConfig)
 
-  const patchHandler = (patch: IJsonPatch): void => {
-    const [typeName, id, propertyName] = patch.path.split('/').slice(1)
+  const flushBuffer = (buffer: Array<IJsonPatch>): void => {
+    buffer.forEach(patch => {
+      const [typeName, id, propertyName] = patch.path.split('/').slice(1)
 
-    if (patch.op === 'add') {
-      db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
-    } else if (patch.op === 'replace' || patch.op === 'remove') {
-      if (propertyName) {
-        let propertyValue = instance[typeName].get(id)[propertyName]
+      if (patch.op === 'add') {
+        db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
+      } else if (patch.op === 'replace' || patch.op === 'remove') {
+        if (propertyName) {
+          let propertyValue = instance[typeName].get(id)[propertyName]
 
-        if (isStateTreeNode(propertyValue)) {
-          propertyValue = getSnapshot(propertyValue)
+          if (isStateTreeNode(propertyValue)) {
+            propertyValue = getSnapshot(propertyValue)
+          }
+
+          db.table(typeName).update(id, {
+            [propertyName]: propertyValue,
+          })
+        } else {
+          db.table(typeName).delete(id)
         }
-
-        db.table(typeName).update(id, {
-          [propertyName]: propertyValue,
-        })
       } else {
-        db.table(typeName).delete(id)
+        throw Error(`Unknown patch op '${patch.op}'`)
       }
-    } else {
-      throw Error(`Unknown patch op '${patch.op}'`)
-    }
+    })
   }
 
   return Promise.all(
@@ -86,12 +88,12 @@ export async function persist(
       }
 
       timeout = setTimeout(() => {
-        buffer.forEach(patchHandler)
+        flushBuffer(buffer)
         buffer = []
       }, flushWait)
 
       if (buffer.length > bufferLimit) {
-        buffer.forEach(patchHandler)
+        flushBuffer(buffer)
         buffer = []
       }
     })
