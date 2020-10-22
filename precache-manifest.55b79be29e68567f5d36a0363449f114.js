@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "9806324b869dad0618c9dc7204d83f7f",
+    "revision": "ce51952dbff570278c3a4a15fe993df3",
     "url": "/exuo/index.html"
   },
   {
