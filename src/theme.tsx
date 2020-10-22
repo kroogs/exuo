@@ -35,13 +35,17 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
   const theme: ReturnType<typeof createMuiTheme> = React.useMemo(() => {
     const palette = {
       type: (prefersDarkMode ? 'dark' : 'light') as PaletteType,
+
       primary: { main: '#FF2EA2' },
       secondary: { main: '#FF8F00' },
+
       divider: prefersDarkMode ? '#222222' : '#e0e0e0',
+
       background: {
         default: prefersDarkMode ? '#000000' : '#ffffff',
         paper: prefersDarkMode ? '#101010' : '#fbfbfb',
       },
+
       text: {
         primary: prefersDarkMode ? '#dddddd' : '#212121',
         secondary: prefersDarkMode ? '#aaaaaa' : '#595959',
@@ -49,10 +53,11 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
     }
 
     return createMuiTheme({
+      palette,
+
+      // TODO use responsiveFontSizes
       typography: {
         fontSize: 16,
-
-        // use responsiveFontSizes
 
         fontFamily: [
           '-apple-system',
@@ -65,8 +70,6 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
           'sans-serif',
         ].join(', '),
       },
-
-      palette,
 
       shape: {
         borderRadius: 6,
