@@ -41,6 +41,14 @@ const useStyles = makeStyles((theme: Theme) =>
         visibility: 'hidden',
         pointerEvents: 'none',
       },
+
+      '&:hover': {
+        color: theme.palette.primary.main,
+      },
+
+      transition: theme.transitions.create(['color', 'background'], {
+        duration: theme.transitions.duration.shortest,
+      }),
     },
 
     hide: {
