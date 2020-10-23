@@ -32,6 +32,7 @@ export const useDarkMode = (): ReturnType<typeof useMediaQuery> =>
 
 export const ThemeProvider: React.FunctionComponent = ({ children }) => {
   const prefersDarkMode = useDarkMode()
+
   const theme: ReturnType<typeof createMuiTheme> = React.useMemo(() => {
     const palette = {
       type: (prefersDarkMode ? 'dark' : 'light') as PaletteType,
@@ -50,6 +51,11 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
         primary: prefersDarkMode ? '#dddddd' : '#212121',
         secondary: prefersDarkMode ? '#aaaaaa' : '#595959',
       },
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      palette.primary.main = '#718C00'
+      palette.secondary.main = '#fd971f'
     }
 
     return createMuiTheme({
