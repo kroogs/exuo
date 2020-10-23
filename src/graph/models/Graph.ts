@@ -29,12 +29,12 @@ import { persist } from 'store/persist'
 import { graphFactory } from './factories'
 import { Node } from './Node'
 import { Config } from './Config'
-import { ViewerConfig } from './ViewerConfig'
+import { View } from './View'
 
 export const Graph = graphFactory({
   Node,
   Config,
-  ViewerConfig,
+  View,
 })
   .actions(self => ({
     // TODO mode and select stuff don't belong here
@@ -261,8 +261,8 @@ export const Graph = graphFactory({
     get selectedNodeCount() {
       let count = 0
 
-      for (const kv of self.selectedNodes) {
-        count += kv[1].length
+      for (const [, value] of self.selectedNodes) {
+        count += value.length
       }
 
       return count

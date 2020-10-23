@@ -21,57 +21,40 @@ import { types, Instance } from 'mobx-state-tree'
 
 import { nodeFactory } from 'graph'
 
-const ViewerConfigItem = types
-  .model('ViewerConfigItem', {
+const ViewItem = types
+  .model('ViewItem', {
     expanded: types.optional(types.boolean, false),
   })
+
   .actions(self => ({
     setExpanded(value: boolean) {
       self.expanded = value
     },
   }))
 
-const ViewerConfigBase = types
-  .model('ViewerConfig', {
-    items: types.map(types.map(ViewerConfigItem)),
+const ViewBase = types
+  .model('View', {
+    items: types.map(ViewItem),
   })
 
   .views(self => ({
-    getItem(
-      parentId: string,
-      childId: string,
-    ): Instance<typeof ViewerConfigItem> | void {
+    getItem(path: string): Instance<typeof ViewItem> | void {
       if (self.items.size) {
-        const parent = self.items.get(parentId)
-        if (parent && parent.size) {
-          return parent.get(childId)
-        }
+        return self.items.get(path)
       }
     },
   }))
 
   .actions(self => ({
-    initItem(
-      parentId: string,
-      childId: string,
-    ): Instance<typeof ViewerConfigItem> | void {
-      const item = self.getItem(parentId, childId)
+    initItem(path: string): Instance<typeof ViewItem> | void {
+      let item = self.getItem(path)
+      if (item) return item
 
-      if (!item) {
-        const parent = self.items.get(parentId)
-        const item = ViewerConfigItem.create()
+      item = ViewItem.create()
+      self.items.set(path, item)
 
-        if (parent) {
-          parent.set(childId, item)
-        } else {
-          self.items.set(parentId, {
-            [childId]: item,
-          })
-        }
-      }
-
-      return self.getItem(parentId, childId)
+      return self.getItem(path)
     },
   }))
 
-export const ViewerConfig = nodeFactory(ViewerConfigBase)
+export const View = nodeFactory(ViewBase)

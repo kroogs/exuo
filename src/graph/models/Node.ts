@@ -25,7 +25,7 @@ import {
   SnapshotIn,
 } from 'mobx-state-tree'
 
-import { nodeFactory, edgeMapFactory, ViewerConfig, Graph } from 'graph'
+import { nodeFactory, edgeMapFactory, View, Graph } from 'graph'
 
 // Avoid circular dependency
 import { Unknown } from 'graph/models/Unknown'
@@ -34,7 +34,7 @@ export const Node = nodeFactory([
   edgeMapFactory(() =>
     types.union(
       types.late((): IAnyType => Node),
-      ViewerConfig,
+      View,
     ),
   ),
 ])
@@ -47,16 +47,14 @@ export const Node = nodeFactory([
       self.content = content
     },
 
-    initConfig(
-      value?: SnapshotIn<typeof ViewerConfig>,
-    ): Instance<typeof ViewerConfig> | void {
-      const config = self.config
+    initView(value?: SnapshotIn<typeof View>): Instance<typeof View> | void {
+      const view = self.view
 
-      if (!config) {
-        self.addEdge('config', self.graphRoot.createNode('ViewerConfig', value))
+      if (!view) {
+        self.addEdge('view', self.graphRoot.createNode('View', value))
       }
 
-      return self.config
+      return self.view
     },
   }))
 
@@ -69,9 +67,9 @@ export const Node = nodeFactory([
       return getParentOfType(self, Graph)
     },
 
-    get config(): Instance<typeof ViewerConfig> | void {
+    get view(): Instance<typeof View> | void {
       if (self.edgeMap.size) {
-        const edgeTag = self.edgeMap.get('config')
+        const edgeTag = self.edgeMap.get('view')
         if (edgeTag && edgeTag.length) {
           return edgeTag[0]
         }

@@ -31,12 +31,13 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 import { Link, useNavigate } from '@reach/router'
+import { useDrag, useDrop, XYCoord } from 'react-dnd'
 
 import { makeUrl } from 'route'
 import { NoteEditor } from 'note'
 import { useGraph, Node, EdgeList, useActive } from 'graph'
 
-const isEditingBorderCombinator = `&.isEditing, &.isEditing + li,\
+const isEditingBorderSelector = `&.isEditing, &.isEditing + li,\
   &.isEditing + .MuiCollapse-container > .MuiCollapse-wrapper > .MuiCollapse-wrapperInner > .MuiList-root > .MuiListItem-container:first-child`
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -44,7 +45,14 @@ const useStyles = makeStyles((theme: Theme) =>
     listItemContainer: {
       borderTop: `.1px solid ${theme.palette.divider}`,
 
-      [isEditingBorderCombinator]: {
+      /* '&.isExpanded': { */
+      /*   backgroundColor: theme.palette.background.default, */
+      /*   position: 'sticky', */
+      /*   top: 60, */
+      /*   zIndex: theme.zIndex.appBar, */
+      /* }, */
+
+      [isEditingBorderSelector]: {
         borderTop: `.1px solid transparent`,
       },
 
@@ -59,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
       cursor: 'pointer',
 
-      '.editMode &, .selectMode &': {
+      '&.isEditing, .editMode &, .selectMode &': {
         cursor: 'default',
         color: 'unset',
       },
@@ -101,6 +109,10 @@ const useStyles = makeStyles((theme: Theme) =>
       textOverflow: 'ellipsis',
 
       '.isEditing &': {
+        opacity: 0,
+      },
+
+      '.isDragging &': {
         opacity: 0,
       },
 
@@ -166,7 +178,7 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingRight: theme.spacing(2),
       paddingLeft: theme.spacing(2),
 
-      '&:hover, &:focus': {
+      '&:hover': {
         color: theme.palette.primary.main,
         background: 'inherit',
       },
@@ -175,9 +187,11 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface DragItem {
-  index: number
-  id: string
   type: string
+  index: number
+  path: string
+  parentNode: Instance<typeof Node>
+  childNode: Instance<typeof Node>
 }
 
 interface NodeListItemProps {
@@ -185,9 +199,8 @@ interface NodeListItemProps {
   parentNode: Instance<typeof Node>
   expandSecondaryTypography?: boolean
   className?: string
-
   index: number
-  moveItem: (dragIndex: number, hoverIndex: number) => void
+  moveItem: (item: DragItem, dragIndex: number, hoverIndex: number) => void
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer(
@@ -200,35 +213,92 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
     moveItem,
   }) => {
     const classes = useStyles()
-    const listRef = React.useRef<HTMLLIElement>(null)
+    const listItemRef = React.useRef<HTMLLIElement>(null)
     const navigate = useNavigate()
     const graph = useGraph()
     const modes = graph.activeModes
     const active = useActive()
-    const config = active.config
+    const view = active.view
 
     const [isEditing, setIsEditing] = React.useState(false)
     const isSelected = graph.selectedNodes.get(parentNode.id)?.includes(node.id)
     const isExpanded =
-      config?.getItem(parentNode.id, node.id)?.expanded ?? false
+      view?.getItem(`${parentNode.id}/${node.id}`)?.expanded ?? false
 
     const toggleExpand = (): void => {
-      const config = active.initConfig()
-      const item = config.initItem(parentNode.id, node.id)
+      const view = active.initView()
+      const item = view.initItem(`${parentNode.id}/${node.id}`)
       item.setExpanded(!item.expanded)
+    }
+
+    const [, drop] = useDrop({
+      accept: 'Node' + parentNode.id,
+
+      hover(item: DragItem, monitor) {
+        if (!listItemRef.current) {
+          return
+        }
+
+        const dragIndex = item.index
+        const hoverIndex = index
+
+        if (dragIndex === hoverIndex) {
+          return
+        }
+
+        const hoverBoundingRect = listItemRef.current?.getBoundingClientRect()
+        const hoverMiddleY =
+          (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+
+        const clientOffset = monitor.getClientOffset()
+        const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
+
+        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+          return
+        }
+
+        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+          return
+        }
+
+        item.index = hoverIndex
+        moveItem(item, dragIndex, hoverIndex)
+      },
+    })
+
+    const [{ isDragging }, drag] = useDrag({
+      item: {
+        type: 'Node' + parentNode.id,
+        path: `${parentNode.id}/${node.id}`,
+        parentNode: parentNode,
+        childNode: node,
+        index,
+      },
+
+      collect: monitor => ({
+        isDragging: monitor.isDragging(),
+      }),
+    })
+
+    if (!modes.includes('select') && !modes.includes('edit')) {
+      drag(drop(listItemRef))
     }
 
     const handleItemClick: React.EventHandler<React.MouseEvent> = e => {
       e.preventDefault()
 
+      if (isEditing) {
+        return
+      }
+
       if (e.altKey) {
-        setIsEditing(true)
         graph.setActiveMode('edit')
+        setIsEditing(true)
       } else if (e.shiftKey) {
         setIsEditing(false)
         graph.setActiveMode('select')
         graph.toggleSelectNode(node, parentNode)
-      } else if (graph.activeModes.includes('select')) {
+      } else if (modes.includes('select')) {
         graph.toggleSelectNode(node, parentNode)
       } else if (modes.includes('edit')) {
         setIsEditing(true)
@@ -245,41 +315,41 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
     }
 
     let primaryText = node.id
-    let secondaryText = undefined
+    let secondaryText
 
     const rawContent = node.content?.toJSON?.()
 
     if (typeof node.content === 'string') {
-      const newlinePosition = node.content.indexOf('\n')
+      const newlineIndex = node.content.indexOf('\n')
 
       primaryText =
-        newlinePosition > 0
-          ? node.content.slice(0, newlinePosition)
-          : node.content
+        newlineIndex > 0 ? node.content.slice(0, newlineIndex) : node.content
 
       secondaryText =
-        newlinePosition > 0
-          ? node.content.slice(newlinePosition + 1)
-          : undefined
+        newlineIndex > 0 ? node.content.slice(newlineIndex + 1) : undefined
     } else if (rawContent) {
       primaryText = rawContent.blocks[0].text
       secondaryText = rawContent.blocks[1]?.text
     }
 
+    console.log({ isDragging })
+
     return (
       <>
         <ListItem
-          ref={listRef}
+          ref={listItemRef}
           onClick={handleItemClick}
           selected={isSelected}
           ContainerProps={{
             className: [
               classes.listItemContainer,
+              isExpanded ? 'isExpanded' : '',
+              isDragging ? 'isDragging' : '',
               isEditing ? 'isEditing' : '',
               className,
             ].join(' '),
           }}
-          className={[classes.listItem, isEditing ? 'isEditing' : ''].join(' ')}
+          className={classes.listItem}
         >
           {isEditing && (
             <NoteEditor
@@ -322,6 +392,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
           >
             {
               <Button
+                size="small"
                 to={makeUrl(`/node/${node.id}/`)}
                 component={Link}
                 onClick={handleArrowClick}
@@ -329,7 +400,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
                 endIcon={
                   isExpanded ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />
                 }
-                size="small"
               >
                 {node.childCount > 0 && node.childCount}
               </Button>

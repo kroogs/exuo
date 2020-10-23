@@ -54,7 +54,9 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'unset',
     },
 
-    children: {},
+    children: {
+      marginBottom: '-0.1px',
+    },
 
     textEditor: {
       position: 'sticky',

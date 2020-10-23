@@ -17,9 +17,11 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from './views/InstanceViewer'
-export * from './views/PropertyEditor'
-export * from './models/Store'
 export * from './StoreProvider'
 export * from './useStore'
 export * from './persist'
+
+export * from './models/Store'
+
+export * from './components/InstanceViewer'
+export * from './components/PropertyEditor'

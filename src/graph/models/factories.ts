@@ -67,6 +67,31 @@ export const edgeMapFactory = (getEdgeType: EdgeResolver): IAnyModelType =>
         self.edgeMap.get(tag)?.remove(target)
       },
 
+      reorderEdge(
+        tag: string,
+        target: Instance<IAnyModelType>,
+        newIndex: number,
+        currentIndex?: number,
+      ) {
+        const edges = self.edgeMap.get(tag)
+        if (!edges) return
+
+        let index = currentIndex
+        if (index === undefined) {
+          index = edges.indexOf(target)
+        }
+
+        const item = edges[index]
+        if (item !== target) {
+          throw Error('Invalid reorder target')
+        }
+
+        edges.splice(index, 1)
+        edges.splice(newIndex, 0, item)
+
+        return
+      },
+
       getEdgeTag(tag: string): void | Array<Instance<IAnyModelType>> {
         return self.edgeMap.get(tag)
       },

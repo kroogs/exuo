@@ -32,8 +32,12 @@ const useStyles = makeStyles((theme: Theme) =>
     list: {
       padding: 0,
 
-      '&.outer > li:first-child': {
-        border: 0,
+      '&.outer': {
+        borderBottom: `.1px solid ${theme.palette.divider}`,
+
+        '& > li:first-child': {
+          border: 0,
+        },
       },
     },
   }),
@@ -44,6 +48,14 @@ interface EdgeListProps {
   edgeTag: string
   outer?: boolean
   className?: string
+}
+
+interface DragItem {
+  type: string
+  index: number
+  path: string
+  parentNode: Instance<typeof Node>
+  childNode: Instance<typeof Node>
 }
 
 export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
@@ -61,8 +73,17 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
     /*   } */
     /* }, [hasAnchor]) */
 
-    const moveItem = (dragIndex: number, hoverIndex: number): void => {
-      return
+    const moveItem = (
+      item: DragItem,
+      dragIndex: number,
+      hoverIndex: number,
+    ): void => {
+      item.parentNode.reorderEdge(
+        'child',
+        item.childNode,
+        hoverIndex,
+        dragIndex,
+      )
     }
 
     return edges?.length ? (
@@ -78,11 +99,11 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
       >
         {edges.map((item: Instance<typeof Node>, index: number) => (
           <NodeListItem
+            key={`${node.id}-${edgeTag}-${item.id}`}
+            index={index}
             node={item}
             parentNode={node}
-            index={index}
             moveItem={moveItem}
-            key={`${node.id}-${edgeTag}-${item.id}`}
           />
         ))}
       </List>

@@ -19,6 +19,8 @@
 
 import React from 'react'
 import { observer } from 'mobx-react-lite'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { NodeLayout, EdgeList, useGraph, ActiveProvider } from 'graph'
 
@@ -29,16 +31,17 @@ interface NodeViewerProps {
 export const NodeViewer: React.FunctionComponent<NodeViewerProps> = observer(
   ({ id }) => {
     const graph = useGraph()
-
     const lookup = graph.Node.get(id)
     const node = lookup ?? graph.rootNode
 
     return node ? (
-      <ActiveProvider value={node}>
-        <NodeLayout node={node}>
-          <EdgeList node={node} edgeTag="child" outer />
-        </NodeLayout>
-      </ActiveProvider>
+      <DndProvider backend={HTML5Backend}>
+        <ActiveProvider value={node}>
+          <NodeLayout node={node}>
+            <EdgeList node={node} edgeTag="child" outer />
+          </NodeLayout>
+        </ActiveProvider>
+      </DndProvider>
     ) : null
   },
 )
