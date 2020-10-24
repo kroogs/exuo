@@ -73,18 +73,17 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
     /*   } */
     /* }, [hasAnchor]) */
 
-    const moveItem = (
-      item: DragItem,
-      dragIndex: number,
-      hoverIndex: number,
-    ): void => {
-      item.parentNode.reorderEdge(
-        'child',
-        item.childNode,
-        hoverIndex,
-        dragIndex,
-      )
-    }
+    const moveItem = React.useCallback(
+      (item: DragItem, dragIndex: number, hoverIndex: number): void => {
+        item.parentNode.reorderEdge(
+          'child',
+          item.childNode,
+          hoverIndex,
+          dragIndex,
+        )
+      },
+      [],
+    )
 
     return edges?.length ? (
       <List
