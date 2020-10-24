@@ -35,7 +35,7 @@ import { useDrag, useDrop, XYCoord } from 'react-dnd'
 
 import { makeUrl } from 'route'
 import { NoteEditor } from 'note'
-import { useGraph, Node, EdgeList, useActive } from 'graph'
+import { useGraph, Node, NodeContextMenu, EdgeList, useActive } from 'graph'
 
 const isEditingBorderSelector = `&.isEditing, &.isEditing + li,\
   &.isEditing + .MuiCollapse-container > .MuiCollapse-wrapper > .MuiCollapse-wrapperInner > .MuiList-root > .MuiListItem-container:first-child`
@@ -59,6 +59,8 @@ const useStyles = makeStyles((theme: Theme) =>
       transition: theme.transitions.create(['color', 'background'], {
         duration: theme.transitions.duration.shortest,
       }),
+
+      backgroundColor: theme.palette.background.default,
 
       '&:hover': {
         color: theme.palette.primary.main,
@@ -98,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     childList: {
-      marginLeft: theme.spacing(3),
+      marginLeft: theme.spacing(4),
       padding: 0,
     },
 
@@ -158,16 +160,32 @@ const useStyles = makeStyles((theme: Theme) =>
     secondaryActions: {
       display: 'none',
 
-      '&.hasChild, .selectMode &, .editMode &': {
+      '&.hasChild, .selectMode &': {
         display: 'unset',
       },
 
       right: 0,
     },
 
-    childButton: {
-      cursor: 'pointer',
-      color: theme.palette.text.primary,
+    edgeArrow: {
+      cursor: 'default',
+      color: theme.palette.text.hint,
+
+      '&:hover': {
+        background: 'inherit',
+      },
+
+      '.isExpanded &': {
+        color: theme.palette.text.primary,
+      },
+
+      '.selectMode &': {
+        cursor: 'pointer',
+        '&:hover': {
+          color: theme.palette.primary.main,
+        },
+      },
+
       transition: theme.transitions.create(['color'], {
         duration: theme.transitions.duration.shortest,
       }),
@@ -177,11 +195,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
       paddingRight: theme.spacing(2),
       paddingLeft: theme.spacing(2),
-
-      '&:hover': {
-        color: theme.palette.primary.main,
-        background: 'inherit',
-      },
     },
   }),
 )
@@ -201,6 +214,7 @@ interface NodeListItemProps {
   className?: string
   index: number
   moveItem: (item: DragItem, dragIndex: number, hoverIndex: number) => void
+  onContextMenu?: React.EventHandler<React.MouseEvent>
 }
 
 export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer(
@@ -211,6 +225,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
     className,
     index,
     moveItem,
+    onContextMenu,
   }) => {
     const classes = useStyles()
     const listItemRef = React.useRef<HTMLLIElement>(null)
@@ -231,6 +246,14 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
       item.setExpanded(!item.expanded)
     }
 
+    const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
+      if (modes.includes('select') || e.metaKey) {
+        navigate(makeUrl(`/node/${node.id}/`))
+      } else {
+        toggleExpand()
+      }
+    }
+
     const [, drop] = useDrop({
       accept: 'Node' + parentNode.id,
 
@@ -247,8 +270,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
         }
 
         const hoverBoundingRect = listItemRef.current?.getBoundingClientRect()
-        const hoverMiddleY =
-          (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+        const hoverMiddleY = hoverBoundingRect.height / 2
 
         const clientOffset = monitor.getClientOffset()
         const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
@@ -267,6 +289,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
     })
 
     const [{ isDragging }, drag] = useDrag({
+      canDrag: () => (isEditing ? false : true),
+
       item: {
         type: 'Node' + parentNode.id,
         path: `${parentNode.id}/${node.id}`,
@@ -275,16 +299,19 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
         index,
       },
 
+      previewOptions: {
+        anchorX: 0,
+        anchorY: 0,
+        offsetX: 0,
+        offsetY: 0,
+      },
+
       collect: monitor => ({
         isDragging: monitor.isDragging(),
       }),
     })
 
-    if (!modes.includes('select') && !modes.includes('edit')) {
-      drag(drop(listItemRef))
-    }
-
-    const handleItemClick: React.EventHandler<React.MouseEvent> = e => {
+    const handleItemClick = (e: React.MouseEvent): void => {
       e.preventDefault()
 
       if (isEditing) {
@@ -298,6 +325,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
         setIsEditing(false)
         graph.setActiveMode('select')
         graph.toggleSelectNode(node, parentNode)
+      } else if (e.metaKey) {
+        navigate(makeUrl(`/node/${node.id}/`))
       } else if (modes.includes('select')) {
         graph.toggleSelectNode(node, parentNode)
       } else if (modes.includes('edit')) {
@@ -307,12 +336,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
       }
     }
 
-    const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
-      if ((!modes.includes('edit') && !modes.includes('select')) || e.altKey) {
-        e.preventDefault()
-        toggleExpand()
-      }
-    }
+    drag(drop(listItemRef))
 
     let primaryText = node.id
     let secondaryText
@@ -324,15 +348,12 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
 
       primaryText =
         newlineIndex > 0 ? node.content.slice(0, newlineIndex) : node.content
-
       secondaryText =
         newlineIndex > 0 ? node.content.slice(newlineIndex + 1) : undefined
     } else if (rawContent) {
       primaryText = rawContent.blocks[0].text
       secondaryText = rawContent.blocks[1]?.text
     }
-
-    console.log({ isDragging })
 
     return (
       <>
@@ -341,6 +362,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
           onClick={handleItemClick}
           selected={isSelected}
           ContainerProps={{
+            onContextMenu,
             className: [
               classes.listItemContainer,
               isExpanded ? 'isExpanded' : '',
@@ -393,10 +415,8 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
             {
               <Button
                 size="small"
-                to={makeUrl(`/node/${node.id}/`)}
-                component={Link}
                 onClick={handleArrowClick}
-                className={classes.childButton}
+                className={classes.edgeArrow}
                 endIcon={
                   isExpanded ? <KeyboardArrowDownIcon /> : <ChevronRightIcon />
                 }
