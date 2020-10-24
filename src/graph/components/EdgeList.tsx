@@ -90,9 +90,9 @@ export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
         aria-label="edge list"
         className={[
           classes.list,
-          outer ? 'outer' : '',
-          modes.includes('edit') ? 'editMode' : '',
-          modes.includes('select') ? 'selectMode' : '',
+          outer ? 'outer' : null,
+          outer && modes.includes('edit') ? 'editMode' : null,
+          outer && modes.includes('select') ? 'selectMode' : null,
           className,
         ].join(' ')}
       >
