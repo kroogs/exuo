@@ -210,18 +210,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
-      zIndex: theme.zIndex.appBar + 10,
-    },
-
-    backdrop: {
-      cursor: 'default',
-      backdropFilter: 'blur(3px) saturate(0%)',
-      backgroundColor: fade(theme.palette.background.default, 0.8),
     },
 
     wrapper: {
-      outline: 'none',
-
       background: `
         linear-gradient(
           to top,
@@ -236,6 +227,14 @@ const useStyles = makeStyles((theme: Theme) =>
           ${theme.palette.secondary.main} 
         )
       `,
+    },
+
+    backdrop: {
+      backgroundColor: fade(theme.palette.background.default, 0.6),
+    },
+
+    inputWrapper: {
+      outline: 'none',
 
       '& .DraftEditor-editorContainer': {
         maxHeight: '70vh',
@@ -254,14 +253,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
     toolbar: {
       justifyContent: 'center',
-      background: `
-        linear-gradient(
-          to bottom,
-          ${theme.palette.background.default} 30%,
-          ${fade(theme.palette.background.default, 0)}
-        )
-      `,
 
+      // Tool button group spacing
       '&>div:first-child': {
         marginRight: theme.spacing(4),
       },
@@ -269,7 +262,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-// TODO autofocus doesn't work on iOS
+// TODO autofocus doesn't work on iOS12
 
 interface NoteEditorProps {
   note?: Instance<typeof Note>
@@ -313,6 +306,7 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
 
     const containerRef = React.useRef<HTMLDivElement>(null)
     const editorRef = React.useRef<Editor>(null)
+    const backdropRef = React.useRef<HTMLDivElement>(null)
 
     const nodeContent = note?.nodeContent
     const contentState = React.useMemo(
@@ -321,6 +315,7 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
         (rawContent && convertFromRaw(rawContent)),
       [nodeContent, rawContent],
     )
+
     const [editorState, setEditorState] = React.useState(() =>
       EditorState.createWithContent(
         contentState ||
@@ -375,6 +370,14 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
       }
     }
 
+    const handleClickAway = (event: React.MouseEvent<HTMLDocument>): void => {
+      if (onClickAway) {
+        onClickAway()
+      } else {
+        handleValue(event)
+      }
+    }
+
     const handleKeyCommand = (
       command: DraftEditorCommand,
       editorState: EditorState,
@@ -392,10 +395,10 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
       event: React.KeyboardEvent,
     ): DraftEditorCommand | null => {
       if (event.keyCode === 13) {
-        if (submitOnReturn && !event.shiftKey) {
-          handleValue()
-          return null
-        } else if (!submitOnReturn && event.shiftKey) {
+        if (
+          (submitOnReturn && !event.shiftKey) ||
+          (!submitOnReturn && event.shiftKey)
+        ) {
           handleValue()
           return null
         } else {
@@ -423,24 +426,23 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
     return (
       <div ref={ref} className={[classes.root, className].join(' ')}>
         {blockCount > 1 && showBackdrop && (
-          <Backdrop open={Boolean(showBackdrop)} className={classes.backdrop} />
+          <Backdrop
+            ref={backdropRef}
+            open={Boolean(showBackdrop)}
+            className={classes.backdrop}
+            transitionDuration={3000}
+          />
         )}
 
         <ClickAwayListener
           mouseEvent={'onMouseDown'}
           touchEvent={'onTouchStart'}
-          onClickAway={event => {
-            if (onClickAway) {
-              onClickAway()
-            } else {
-              handleValue(event)
-            }
-          }}
+          onClickAway={handleClickAway}
         >
-          <div ref={containerRef}>
+          <div ref={containerRef} className={classes.wrapper}>
             <div
               tabIndex={-1}
-              className={[classes.wrapper, inputClassName].join(' ')}
+              className={[classes.inputWrapper, inputClassName].join(' ')}
             >
               <Editor
                 ref={editorRef}

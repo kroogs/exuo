@@ -60,8 +60,6 @@ const useStyles = makeStyles((theme: Theme) =>
         duration: theme.transitions.duration.shortest,
       }),
 
-      backgroundColor: theme.palette.background.default,
-
       '&:hover': {
         color: theme.palette.primary.main,
         backgroundColor: theme.palette.background.paper,
@@ -147,6 +145,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     noteEditor: {
+      zIndex: theme.zIndex.appBar - 1,
       cursor: 'default',
       position: 'absolute',
       top: 0,
@@ -297,13 +296,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
         parentNode: parentNode,
         childNode: node,
         index,
-      },
-
-      previewOptions: {
-        anchorX: 0,
-        anchorY: 0,
-        offsetX: 0,
-        offsetY: 0,
       },
 
       collect: monitor => ({

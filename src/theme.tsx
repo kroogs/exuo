@@ -101,7 +101,10 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
         MuiCssBaseline: {
           '@global': {
             '*::selection': {
-              backgroundColor: fade(palette.primary.main, 0.2),
+              backgroundColor: fade(
+                palette.text.primary,
+                prefersDarkMode ? 0.4 : 0.2,
+              ),
             },
 
             html: {
