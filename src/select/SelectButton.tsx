@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'inherit',
       position: 'relative',
     },
+
     buttonGroup: {
       '& .MuiButtonGroup-groupedTextHorizontal': {
         borderRight: 'unset',
@@ -53,24 +54,30 @@ const useStyles = makeStyles((theme: Theme) =>
         minWidth: 'unset',
       },
     },
+
     selectCount: {
       color: theme.palette.primary.main,
       fontSize: 12,
       position: 'absolute',
       right: -theme.spacing(1),
     },
+
     selectButton: {},
+
     deleteButton: {
       color: theme.palette.error.main,
     },
+
     popper: {
       '& svg': {
         marginRight: theme.spacing(1),
       },
     },
+
     paper: {
       border: `.1px solid ${theme.palette.divider}`,
     },
+
     selectMenu: {
       outline: 0,
     },
@@ -85,10 +92,14 @@ interface SelectButtonProps extends IconButtonProps {
 
 export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer(
   ({ node, className, onClick, ...extraProps }) => {
-    const classes = useStyles()
-    const [open, setOpen] = React.useState(false)
-    const anchorRef = React.useRef<HTMLButtonElement>(null)
+    const graph = useGraph()
     const active = useActive()
+    const classes = useStyles()
+    const anchorRef = React.useRef<HTMLButtonElement>(null)
+
+    const selectedCount = graph.selectedNodeCount
+
+    const [open, setOpen] = React.useState(false)
     const [showAltMenu, setShowAltMenu] = React.useState(false)
 
     React.useEffect(() => {
@@ -113,14 +124,12 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
       }
     })
 
-    const graph = useGraph()
-
-    const selectedCount = graph.selectedNodeCount
     return (
       <div className={[classes.root, className].join(' ')}>
         {selectedCount > 0 && (
           <span className={classes.selectCount}>{selectedCount}</span>
         )}
+
         <IconButton
           color="primary"
           ref={anchorRef}
@@ -132,6 +141,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
         >
           <SelectAllIcon />
         </IconButton>
+
         <Popper
           open={open}
           anchorEl={anchorRef.current}

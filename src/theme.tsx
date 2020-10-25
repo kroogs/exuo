@@ -44,7 +44,7 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
 
       background: {
         default: prefersDarkMode ? '#000000' : '#ffffff',
-        paper: prefersDarkMode ? '#101010' : '#fbfbfb',
+        paper: prefersDarkMode ? '#141414' : '#fbfbfb',
       },
 
       text: {
@@ -108,11 +108,14 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
               userSelect: 'none',
               overscrollBehavior: 'none',
               '-webkit-touch-callout': 'none',
-              maxWidth: '900px',
+
+              height: '100%',
               margin: 'auto',
-              '&, & body': {
-                height: '100%',
-              },
+              maxWidth: '900px',
+            },
+
+            body: {
+              height: '100%',
             },
           },
         },

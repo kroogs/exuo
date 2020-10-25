@@ -91,8 +91,8 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = observer(
     const navigate = useNavigate()
     const graph = useGraph()
 
-    let titleText: string
     const content = node.content?.toJSON?.()
+    let titleText: string
 
     if (typeof node.content === 'string') {
       titleText = node.content
@@ -116,6 +116,7 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = observer(
         >
           {children}
         </Box>
+
         {graph.activeModes.includes('insert') && (
           <NoteEditor
             autoFocus
@@ -123,6 +124,7 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = observer(
             onValue={(value, event) => {
               if (value) {
                 const child = graph.createChild(node, { content: value })
+
                 if (event?.ctrlKey) {
                   navigate(makeUrl(`/node/${child.id}/`))
                 } else {
