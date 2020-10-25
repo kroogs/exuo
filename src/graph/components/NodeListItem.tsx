@@ -30,12 +30,12 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
-import { Link, useNavigate } from '@reach/router'
+import { useNavigate } from '@reach/router'
 import { useDrag, useDrop, XYCoord } from 'react-dnd'
 
 import { makeUrl } from 'route'
 import { NoteEditor } from 'note'
-import { useGraph, Node, NodeContextMenu, EdgeList, useActive } from 'graph'
+import { useGraph, Node, EdgeList, useActive } from 'graph'
 
 const isEditingBorderSelector = `&.isEditing, &.isEditing + li,\
   &.isEditing + .MuiCollapse-container > .MuiCollapse-wrapper > .MuiCollapse-wrapperInner > .MuiList-root > .MuiListItem-container:first-child`
