@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) =>
     textEditor: {
       position: 'sticky',
       zIndex: theme.zIndex.appBar,
-      bottom: theme.spacing(8),
+      bottom: theme.spacing(8) + 1,
     },
 
     actions: {

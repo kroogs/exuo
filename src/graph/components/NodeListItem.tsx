@@ -136,7 +136,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     noteEditor: {
+      // Account for layout's bottom toolbar
+      paddingBottom: theme.spacing(8) + 1,
       zIndex: theme.zIndex.appBar,
+
       cursor: 'default',
       position: 'absolute',
       top: 0,
