@@ -40,11 +40,11 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
       primary: { main: '#FF2EA2' },
       secondary: { main: '#FF8F00' },
 
-      divider: prefersDarkMode ? '#222222' : '#e0e0e0',
+      divider: prefersDarkMode ? '#1b1b1b' : '#e0e0e0',
 
       background: {
         default: prefersDarkMode ? '#000000' : '#ffffff',
-        paper: prefersDarkMode ? '#141414' : '#fbfbfb',
+        paper: prefersDarkMode ? '#101010' : '#f8f8f8',
       },
 
       text: {
@@ -103,7 +103,7 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
             '*::selection': {
               backgroundColor: fade(
                 palette.text.primary,
-                prefersDarkMode ? 0.4 : 0.2,
+                prefersDarkMode ? 0.3 : 0.2,
               ),
             },
 

@@ -26,9 +26,9 @@ import {
   ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core'
+import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
-import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import { Instance } from 'mobx-state-tree'
 import { useNavigate } from '@reach/router'
 import { useDrag, useDrop, XYCoord } from 'react-dnd'
@@ -44,13 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItemContainer: {
       borderTop: `.1px solid ${theme.palette.divider}`,
-
-      /* '&.isExpanded': { */
-      /*   backgroundColor: theme.palette.background.default, */
-      /*   position: 'sticky', */
-      /*   top: 60, */
-      /*   zIndex: theme.zIndex.appBar, */
-      /* }, */
+      background: theme.palette.background.default,
 
       [isEditingBorderSelector]: {
         borderTop: `.1px solid transparent`,
@@ -61,11 +55,10 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
 
       '&:hover': {
+        cursor: 'pointer',
         color: theme.palette.primary.main,
-        backgroundColor: theme.palette.background.paper,
+        background: theme.palette.background.paper,
       },
-
-      cursor: 'pointer',
 
       '&.isEditing, .editMode &, .selectMode &': {
         cursor: 'default',
@@ -104,16 +97,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
     itemText: {
       margin: 0,
-      overflowX: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-
-      '.isEditing &': {
-        opacity: 0,
-      },
 
       '.isDragging &': {
         opacity: 0,
+      },
+
+      '&, & .MuiListItemText-secondary': {
+        overflowX: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
       },
 
       '& .MuiListItemText-primary': {
@@ -121,7 +113,6 @@ const useStyles = makeStyles((theme: Theme) =>
       },
 
       '& .MuiListItemText-secondary': {
-        display: 'inline',
         paddingLeft: theme.spacing(1),
       },
 
@@ -145,7 +136,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     noteEditor: {
-      zIndex: theme.zIndex.appBar - 1,
+      zIndex: theme.zIndex.appBar,
       cursor: 'default',
       position: 'absolute',
       top: 0,
@@ -158,6 +149,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
     secondaryActions: {
       display: 'none',
+
+      '.isDragging &': {
+        opacity: 0,
+      },
 
       '&.hasChild, .selectMode &': {
         display: 'unset',
@@ -353,6 +348,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
           ref={listItemRef}
           onClick={handleItemClick}
           selected={isSelected}
+          className={classes.listItem}
           ContainerProps={{
             onContextMenu,
             className: [
@@ -363,7 +359,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
               className,
             ].join(' '),
           }}
-          className={classes.listItem}
         >
           {isEditing && (
             <NoteEditor
@@ -384,7 +379,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
               }}
               onEscape={() => {
                 setIsEditing(false)
-                graph.unsetActiveMode('edit')
               }}
             />
           )}

@@ -27,6 +27,7 @@ import {
   Theme,
   Toolbar,
   createStyles,
+  Fade,
   fade,
   makeStyles,
   useMediaQuery,
@@ -85,9 +86,9 @@ const BLOCK_TYPES: Array<ButtonConfig> = [
   {
     label: 'UL',
     style: 'unordered-list-item',
-    icon: <FormatListNumberedIcon />,
+    icon: <FormatListBulletedIcon />,
   },
-  { label: 'OL', style: 'ordered-list-item', icon: <FormatListBulletedIcon /> },
+  { label: 'OL', style: 'ordered-list-item', icon: <FormatListNumberedIcon /> },
   { label: 'Blockquote', style: 'blockquote', icon: <FormatQuoteIcon /> },
   { label: 'Code Block', style: 'code-block', icon: <Code /> },
 ]
@@ -213,6 +214,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     wrapper: {
+      '.multiLine &': {
+        boxShadow: `0 0 ${theme.spacing(2)}px ${theme.spacing(2)}px ${
+          theme.palette.background.default
+        }`,
+      },
+
       background: `
         linear-gradient(
           to top,
@@ -230,7 +237,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     backdrop: {
-      backgroundColor: fade(theme.palette.background.default, 0.6),
+      backgroundColor: fade(theme.palette.background.default, 0.8),
     },
 
     inputWrapper: {
@@ -274,6 +281,7 @@ interface NoteEditorProps {
   showControls?: boolean
   showRichTextControls?: boolean
   className?: string
+  wrapperClassName?: string
   inputClassName?: string
   onValue?: (
     value?: Instance<typeof Note> | ContentState,
@@ -295,6 +303,7 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
       showControls,
       showRichTextControls,
       className,
+      wrapperClassName,
       inputClassName,
       onValue,
       onClickAway,
@@ -326,11 +335,15 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
     const isMobile = useMediaQuery('(pointer: coarse) and (hover: none)')
     const [submitOnReturn, setSubmitOnReturn] = React.useState(!isMobile)
 
+    const [key, setKey] = React.useState(1)
+    const incrementKey = (): void => setKey(key + 1)
+
+    // Focus every time Editor is regenerated
     React.useEffect(() => {
       if (autoFocus) {
         setEditorState(EditorState.moveFocusToEnd(editorState))
       }
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [key]) // eslint-disable-line react-hooks/exhaustive-deps
 
     /* React.useEffect(() => { */
     /*   containerRef.current?.scrollIntoView(false) */
@@ -357,6 +370,10 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
           event,
         )
       ) {
+        // Tell React to re-render Editor if NoteEditor doesn't unmount.
+        // Hopefully this takes care of some weird state issues on iOS?
+        incrementKey()
+
         setEditorState(
           EditorState.forceSelection(
             EditorState.push(
@@ -424,55 +441,68 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
     const blockCount = editorState.getCurrentContent().getBlocksAsArray().length
 
     return (
-      <div ref={ref} className={[classes.root, className].join(' ')}>
-        {blockCount > 1 && showBackdrop && (
+      <div
+        ref={ref}
+        className={[
+          classes.root,
+          blockCount > 1 ? 'multiLine' : null,
+          className,
+        ].join(' ')}
+      >
+        {
           <Backdrop
             ref={backdropRef}
-            open={Boolean(showBackdrop)}
+            open={Boolean(blockCount > 1 && showBackdrop)}
             className={classes.backdrop}
-            transitionDuration={3000}
+            transitionDuration={1500}
           />
-        )}
+        }
 
         <ClickAwayListener
           mouseEvent={'onMouseDown'}
           touchEvent={'onTouchStart'}
           onClickAway={handleClickAway}
         >
-          <div ref={containerRef} className={classes.wrapper}>
+          <Fade in={true} timeout={300}>
             <div
-              tabIndex={-1}
-              className={[classes.inputWrapper, inputClassName].join(' ')}
+              ref={containerRef}
+              className={[classes.wrapper, wrapperClassName].join(' ')}
             >
-              <Editor
-                ref={editorRef}
-                blockStyleFn={getBlockStyle}
-                editorState={editorState}
-                handleKeyCommand={handleKeyCommand}
-                keyBindingFn={mapKeyToEditorCommand}
-                onChange={setEditorState}
-                placeholder={placeholder}
-                spellCheck={true}
-              />
-            </div>
+              <div
+                tabIndex={-1}
+                className={[classes.inputWrapper, inputClassName].join(' ')}
+              >
+                <Editor
+                  key={key}
+                  ref={editorRef}
+                  blockStyleFn={getBlockStyle}
+                  editorState={editorState}
+                  handleKeyCommand={handleKeyCommand}
+                  keyBindingFn={mapKeyToEditorCommand}
+                  onChange={setEditorState}
+                  placeholder={placeholder}
+                  spellCheck={true}
+                />
+              </div>
 
-            {blockCount > 1 && showControls && (
-              <Toolbar variant="dense" className={classes.toolbar}>
-                {showRichTextControls && (
-                  <>
-                    <InlineStyleControls
-                      editorState={editorState}
-                      onToggle={toggleInlineStyle}
-                    />
-                    <BlockStyleControls
-                      editorState={editorState}
-                      onToggle={toggleBlockType}
-                    />
-                  </>
-                )}
-              </Toolbar>
-            )}
-          </div>
+              {blockCount > 1 && showControls && (
+                <Toolbar variant="dense" className={classes.toolbar}>
+                  {showRichTextControls && (
+                    <>
+                      <InlineStyleControls
+                        editorState={editorState}
+                        onToggle={toggleInlineStyle}
+                      />
+                      <BlockStyleControls
+                        editorState={editorState}
+                        onToggle={toggleBlockType}
+                      />
+                    </>
+                  )}
+                </Toolbar>
+              )}
+            </div>
+          </Fade>
         </ClickAwayListener>
       </div>
     )

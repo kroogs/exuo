@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     appBar: {
+      zIndex: theme.zIndex.appBar + 1,
       position: 'sticky',
       borderBottom: `.1px solid ${theme.palette.divider}`,
       backdropFilter: 'blur(3px)',
@@ -54,19 +55,17 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'unset',
     },
 
-    children: {
-      marginBottom: '-0.1px',
-    },
+    children: {},
 
     textEditor: {
       position: 'sticky',
-      zIndex: theme.zIndex.appBar + 1,
+      zIndex: theme.zIndex.appBar,
       bottom: theme.spacing(8),
     },
 
     actions: {
       borderTop: `.1px solid ${theme.palette.divider}`,
-      zIndex: theme.zIndex.appBar,
+      zIndex: theme.zIndex.appBar + 1,
 
       position: 'fixed',
       bottom: 0,
