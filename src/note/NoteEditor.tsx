@@ -242,10 +242,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
     inputWrapper: {
       outline: 'none',
+      maxHeight: '50vh',
+      overflowY: 'auto',
 
       '& .DraftEditor-editorContainer': {
-        maxHeight: '70vh',
-        overflowY: 'auto',
         border: 0,
         padding: theme.spacing(1, 2, 1, 2),
 
