@@ -32,6 +32,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { Instance } from 'mobx-state-tree'
 import { useNavigate } from '@reach/router'
 import { useDrag, useDrop, XYCoord } from 'react-dnd'
+import { ContentBlock } from 'draft-js'
 
 import { makeUrl } from 'route'
 import { NoteEditor } from 'note'
@@ -48,11 +49,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
       [isEditingBorderSelector]: {
         borderTop: `.1px solid transparent`,
+
+        // Can be removed when I figure out what's
+        // going on with list items remaining active.
+        background: 'unset !important',
       },
 
       transition: theme.transitions.create(['color', 'background'], {
         duration: theme.transitions.duration.shortest,
       }),
+
+      // This stuff is a jumble and requires better mode handling.
 
       '&:hover': {
         cursor: 'pointer',
@@ -137,7 +144,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
     noteEditor: {
       // Account for layout's bottom toolbar
-      paddingBottom: theme.spacing(8) + 1,
+      marginBottom: theme.spacing(8) + 1,
       zIndex: theme.zIndex.appBar,
 
       cursor: 'default',
@@ -326,9 +333,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
       }
     }
 
-    drag(drop(listItemRef))
-
-    let primaryText = node.id
+    let primaryText
     let secondaryText
 
     const rawContent = node.content?.toJSON?.()
@@ -340,10 +345,23 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
         newlineIndex > 0 ? node.content.slice(0, newlineIndex) : node.content
       secondaryText =
         newlineIndex > 0 ? node.content.slice(newlineIndex + 1) : undefined
-    } else if (rawContent) {
-      primaryText = rawContent.blocks[0].text
-      secondaryText = rawContent.blocks[1]?.text
+    } else if (rawContent?.blocks) {
+      for (const block of rawContent.blocks) {
+        if (block.text === '') continue
+
+        if (!primaryText) {
+          primaryText = block.text
+        } else if (!secondaryText) {
+          secondaryText = block.text
+        } else {
+          break
+        }
+      }
+    } else {
+      primaryText = node.id
     }
+
+    drag(drop(listItemRef))
 
     return (
       <>
