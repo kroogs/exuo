@@ -21,7 +21,9 @@ import {
   Instance,
   applySnapshot,
   SnapshotIn,
+  SnapshotOut,
   IAnyModelType,
+  getSnapshot,
 } from 'mobx-state-tree'
 
 import { persist } from 'store/persist'
@@ -90,11 +92,43 @@ export const Graph = graphFactory({
     },
   }))
 
-  .actions(self => ({
-    toggleSelectNode(
+  .actions(self => {
+    function selectNode(
       node: Instance<typeof Node>,
       parentNode: Instance<typeof Node>,
-    ) {
+    ): void {
+      const nodes = self.selectedNodes
+      const container = nodes.get(parentNode.id)
+
+      if (container) {
+        if (!container.includes(node.id)) {
+          container.push(node.id)
+        }
+      } else {
+        nodes.set(parentNode.id, [node.id])
+      }
+    }
+
+    function deselectNode(
+      node: Instance<typeof Node>,
+      parentNode: Instance<typeof Node>,
+    ): void {
+      const nodes = self.selectedNodes
+      const container = nodes.get(parentNode.id)
+
+      if (!container) return
+
+      container.remove(node.id)
+
+      if (container.length === 0) {
+        nodes.delete(parentNode.id)
+      }
+    }
+
+    function toggleSelectNode(
+      node: Instance<typeof Node>,
+      parentNode: Instance<typeof Node>,
+    ): void {
       const selectedNodes = self.Config.get('system').get('selectedNodes')
       if (!selectedNodes) {
         return
@@ -114,24 +148,24 @@ export const Graph = graphFactory({
       } else {
         selectedNodes.set(parentNode.id, [node.id])
       }
-    },
+    }
 
-    clearSelectedNodes() {
+    function clearSelectedNodes(): void {
       self.Config.get('system').get('selectedNodes')?.clear()
       if (self.selectedNodes.size === 0) {
         self.unsetActiveMode('select')
       }
-    },
+    }
 
-    deleteSelectedNodes() {
+    function deleteSelectedNodes(): void {
       self.selectedNodes.forEach((nodeIds: Array<string>) =>
         nodeIds.forEach((nodeId: string) => self.Node.delete(nodeId)),
       )
 
       self.clearSelectedNodes()
-    },
+    }
 
-    moveSelectedNodes(target: Instance<typeof Node>) {
+    function moveSelectedNodes(target: Instance<typeof Node>): void {
       for (const [accessorId, nodeIds] of self.selectedNodes) {
         const accessor = self.Node.get(accessorId)
         for (const nodeId of nodeIds) {
@@ -147,13 +181,13 @@ export const Graph = graphFactory({
       }
 
       self.clearSelectedNodes()
-    },
+    }
 
-    copySelectedNodes() {
+    function copySelectedNodes(): void {
       //
-    },
+    }
 
-    linkSelectedNodes(target: Instance<typeof Node>) {
+    function linkSelectedNodes(target: Instance<typeof Node>): void {
       for (const nodeIds of self.selectedNodes.values()) {
         for (const nodeId of nodeIds) {
           const node = self.Node.get(nodeId)
@@ -165,9 +199,9 @@ export const Graph = graphFactory({
       }
 
       self.clearSelectedNodes()
-    },
+    }
 
-    unlinkSelectedNodes() {
+    function unlinkSelectedNodes(): void {
       for (const [accessorId, nodeIds] of self.selectedNodes) {
         const accessor = self.Node.get(accessorId)
         for (const nodeId of nodeIds) {
@@ -180,9 +214,9 @@ export const Graph = graphFactory({
       }
 
       self.clearSelectedNodes()
-    },
+    }
 
-    removeSelectedNodes() {
+    function removeSelectedNodes(): void {
       for (const [accessorId, nodeIds] of self.selectedNodes) {
         const accessor = self.Node.get(accessorId)
         for (const nodeId of nodeIds) {
@@ -198,8 +232,56 @@ export const Graph = graphFactory({
       }
 
       self.clearSelectedNodes()
-    },
-  }))
+    }
+
+    const processExportItem = (
+      itemId: string,
+      allIds: Array<string>,
+    ): SnapshotIn<typeof Node> => {
+      const json = { ...self['Node'].get(itemId).toJSON() }
+      const parentIds = json.edgeMap.parent
+
+      delete json.edgeMap
+
+      if (parentIds) {
+        const localIds = parentIds.filter((id: string) => allIds.includes(id))
+        if (localIds.length) {
+          json.edgeMap = { parent: localIds }
+        }
+      }
+
+      return json
+    }
+
+    return {
+      selectNode,
+      deselectNode,
+      toggleSelectNode,
+      clearSelectedNodes,
+      deleteSelectedNodes,
+      moveSelectedNodes,
+      copySelectedNodes,
+      linkSelectedNodes,
+      unlinkSelectedNodes,
+      removeSelectedNodes,
+
+      exportSelectedNodes(): Blob {
+        const itemIds = Object.values(self.selectedNodes.toJSON()).flatMap(
+          value => value,
+        ) as Array<string>
+
+        const exportItems = Object.fromEntries(
+          itemIds.map(id => [id, processExportItem(id, itemIds)]),
+        )
+
+        const blob = new Blob([JSON.stringify(exportItems, null, 2)], {
+          type: 'application/json',
+        })
+
+        return blob
+      },
+    }
+  })
 
   .actions(self => ({
     afterCreate() {
@@ -209,13 +291,14 @@ export const Graph = graphFactory({
         })
         .then(() => {
           if (!self.rootNode) {
-            const rootNode = self.createNode('Node', { content: 'Exuo' })
+            const rootNode = self.createNode('Node', { content: 'Locus' })
             applySnapshot(self.Config, {
               system: {
                 id: 'system',
                 items: {
                   rootNodeId: rootNode.id,
                   selectedNodes: {},
+                  lastSelectedNodeId: '',
                   activeModes: [],
                 },
               },
@@ -256,6 +339,11 @@ export const Graph = graphFactory({
     get selectedNodes() {
       const config = self.Config.get('system')
       return config?.get('selectedNodes')
+    },
+
+    get lastSelectedNode() {
+      const config = self.Config.get('system')
+      return self.Node.get(config?.get('lastSelectedNodeId'))
     },
 
     get selectedNodeCount() {

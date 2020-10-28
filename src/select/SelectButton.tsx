@@ -34,6 +34,7 @@ import FlipToBackIcon from '@material-ui/icons/FlipToBackOutlined'
 import CancelIcon from '@material-ui/icons/CancelOutlined'
 import FolderIcon from '@material-ui/icons/FolderOutlined'
 import FileCopyIcon from '@material-ui/icons/FileCopyOutlined'
+import SaveAltIcon from '@material-ui/icons/SaveAlt'
 import SelectAllIcon from '@material-ui/icons/SelectAll'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
@@ -84,6 +85,34 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
+interface DownloadProps {
+  blob?: Blob | null
+  onComplete: () => void
+}
+
+const Download: React.FunctionComponent<DownloadProps> = ({
+  blob,
+  onComplete,
+}) => {
+  const ref = React.useRef<HTMLAnchorElement>(null)
+  const [url, setUrl] = React.useState('')
+
+  React.useEffect(() => {
+    if (url && ref.current) {
+      ref.current.click()
+
+      URL.revokeObjectURL(url)
+      setUrl('')
+
+      onComplete()
+    } else if (blob) {
+      setUrl(URL.createObjectURL(blob))
+    }
+  }, [blob, ref, url, onComplete])
+
+  return <a ref={ref} href={url} style={{ display: 'none' }} children={null} />
+}
+
 interface SelectButtonProps extends IconButtonProps {
   node: Instance<typeof Node>
   onClick: React.MouseEventHandler
@@ -101,6 +130,7 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
 
     const [open, setOpen] = React.useState(false)
     const [showAltMenu, setShowAltMenu] = React.useState(false)
+    const [download, setDownload] = React.useState(null)
 
     React.useEffect(() => {
       const downHandler = (event: KeyboardEvent): void => {
@@ -126,6 +156,8 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
 
     return (
       <div className={[classes.root, className].join(' ')}>
+        <Download blob={download} onComplete={() => setDownload(null)} />
+
         {selectedCount > 0 && (
           <span className={classes.selectCount}>{selectedCount}</span>
         )}
@@ -213,6 +245,17 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
                   {/*   <DeleteIcon /> */}
                   {/*   Delete */}
                   {/* </MenuItem> */}
+
+                  <MenuItem
+                    divider
+                    onClick={() => {
+                      setDownload(graph.exportSelectedNodes())
+                      setOpen(false)
+                    }}
+                  >
+                    <SaveAltIcon />
+                    Export
+                  </MenuItem>
 
                   <MenuItem
                     onClick={() => {
