@@ -247,7 +247,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
       '& .DraftEditor-editorContainer': {
         border: 0,
-        padding: theme.spacing(1, 2, 1, 2),
+
+        '& > [contentEditable=true]': {
+          padding: theme.spacing(1, 2, 1, 2),
+        },
 
         '& [data-contents=true] > [data-block=true]': {
           ...theme.typography.body2,
@@ -372,8 +375,12 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
       ) {
         // Tell React to re-render Editor if NoteEditor doesn't unmount.
         // Hopefully this takes care of some weird state issues on iOS?
+        // This might be appropriate to hoist and use only when Editor
+        // creates many records.
         incrementKey()
 
+        // TODO Seems to throw a deprecation notice in Chrome sometimes?
+        // It also might not be necessary with the above re-render hack.
         setEditorState(
           EditorState.forceSelection(
             EditorState.push(
@@ -440,24 +447,28 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
 
     const blockCount = editorState.getCurrentContent().getBlocksAsArray().length
 
+    // TODO Get Backdrop, ClickAwayListener, and Fade out of here.
+    // It's all rendering on every keystroke. Cut as much as you
+    // can out of this component.
+
     return (
       <div
         ref={ref}
         className={[
           classes.root,
+          // TODO multiLine should just take measurements, there is
+          // no other reliable way to know this will overlap other
+          // things and require a shadow.
           blockCount > 1 ? 'multiLine' : null,
           className,
         ].join(' ')}
       >
-        {
-          <Backdrop
-            ref={backdropRef}
-            open={Boolean(blockCount > 1 && showBackdrop)}
-            className={classes.backdrop}
-            transitionDuration={1500}
-          />
-        }
-
+        <Backdrop
+          ref={backdropRef}
+          open={Boolean(blockCount > 1 && showBackdrop)}
+          className={classes.backdrop}
+          transitionDuration={1500}
+        />
         <ClickAwayListener
           mouseEvent={'onMouseDown'}
           touchEvent={'onTouchStart'}
@@ -510,7 +521,7 @@ export const NoteEditor = React.forwardRef<HTMLDivElement, NoteEditorProps>(
 )
 
 NoteEditor.defaultProps = {
-  showBackdrop: true,
-  showControls: true,
+  showBackdrop: false,
+  showControls: false,
   showRichTextControls: true,
 }
