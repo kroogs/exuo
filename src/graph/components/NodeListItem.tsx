@@ -32,7 +32,6 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { Instance } from 'mobx-state-tree'
 import { useNavigate } from '@reach/router'
 import { useDrag, useDrop, XYCoord } from 'react-dnd'
-import { ContentBlock } from 'draft-js'
 
 import { makeUrl } from 'route'
 import { NoteEditor } from 'note'
@@ -50,8 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
       [isEditingBorderSelector]: {
         borderTop: `.1px solid transparent`,
 
-        // Can be removed when I figure out what's
-        // going on with list items remaining active.
+        // TODO Cursor effect remains active?  Make it less apparent.
         background: 'unset !important',
       },
 
@@ -59,10 +57,10 @@ const useStyles = makeStyles((theme: Theme) =>
         duration: theme.transitions.duration.shortest,
       }),
 
-      // This stuff is a jumble and requires better mode handling.
+      // TODO Mode stuff is boggled.
+      cursor: 'pointer',
 
       '&:hover': {
-        cursor: 'pointer',
         color: theme.palette.primary.main,
         background: theme.palette.background.paper,
       },
