@@ -61,10 +61,7 @@ export const ThemeProvider: React.FunctionComponent = ({ children }) => {
     return createMuiTheme({
       palette,
 
-      // TODO use responsiveFontSizes
       typography: {
-        fontSize: 16,
-
         fontFamily: [
           '-apple-system',
           'system-ui',
