@@ -42,14 +42,21 @@ export async function persist(
   db.version(1).stores(tableConfig)
 
   const flushBuffer = (buffer: Array<IJsonPatch>): void => {
-    buffer.forEach(patch => {
+    for (const patch of buffer) {
       const [typeName, id, propertyName] = patch.path.split('/').slice(1)
+      const item = instance[typeName].get(id)
 
       if (patch.op === 'add') {
-        db.table(typeName).put(getSnapshot(instance[typeName].get(id)))
+        db.table(typeName).put(getSnapshot(item))
       } else if (patch.op === 'replace' || patch.op === 'remove') {
+        // TODO Avoid trying to remove a dead path, probably when doing
+        // applySnapshot(Graph, {}). Investigate applySnapshot, this is odd.
+        if (!item) {
+          continue
+        }
+
         if (propertyName) {
-          let propertyValue = instance[typeName].get(id)[propertyName]
+          let propertyValue = item[propertyName]
 
           if (isStateTreeNode(propertyValue)) {
             propertyValue = getSnapshot(propertyValue)
@@ -61,10 +68,8 @@ export async function persist(
         } else {
           db.table(typeName).delete(id)
         }
-      } else {
-        throw Error(`Unknown patch op '${patch.op}'`)
       }
-    })
+    }
   }
 
   return Promise.all(
