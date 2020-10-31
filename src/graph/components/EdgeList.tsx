@@ -27,6 +27,21 @@ import { useGraph } from 'graph'
 import { NodeListItem } from './NodeListItem'
 import { Node } from '../models/Node'
 
+interface DragItem {
+  type: string
+  index: number
+  path: string
+  parentNode: Instance<typeof Node>
+  childNode: Instance<typeof Node>
+}
+
+interface EdgeListProps {
+  node: Instance<IAnyModelType>
+  edgeTag: string
+  outer?: boolean
+  className?: string
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     list: {
@@ -42,21 +57,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 )
-
-interface EdgeListProps {
-  node: Instance<IAnyModelType>
-  edgeTag: string
-  outer?: boolean
-  className?: string
-}
-
-interface DragItem {
-  type: string
-  index: number
-  path: string
-  parentNode: Instance<typeof Node>
-  childNode: Instance<typeof Node>
-}
 
 export const EdgeList: React.FunctionComponent<EdgeListProps> = observer(
   ({ node, edgeTag, outer, className }) => {
