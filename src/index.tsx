@@ -19,7 +19,6 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import 'mobx-react-lite/batchingForReactDom'
 
 import { StoreProvider } from './store'
 import { ThemeProvider } from './theme'
@@ -37,4 +36,12 @@ ReactDOM.render(
   document.getElementById('root'),
 )
 
-serviceWorker.register()
+serviceWorker.register({
+  onUpdate(registration: ServiceWorkerRegistration) {
+    alert('Update available. Please close all open instances to update.')
+  },
+
+  onSuccess(registration: ServiceWorkerRegistration) {
+    alert('Latest version has been installed and is now available offline.')
+  },
+})
