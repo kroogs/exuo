@@ -18,6 +18,7 @@
  */
 
 import {
+  types,
   Instance,
   applySnapshot,
   SnapshotIn,
@@ -93,151 +94,10 @@ export const Graph = graphFactory({
   }))
 
   .actions(self => {
-    function selectNode(
-      node: Instance<typeof Node>,
-      parentNode: Instance<typeof Node>,
-    ): void {
-      const nodes = self.selectedNodes
-      const container = nodes.get(parentNode.id)
-
-      if (container) {
-        if (!container.includes(node.id)) {
-          container.push(node.id)
-        }
-      } else {
-        nodes.set(parentNode.id, [node.id])
-      }
-    }
-
-    function deselectNode(
-      node: Instance<typeof Node>,
-      parentNode: Instance<typeof Node>,
-    ): void {
-      const nodes = self.selectedNodes
-      const container = nodes.get(parentNode.id)
-
-      if (!container) return
-
-      container.remove(node.id)
-
-      if (container.length === 0) {
-        nodes.delete(parentNode.id)
-      }
-    }
-
-    function toggleSelectNode(
-      node: Instance<typeof Node>,
-      parentNode: Instance<typeof Node>,
-    ): void {
-      const selectedNodes = self.Config.get('system').get('selectedNodes')
-      if (!selectedNodes) {
-        return
-      }
-
-      const nodeIds = selectedNodes.get(parentNode.id)
-
-      if (nodeIds) {
-        if (nodeIds.includes(node.id)) {
-          nodeIds.remove(node.id)
-          if (nodeIds.length === 0) {
-            selectedNodes.delete(parentNode.id)
-          }
-        } else {
-          nodeIds.push(node.id)
-        }
-      } else {
-        selectedNodes.set(parentNode.id, [node.id])
-      }
-    }
-
-    function clearSelectedNodes(): void {
-      self.Config.get('system').get('selectedNodes')?.clear()
-      if (self.selectedNodes.size === 0) {
-        self.unsetActiveMode('select')
-      }
-    }
-
-    function deleteSelectedNodes(): void {
-      self.selectedNodes.forEach((nodeIds: Array<string>) =>
-        nodeIds.forEach((nodeId: string) => self.Node.delete(nodeId)),
-      )
-
-      self.clearSelectedNodes()
-    }
-
-    function moveSelectedNodes(target: Instance<typeof Node>): void {
-      for (const [accessorId, nodeIds] of self.selectedNodes) {
-        const accessor = self.Node.get(accessorId)
-        for (const nodeId of nodeIds) {
-          const node = self.Node.get(nodeId)
-          if (node) {
-            node.removeEdge('parent', accessor)
-            accessor.removeEdge('child', node)
-
-            node.addEdge('parent', target)
-            target.addEdge('child', node)
-          }
-        }
-      }
-
-      self.clearSelectedNodes()
-    }
-
-    function copySelectedNodes(): void {
-      //
-    }
-
-    function linkSelectedNodes(target: Instance<typeof Node>): void {
-      for (const nodeIds of self.selectedNodes.values()) {
-        for (const nodeId of nodeIds) {
-          const node = self.Node.get(nodeId)
-          if (node) {
-            node.addEdge('parent', target)
-            target.addEdge('child', node)
-          }
-        }
-      }
-
-      self.clearSelectedNodes()
-    }
-
-    function unlinkSelectedNodes(): void {
-      for (const [accessorId, nodeIds] of self.selectedNodes) {
-        const accessor = self.Node.get(accessorId)
-        for (const nodeId of nodeIds) {
-          const node = self.Node.get(nodeId)
-          if (node) {
-            node.removeEdge('parent', accessor)
-            accessor.removeEdge('child', node)
-          }
-        }
-      }
-
-      self.clearSelectedNodes()
-    }
-
-    function removeSelectedNodes(): void {
-      for (const [accessorId, nodeIds] of self.selectedNodes) {
-        const accessor = self.Node.get(accessorId)
-        for (const nodeId of nodeIds) {
-          const node = self.Node.get(nodeId)
-          if (node) {
-            node.removeEdge('parent', accessor)
-            accessor.removeEdge('child', node)
-            if (node.edgeMap.get('parent').size === 0) {
-              self.deleteNode(node)
-            }
-          }
-        }
-      }
-
-      self.clearSelectedNodes()
-    }
-
-    const processExportItem = (
+    function processExportNode(
       itemId: string,
       allIds: Array<string>,
-    ): SnapshotIn<typeof Node> => {
+    ): SnapshotIn<typeof Node> {
       const json = { ...self['Node'].get(itemId).toJSON() }
       const parentIds = json.edgeMap.parent
 
@@ -254,31 +114,175 @@ export const Graph = graphFactory({
     }
 
     return {
-      selectNode,
-      deselectNode,
-      toggleSelectNode,
-      clearSelectedNodes,
-      deleteSelectedNodes,
-      moveSelectedNodes,
-      copySelectedNodes,
-      linkSelectedNodes,
-      unlinkSelectedNodes,
-      removeSelectedNodes,
+      selectNode(
+        node: Instance<typeof Node>,
+        parentNode: Instance<typeof Node>,
+      ): void {
+        const nodes = self.selectedNodes
+        const container = nodes.get(parentNode.id)
 
-      exportSelectedNodes(): Blob {
+        if (container) {
+          if (!container.includes(node.id)) {
+            container.push(node.id)
+          }
+        } else {
+          nodes.set(parentNode.id, [node.id])
+        }
+      },
+
+      deselectNode(
+        node: Instance<typeof Node>,
+        parentNode: Instance<typeof Node>,
+      ): void {
+        const nodes = self.selectedNodes
+        const container = nodes.get(parentNode.id)
+
+        if (!container) return
+
+        container.remove(node.id)
+
+        if (container.length === 0) {
+          nodes.delete(parentNode.id)
+        }
+      },
+
+      toggleSelectNode(
+        node: Instance<typeof Node>,
+        parentNode: Instance<typeof Node>,
+      ): void {
+        const selectedNodes = self.Config.get('system').get('selectedNodes')
+        if (!selectedNodes) {
+          return
+        }
+
+        const nodeIds = selectedNodes.get(parentNode.id)
+
+        if (nodeIds) {
+          if (nodeIds.includes(node.id)) {
+            nodeIds.remove(node.id)
+            if (nodeIds.length === 0) {
+              selectedNodes.delete(parentNode.id)
+            }
+          } else {
+            nodeIds.push(node.id)
+          }
+        } else {
+          selectedNodes.set(parentNode.id, [node.id])
+        }
+      },
+
+      clearSelectedNodes(): void {
+        self.Config.get('system').get('selectedNodes')?.clear()
+        if (self.selectedNodes.size === 0) {
+          self.unsetActiveMode('select')
+        }
+      },
+
+      deleteSelectedNodes(): void {
+        self.selectedNodes.forEach((nodeIds: Array<string>) =>
+          nodeIds.forEach((nodeId: string) => self.Node.delete(nodeId)),
+        )
+
+        self.clearSelectedNodes()
+      },
+
+      moveSelectedNodes(target: Instance<typeof Node>): void {
+        for (const [accessorId, nodeIds] of self.selectedNodes) {
+          const accessor = self.Node.get(accessorId)
+          for (const nodeId of nodeIds) {
+            const node = self.Node.get(nodeId)
+            if (node) {
+              node.removeEdge('parent', accessor)
+              accessor.removeEdge('child', node)
+
+              node.addEdge('parent', target)
+              target.addEdge('child', node)
+            }
+          }
+        }
+
+        self.clearSelectedNodes()
+      },
+
+      copySelectedNodes(): void {
+        //
+      },
+
+      linkSelectedNodes(target: Instance<typeof Node>): void {
+        for (const nodeIds of self.selectedNodes.values()) {
+          for (const nodeId of nodeIds) {
+            const node = self.Node.get(nodeId)
+            if (node) {
+              node.addEdge('parent', target)
+              target.addEdge('child', node)
+            }
+          }
+        }
+
+        self.clearSelectedNodes()
+      },
+
+      unlinkSelectedNodes(): void {
+        for (const [accessorId, nodeIds] of self.selectedNodes) {
+          const accessor = self.Node.get(accessorId)
+          for (const nodeId of nodeIds) {
+            const node = self.Node.get(nodeId)
+            if (node) {
+              node.removeEdge('parent', accessor)
+              accessor.removeEdge('child', node)
+            }
+          }
+        }
+
+        self.clearSelectedNodes()
+      },
+
+      removeSelectedNodes(): void {
+        for (const [accessorId, nodeIds] of self.selectedNodes) {
+          const accessor = self.Node.get(accessorId)
+          for (const nodeId of nodeIds) {
+            const node = self.Node.get(nodeId)
+            if (node) {
+              node.removeEdge('parent', accessor)
+              accessor.removeEdge('child', node)
+              if (node.edgeMap.get('parent').size === 0) {
+                self.deleteNode(node)
+              }
+            }
+          }
+        }
+
+        self.clearSelectedNodes()
+      },
+
+      exportSelectedItems(): Blob {
         const itemIds = Object.values(self.selectedNodes.toJSON()).flatMap(
           value => value,
         ) as Array<string>
 
-        const exportItems = Object.fromEntries(
-          itemIds.map(id => [id, processExportItem(id, itemIds)]),
+        const snapshot = Object.fromEntries(
+          itemIds.map(id => [id, processExportNode(id, itemIds)]),
         )
 
-        const blob = new Blob([JSON.stringify(exportItems, null, 2)], {
+        return new Blob([JSON.stringify(snapshot, null, 2)], {
           type: 'application/json',
         })
+      },
 
-        return blob
+      exportAllItems(): Blob | void {
+        return new Blob([JSON.stringify(getSnapshot(self), null, 2)], {
+          type: 'application/json',
+        })
+      },
+
+      importItems(file: File): void {
+        file
+          .text()
+          .then(text => JSON.parse(text))
+          .then(json => applySnapshot(self, json))
+          .catch(error => {
+            throw Error(`Import error ${error}`)
+          })
       },
     }
   })
@@ -286,9 +290,6 @@ export const Graph = graphFactory({
   .actions(self => ({
     afterCreate() {
       persist(self)
-        .catch(e => {
-          console.error('Persist error', e)
-        })
         .then(() => {
           if (!self.rootNode) {
             const rootNode = self.createNode('Node', { content: 'Locus' })
@@ -304,6 +305,9 @@ export const Graph = graphFactory({
               },
             })
           }
+        })
+        .catch(e => {
+          console.error('Persist error', e)
         })
     },
 

@@ -37,6 +37,7 @@ import TuneIcon from '@material-ui/icons/Tune'
 import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
 
+import { selectFile } from 'common'
 import { SelectButton } from 'select'
 import { Node, useGraph } from 'graph'
 
@@ -52,11 +53,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
       minHeight: theme.spacing(8),
 
-      backdropFilter: 'blur(3px)',
+      /* backdropFilter: 'blur(3px)', */
       background: `
         linear-gradient(
           to bottom,
-          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 0.8)},
           ${fade(theme.palette.background.default, 1)} 80%
         )`,
     },
@@ -128,8 +129,12 @@ export const NodeActions: React.FunctionComponent<NodeActionsProps> = observer(
 
           <IconButton
             color="primary"
-            onClick={() => {
-              graph.setActiveMode('insert')
+            onClick={e => {
+              if (e.altKey) {
+                selectFile('.json', files => graph.importItems(files[0]))
+              } else {
+                graph.setActiveMode('insert')
+              }
             }}
             className={classes.insertButton}
           >

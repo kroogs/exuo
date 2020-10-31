@@ -38,6 +38,7 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt'
 import SelectAllIcon from '@material-ui/icons/SelectAll'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
+import { saveBlob } from 'common'
 import { useGraph, Node, useActive } from 'graph'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -85,34 +86,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface DownloadProps {
-  blob?: Blob | null
-  onComplete: () => void
-}
-
-const Download: React.FunctionComponent<DownloadProps> = ({
-  blob,
-  onComplete,
-}) => {
-  const ref = React.useRef<HTMLAnchorElement>(null)
-  const [url, setUrl] = React.useState('')
-
-  React.useEffect(() => {
-    if (url && ref.current) {
-      ref.current.click()
-
-      URL.revokeObjectURL(url)
-      setUrl('')
-
-      onComplete()
-    } else if (blob) {
-      setUrl(URL.createObjectURL(blob))
-    }
-  }, [blob, ref, url, onComplete])
-
-  return <a ref={ref} href={url} style={{ display: 'none' }} children={null} />
-}
-
 interface SelectButtonProps extends IconButtonProps {
   node: Instance<typeof Node>
   onClick: React.MouseEventHandler
@@ -130,8 +103,10 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
 
     const [open, setOpen] = React.useState(false)
     const [showAltMenu, setShowAltMenu] = React.useState(false)
-    const [download, setDownload] = React.useState(null)
 
+    // Wait, ...?  Why is it adding listeners for document
+    // events? Why does it use KeyboardEvent? This whole file is
+    // a mess.
     React.useEffect(() => {
       const downHandler = (event: KeyboardEvent): void => {
         if (event.key === 'Alt') {
@@ -156,8 +131,6 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
 
     return (
       <div className={[classes.root, className].join(' ')}>
-        <Download blob={download} onComplete={() => setDownload(null)} />
-
         {selectedCount > 0 && (
           <span className={classes.selectCount}>{selectedCount}</span>
         )}
@@ -165,9 +138,15 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
         <IconButton
           color="primary"
           ref={anchorRef}
-          onClick={
-            graph.selectedNodes.size ? () => setOpen(value => !value) : onClick
-          }
+          onClick={e => {
+            if (e.altKey) {
+              saveBlob(graph.exportAllItems())
+            } else if (graph.selectedNodes.size) {
+              setOpen(true)
+            } else {
+              onClick(e)
+            }
+          }}
           className={classes.selectButton}
           {...extraProps}
         >
@@ -183,6 +162,8 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
         >
           {({ placement }) => (
             <ClickAwayListener
+              mouseEvent={'onMouseDown'}
+              touchEvent={'onTouchStart'}
               onClickAway={e => {
                 e.preventDefault()
                 setOpen(false)
@@ -246,16 +227,16 @@ export const SelectButton: React.FunctionComponent<SelectButtonProps> = observer
                   {/*   Delete */}
                   {/* </MenuItem> */}
 
-                  <MenuItem
-                    divider
-                    onClick={() => {
-                      setDownload(graph.exportSelectedNodes())
-                      setOpen(false)
-                    }}
-                  >
-                    <SaveAltIcon />
-                    Export
-                  </MenuItem>
+                  {/* <MenuItem */}
+                  {/*   divider */}
+                  {/*   onClick={() => { */}
+                  {/*     saveBlob(graph.exportSelectedItems()) */}
+                  {/*     setOpen(false) */}
+                  {/*   }} */}
+                  {/* > */}
+                  {/*   <SaveAltIcon /> */}
+                  {/*   Export */}
+                  {/* </MenuItem> */}
 
                   <MenuItem
                     onClick={() => {

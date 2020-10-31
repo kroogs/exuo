@@ -19,6 +19,41 @@
 
 import { makeUrl } from 'route'
 
+export function saveBlob(blob: Blob, name?: string): void {
+  const url = URL.createObjectURL(blob)
+  const el = document.createElement('a')
+
+  el.href = url
+  el.download = name ?? ''
+  el.setAttribute('style', "'display: 'none'")
+
+  document.body.appendChild(el)
+  el.click()
+  document.body.removeChild(el)
+  URL.revokeObjectURL(url)
+}
+
+export function selectFile(
+  accept: string,
+  callback: (files: FileList) => void,
+): void {
+  const el = document.createElement('input')
+
+  el.type = 'file'
+  el.accept = accept
+  el.setAttribute('style', 'display: none')
+
+  el.oninput = () => {
+    if (el.files?.length) {
+      callback(el.files)
+    }
+  }
+
+  document.body.appendChild(el)
+  el.click()
+  document.body.removeChild(el)
+}
+
 export const isRootPath = (): boolean =>
   window.location.pathname === makeUrl('/') ||
   window.location.pathname === makeUrl()
