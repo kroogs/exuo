@@ -23,12 +23,12 @@ import * as reach from '@reach/router'
 
 import { useGraph } from 'graph'
 import { NodeViewer } from 'graph'
-import { PeerConnector } from 'peer'
-import { Settings } from 'common'
+/* import { PeerConnector } from 'peer' */
 
 // Necessary for now because this routing library is bad.
-export function makeUrl(path = ''): string {
-  return process.env.PUBLIC_URL + path
+export const makeUrl = (path = ''): string => process.env.PUBLIC_URL + path
+export const navigate = (path = ''): void => {
+  reach.navigate(makeUrl(path))
 }
 
 export type RouteProps<T = unknown> = {
@@ -46,8 +46,7 @@ export const Router: React.FunctionComponent = observer(() => {
     <reach.Router basepath={process.env.PUBLIC_URL}>
       <Route path="/" component={NodeViewer} />
       <Route path=":type/:id" component={NodeViewer} />
-      <Route path="peer/:id" component={PeerConnector} />
-      <Route path="settings" component={Settings} />
+      {/* <Route path="peer/:id" component={PeerConnector} /> */}
     </reach.Router>
   ) : null
 })

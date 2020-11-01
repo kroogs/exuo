@@ -22,9 +22,8 @@ import { observer } from 'mobx-react-lite'
 import { AppBar, Box, fade } from '@material-ui/core'
 import { Instance } from 'mobx-state-tree'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import { useNavigate } from '@reach/router'
 
-import { makeUrl } from 'route'
+import { navigate } from 'route'
 import { TitleBar } from 'common'
 import { NoteEditor } from 'note'
 
@@ -42,11 +41,11 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: theme.zIndex.appBar + 1,
       position: 'sticky',
       borderBottom: `.1px solid ${theme.palette.divider}`,
-      backdropFilter: 'blur(3px)',
+      /* backdropFilter: 'blur(3px)', */
       background: `
         linear-gradient(
           to top,
-          ${fade(theme.palette.background.default, 0.9)},
+          ${fade(theme.palette.background.default, 0.8)},
           ${fade(theme.palette.background.default, 1)} 80%
         )`,
     },
@@ -88,7 +87,6 @@ interface LayoutProps {
 export const NodeLayout: React.FunctionComponent<LayoutProps> = observer(
   ({ node, className, children }) => {
     const classes = useStyles()
-    const navigate = useNavigate()
     const graph = useGraph()
 
     const content = node.content?.toJSON?.()
@@ -126,7 +124,7 @@ export const NodeLayout: React.FunctionComponent<LayoutProps> = observer(
                 const child = graph.createChild(node, { content: value })
 
                 if (event?.ctrlKey) {
-                  navigate(makeUrl(`/node/${child.id}/`))
+                  navigate(`/node/${child.id}/`)
                 } else {
                   return true
                 }

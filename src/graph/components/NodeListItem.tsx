@@ -30,10 +30,9 @@ import { createStyles, makeStyles, fade, Theme } from '@material-ui/core/styles'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { Instance } from 'mobx-state-tree'
-import { useNavigate } from '@reach/router'
 import { useDrag, useDrop, XYCoord } from 'react-dnd'
 
-import { makeUrl } from 'route'
+import { navigate } from 'route'
 import { NoteEditor } from 'note'
 import { useGraph, Node, EdgeList, useActive } from 'graph'
 
@@ -49,11 +48,12 @@ const useStyles = makeStyles((theme: Theme) =>
       [isEditingBorderSelector]: {
         borderTop: `.1px solid transparent`,
 
-        // TODO Cursor effect remains active?  Make it less apparent.
+        // TODO Active cursor effect remains?
+        // Make it less apparent for now.
         background: 'unset !important',
       },
 
-      transition: theme.transitions.create(['color', 'background'], {
+      transition: theme.transitions.create(['color', 'background', 'border'], {
         duration: theme.transitions.duration.shortest,
       }),
 
@@ -107,11 +107,11 @@ const useStyles = makeStyles((theme: Theme) =>
         opacity: 0,
       },
 
-      '&, & .MuiListItemText-secondary': {
-        overflowX: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-      },
+      /* '&, & .MuiListItemText-secondary': { */
+      /*   overflowX: 'hidden', */
+      /*   whiteSpace: 'nowrap', */
+      /*   textOverflow: 'ellipsis', */
+      /* }, */
 
       '& .MuiListItemText-primary': {
         display: 'inline',
@@ -231,7 +231,6 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
   }) => {
     const classes = useStyles()
     const listItemRef = React.useRef<HTMLLIElement>(null)
-    const navigate = useNavigate()
     const graph = useGraph()
     const modes = graph.activeModes
     const active = useActive()
@@ -250,7 +249,7 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
 
     const handleArrowClick: React.EventHandler<React.MouseEvent> = e => {
       if (modes.includes('select') || e.metaKey) {
-        navigate(makeUrl(`/node/${node.id}/`))
+        navigate(`/node/${node.id}/`)
       } else {
         toggleExpand()
       }
@@ -321,13 +320,13 @@ export const NodeListItem: React.FunctionComponent<NodeListItemProps> = observer
         graph.setActiveMode('select')
         graph.toggleSelectNode(node, parentNode)
       } else if (e.metaKey) {
-        navigate(makeUrl(`/node/${node.id}/`))
+        navigate(`/node/${node.id}/`)
       } else if (modes.includes('select')) {
         graph.toggleSelectNode(node, parentNode)
       } else if (modes.includes('edit')) {
         setIsEditing(true)
       } else {
-        navigate(makeUrl(`/node/${node.id}/`))
+        navigate(`/node/${node.id}/`)
       }
     }
 
