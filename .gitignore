@@ -11,6 +11,7 @@
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+!.yarnrc.yml
 
 node_modules
 coverage
