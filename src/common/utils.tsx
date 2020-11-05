@@ -17,7 +17,7 @@
  * along with Exuo.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { makeUrl } from 'route'
+import { makeUrl } from 'exuo/src/route'
 
 export function saveBlob(blob: Blob, name?: string): void {
   const url = URL.createObjectURL(blob)

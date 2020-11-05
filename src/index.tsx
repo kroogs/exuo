@@ -22,14 +22,16 @@ import ReactDOM from 'react-dom'
 
 import { StoreProvider } from './store'
 import { ThemeProvider } from './theme'
-import { Router } from './route'
+import { NodeViewer } from './graph'
+/* import { Router } from './route' */
 import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
   <React.StrictMode>
     <StoreProvider>
       <ThemeProvider>
-        <Router />
+        <NodeViewer />
+        {/* <Router /> */}
       </ThemeProvider>
     </StoreProvider>
   </React.StrictMode>,

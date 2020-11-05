@@ -18,35 +18,40 @@
  */
 
 import React from 'react'
-import { observer } from 'mobx-react-lite'
-import * as reach from '@reach/router'
 
-import { useGraph } from 'graph'
-import { NodeViewer } from 'graph'
-/* import { PeerConnector } from 'peer' */
+export {}
+/* import { observer } from 'mobx-react-lite' */
+/* import * as reach from '@reach/router' */
 
-// Necessary for now because this routing library is bad.
+/* export const Link = reach.Link */
+
+/* import { useGraph, NodeViewer } from 'exuo/src/graph' */
+/* /1* import { PeerConnector } from 'peer' *1/ */
+
+/* // Necessary for now because this routing library is bad. */
 export const makeUrl = (path = ''): string => process.env.PUBLIC_URL + path
 export const navigate = (path = ''): void => {
-  reach.navigate(makeUrl(path))
+  /* reach.navigate(makeUrl(path)) */
 }
 
-export type RouteProps<T = unknown> = {
-  component: React.FunctionComponent<T>
-} & reach.RouteComponentProps
+export const Link: React.FunctionComponent = () => <></>
 
-export const Route: React.FunctionComponent<RouteProps> = ({
-  component: Component,
-  ...props
-}) => <Component {...props} />
+/* export type RouteProps<T = unknown> = { */
+/*   component: React.FunctionComponent<T> */
+/* } & reach.RouteComponentProps */
 
-export const Router: React.FunctionComponent = observer(() => {
-  const graph = useGraph()
-  return graph.rootNode ? (
-    <reach.Router basepath={process.env.PUBLIC_URL}>
-      <Route path="/" component={NodeViewer} />
-      <Route path=":type/:id" component={NodeViewer} />
-      {/* <Route path="peer/:id" component={PeerConnector} /> */}
-    </reach.Router>
-  ) : null
-})
+/* export const Route: React.FunctionComponent<RouteProps> = ({ */
+/*   component: Component, */
+/*   ...props */
+/* }) => <Component {...props} /> */
+
+/* export const Router: React.FunctionComponent = observer(() => { */
+/*   const graph = useGraph() */
+/*   return graph.rootNode ? ( */
+/*     <reach.Router basepath={process.env.PUBLIC_URL}> */
+/*       <Route path="/" component={NodeViewer} /> */
+/*       <Route path=":type/:id" component={NodeViewer} /> */
+/*       {/1* <Route path="peer/:id" component={PeerConnector} /> *1/} */
+/*     </reach.Router> */
+/*   ) : null */
+/* }) */

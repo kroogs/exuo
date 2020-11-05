@@ -23,7 +23,7 @@ import { List } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { IAnyModelType, Instance } from 'mobx-state-tree'
 
-import { useGraph } from 'graph'
+import { useGraph } from 'exuo/src/graph'
 import { NodeListItem } from './NodeListItem'
 import { Node } from '../models/Node'
 

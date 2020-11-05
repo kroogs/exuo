@@ -32,8 +32,8 @@ import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck'
 import BorderAllIcon from '@material-ui/icons/BorderAll'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
 
-import { Layout } from 'common'
-import { useGraph } from 'graph'
+import { useGraph } from 'exuo/src/graph'
+import { Layout } from './Layout'
 
 export const Settings: React.FunctionComponent = observer(() => {
   const graph = useGraph()
@@ -56,6 +56,7 @@ export const Settings: React.FunctionComponent = observer(() => {
           </ListItemSecondaryAction>
         </ListItem>
       </List>
+
       <List subheader={<ListSubheader>Lists</ListSubheader>}>
         <ListItem>
           <ListItemIcon>
@@ -76,6 +77,7 @@ export const Settings: React.FunctionComponent = observer(() => {
             />
           </ListItemSecondaryAction>
         </ListItem>
+
         <ListItem>
           <ListItemIcon>
             <BorderAllIcon />
@@ -91,6 +93,7 @@ export const Settings: React.FunctionComponent = observer(() => {
             />
           </ListItemSecondaryAction>
         </ListItem>
+
         <ListItem>
           <ListItemIcon>
             <AccountTreeIcon />

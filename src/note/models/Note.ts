@@ -20,10 +20,10 @@
 import { types } from 'mobx-state-tree'
 import { convertToRaw } from 'draft-js'
 
-import { nodeFactory } from 'graph'
+import { nodeFactory } from 'exuo/src/graph'
 
 // Avoid circular dependency issue
-import { Unknown } from 'graph/models/Unknown'
+import { Unknown } from 'exuo/src/graph/models/Unknown'
 
 const NoteBase = types
   .model('Note', {

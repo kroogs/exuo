@@ -23,7 +23,7 @@ import { List, ListItem, ListItemText } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { getMembers, Instance, isStateTreeNode } from 'mobx-state-tree'
 
-import { useGraph, Node } from 'graph'
+import { useGraph, Node } from 'exuo/src/graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -1,7 +1,8 @@
 {
   "include": ["src"],
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": ".",
+
     "lib": ["dom", "dom.iterable", "webworker", "esnext"],
 
     "strict": true,

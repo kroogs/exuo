@@ -23,11 +23,11 @@ import { AppBar, Box, fade } from '@material-ui/core'
 import { Instance } from 'mobx-state-tree'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { navigate } from 'route'
-import { TitleBar } from 'common'
-import { NoteEditor } from 'note'
+import { navigate } from 'exuo/src/route'
+import { TitleBar } from 'exuo/src/common'
+import { NoteEditor } from 'exuo/src/note'
 
-import { Node, useGraph, NodeActions } from 'graph'
+import { Node, useGraph, NodeActions } from 'exuo/src/graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

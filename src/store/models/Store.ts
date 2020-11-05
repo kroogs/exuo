@@ -19,7 +19,7 @@
 
 import { types } from 'mobx-state-tree'
 
-import { Graph } from 'graph'
+import { Graph } from 'exuo/src/graph'
 
 export const Store = types
   .model('Store', {

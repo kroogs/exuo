@@ -18,11 +18,21 @@
  */
 
 import React from 'react'
+/* import { configure } from 'mobx' */
 import { Instance } from 'mobx-state-tree'
-
-import { Graph } from 'graph'
+import { Graph } from 'exuo/src/graph'
 
 import { Store } from './models/Store'
+
+/* if (process.env.NODE_ENV === 'development') { */
+/*   configure({ */
+/*     enforceActions: 'always', */
+/*     computedRequiresReaction: true, */
+/*     reactionRequiresObservable: true, */
+/*     observableRequiresReaction: true, */
+/*     disableErrorBoundaries: true, */
+/*   }) */
+/* } */
 
 const store = Store.create({
   graph: Graph.create(),

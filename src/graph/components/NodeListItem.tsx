@@ -32,9 +32,9 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { Instance } from 'mobx-state-tree'
 import { useDrag, useDrop, XYCoord } from 'react-dnd'
 
-import { navigate } from 'route'
-import { NoteEditor } from 'note'
-import { useGraph, Node, EdgeList, useActive } from 'graph'
+import { navigate } from 'exuo/src/route'
+import { NoteEditor } from 'exuo/src/note'
+import { useGraph, Node, EdgeList, useActive } from 'exuo/src/graph'
 
 const isEditingBorderSelector = `&.isEditing, &.isEditing + li,\
   &.isEditing + .MuiCollapse-container > .MuiCollapse-wrapper > .MuiCollapse-wrapperInner > .MuiList-root > .MuiListItem-container:first-child`

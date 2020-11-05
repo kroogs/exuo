@@ -20,7 +20,7 @@
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
 
-import { Store, storeContext } from 'store'
+import { Store, storeContext } from 'exuo/src/store'
 
 export function useStore(): Instance<typeof Store> {
   const store = React.useContext(storeContext)

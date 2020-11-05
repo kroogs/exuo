@@ -25,10 +25,10 @@ import {
   SnapshotIn,
 } from 'mobx-state-tree'
 
-import { nodeFactory, edgeMapFactory, View, Graph } from 'graph'
+import { nodeFactory, edgeMapFactory, View, Graph } from 'exuo/src/graph'
 
 // Avoid circular dependency
-import { Unknown } from 'graph/models/Unknown'
+import { Unknown } from 'exuo/src/graph/models/Unknown'
 
 export const Node = nodeFactory([
   edgeMapFactory(() =>

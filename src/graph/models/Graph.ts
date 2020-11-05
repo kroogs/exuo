@@ -18,16 +18,14 @@
  */
 
 import {
-  types,
   Instance,
   applySnapshot,
   SnapshotIn,
-  SnapshotOut,
   IAnyModelType,
   getSnapshot,
 } from 'mobx-state-tree'
 
-import { persist } from 'store/persist'
+import { persist } from 'exuo/src/store/persist'
 
 import { graphFactory } from './factories'
 import { Node } from './Node'

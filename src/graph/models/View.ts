@@ -19,7 +19,7 @@
 
 import { types, Instance } from 'mobx-state-tree'
 
-import { nodeFactory } from 'graph'
+import { nodeFactory } from 'exuo/src/graph'
 
 const ViewItem = types
   .model('ViewItem', {

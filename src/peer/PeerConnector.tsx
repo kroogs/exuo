@@ -21,11 +21,10 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, Button, Typography, CircularProgress } from '@material-ui/core'
 import { IAnyStateTreeNode } from 'mobx-state-tree'
-import { useNavigate } from '@reach/router'
 
-import { Layout } from 'common'
-import { makeUrl } from 'route'
-import { useGraph } from 'graph'
+import { Layout } from 'exuo/src/common'
+import { navigate } from 'exuo/src/route'
+import { useGraph } from 'exuo/src/graph'
 
 interface PeerConnectorProps {
   id?: string
@@ -35,7 +34,6 @@ export const PeerConnector: React.FunctionComponent<PeerConnectorProps> = observ
   ({ id }) => {
     const [peerError, setPeerError] = React.useState<null | Error>(null)
     const [hasAccepted, setHasAccepted] = React.useState(false)
-    const navigate = useNavigate()
     const graph = useGraph()
 
     const handleAccept: React.EventHandler<React.SyntheticEvent> = () => {
@@ -43,7 +41,7 @@ export const PeerConnector: React.FunctionComponent<PeerConnectorProps> = observ
       graph
         .seekPeerConnection(id)
         .then((instance: IAnyStateTreeNode) => {
-          navigate(makeUrl(`/node/${instance.id}`))
+          navigate(`/node/${instance.id}`)
         })
         .catch((error: Error) => {
           setPeerError(error)

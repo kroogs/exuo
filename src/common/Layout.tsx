@@ -21,7 +21,7 @@ import React from 'react'
 import { AppBar, Box } from '@material-ui/core'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { TitleBar } from 'common'
+import { TitleBar } from './TitleBar'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

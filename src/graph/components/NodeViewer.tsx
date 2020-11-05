@@ -21,8 +21,9 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+/* import { TouchBackend } from 'react-dnd-touch-backend' */
 
-import { NodeLayout, EdgeList, useGraph, ActiveProvider } from 'graph'
+import { NodeLayout, EdgeList, useGraph, ActiveProvider } from 'exuo/src/graph'
 
 interface NodeViewerProps {
   id?: string

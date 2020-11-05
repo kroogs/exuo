@@ -20,9 +20,9 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 
-import { NodeLayout, EdgeList } from 'graph'
+import { NodeLayout, EdgeList } from 'exuo/src/graph'
 
-import { useStore } from 'store'
+import { useStore } from 'exuo/src/store'
 
 interface InstanceViewerProps {
   id?: string

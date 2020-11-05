@@ -37,9 +37,9 @@ import TuneIcon from '@material-ui/icons/Tune'
 import GroupIcon from '@material-ui/icons/Group'
 import { Instance } from 'mobx-state-tree'
 
-import { selectFile } from 'common'
-import { SelectButton } from 'select'
-import { Node, useGraph } from 'graph'
+import { selectFile } from 'exuo/src/common'
+import { SelectButton } from 'exuo/src/select'
+import { Node, useGraph } from 'exuo/src/graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

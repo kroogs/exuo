@@ -20,8 +20,8 @@
 import React from 'react'
 import { Instance } from 'mobx-state-tree'
 
-import { useStore } from 'store'
-import { Graph, Node } from 'graph'
+import { useStore } from 'exuo/src/store'
+import { Graph, Node } from 'exuo/src/graph'
 
 export const useGraph = (): Instance<typeof Graph> => useStore().graph
 

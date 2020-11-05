@@ -19,7 +19,7 @@
 
 import { types, SnapshotIn, Instance } from 'mobx-state-tree'
 
-import { nodeFactory } from 'graph'
+import { nodeFactory } from 'exuo/src/graph'
 import { Unknown } from './Unknown'
 
 const ConfigBase = types

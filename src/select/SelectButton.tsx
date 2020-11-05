@@ -34,12 +34,12 @@ import FlipToBackIcon from '@material-ui/icons/FlipToBackOutlined'
 import CancelIcon from '@material-ui/icons/CancelOutlined'
 import FolderIcon from '@material-ui/icons/FolderOutlined'
 import FileCopyIcon from '@material-ui/icons/FileCopyOutlined'
-import SaveAltIcon from '@material-ui/icons/SaveAlt'
+/* import SaveAltIcon from '@material-ui/icons/SaveAlt' */
 import SelectAllIcon from '@material-ui/icons/SelectAll'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { saveBlob } from 'common'
-import { useGraph, Node, useActive } from 'graph'
+import { saveBlob } from 'exuo/src/common'
+import { useGraph, Node, useActive } from 'exuo/src/graph'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
